@@ -1,0 +1,3 @@
+FROM {{ OS_image }}:{{ OS_image_version }}
+
+CMD ["echo", "{{ Echo_message }}"]
