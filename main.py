@@ -1,6 +1,7 @@
 import jinja2
 import subprocess
 import tkinter as tk
+from existing_dockerfile import *
 
 pip_packages = {"jinja": "Jinja2",
                "mypdf2": "PyPDF2",
@@ -11,6 +12,14 @@ apt_get_packages = {"git": "git",
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
 template = environment.get_template("template-dockerfile.txt")
+
+path="/home/weektor/test-repos/Auto-GPT"
+dockerfile_path = get_dockerfile_path(path=path)
+if dockerfile_path:
+    parse_dockerfile(dockerfile_path=dockerfile_path, apt_packages=apt_get_packages, pip_packages=pip_packages)
+    
+print(apt_get_packages)
+print(pip_packages)
 
 OS_image="ubuntu"
 OS_image_version="latest"
@@ -24,7 +33,7 @@ content = template.render(OS_image=OS_image,
 with open("outputs/Dockerfile", "w") as file:
     file.write(content)
 
-print(content)
+#print(content)
 
 print("Try to run Dockerfile")
 #subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
