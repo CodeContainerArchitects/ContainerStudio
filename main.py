@@ -1,30 +1,34 @@
 import jinja2
 import subprocess
 import tkinter as tk
+import add_files
 
-pip_packages = {"jinja": "Jinja2",
+def generate_dockerfile():
+    pip_packages = {"jinja": "Jinja2",
                "mypdf2": "PyPDF2",
                "click": "click"}
 
-apt_get_packages = {"git": "git",
-                    "ansible":"ansible"}
+    apt_get_packages = {"git": "git",
+                        "ansible":"ansible"}
 
-environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
-template = environment.get_template("template-dockerfile.txt")
+    environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
+    template = environment.get_template("template-dockerfile.txt")
 
-OS_image="ubuntu"
-OS_image_version="latest"
-message = "testing message 123"
-content = template.render(OS_image=OS_image,
-                          OS_image_version=OS_image_version,
-                          packages_to_install=pip_packages.values(),
-                          apt_get_packages=apt_get_packages.values())
+    OS_image="ubuntu"
+    OS_image_version="latest"
+    message = "testing message 123"
+    copy_folder_to_dockerfile = add_files.copy_folder_to_dockerfile()
+    content = template.render(OS_image=OS_image,
+                            OS_image_version=OS_image_version,
+                            packages_to_install=pip_packages.values(),
+                            apt_get_packages=apt_get_packages.values(),
+                            copy_folder_to_dockerfile=copy_folder_to_dockerfile)
 
+    path = "outputs/Dockerfile"
+    with open(path, "w") as file:
+        file.write(content)
 
-with open("outputs/Dockerfile", "w") as file:
-    file.write(content)
-
-print(content)
+    print(content)
 
 print("Try to run Dockerfile")
 #subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
@@ -44,21 +48,18 @@ center_y = int(screen_height/2 - window_height / 2)
 
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 
-# textbox for inputting text
-textbox = tk.Text(root, height=5, width=70, pady = 10)
-label = tk.Label(root, text = "Type a message")
+#select folder 
+select_folder_button = tk.Button(root, text = "Select folder", command = lambda:add_files.select_working_directory())
 
 # uploading files
-#upload_file_button = tk.Button(root, text = "Upload file", command = lambda:upload_file())
-file_label = tk.Label(text='Choose a file')
+choose_file_button = tk.Button(root, text = "Choose file", command = lambda:add_files.select_files(root))
 
-send_button = tk.Button(root, text = "Send", )
+
+send_button = tk.Button(root, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
 exit_button = tk.Button(root, text = "Exit", command = root.destroy)
 
-label.pack()
-textbox.pack()
-#upload_file_button.pack()
-file_label.pack()
+select_folder_button.pack()
+choose_file_button.pack()
 send_button.pack()
 exit_button.pack()
 

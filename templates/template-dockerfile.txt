@@ -21,4 +21,8 @@ RUN apt-get update \
 {% endfor %}
     && rm -rf /var/lib/apt/lists/*
 
+{% if copy_folder_to_dockerfile %}
+COPY {{ copy_folder_to_dockerfile }}
+{% endif %}
+
 CMD ["bash"]
