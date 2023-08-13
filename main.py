@@ -15,19 +15,58 @@ template = environment.get_template("template-dockerfile.txt")
 
 path="/home/weektor/test-repos/Auto-GPT"
 dockerfile_path = get_dockerfile_path(path=path)
+OS_data= {
+    "OS_image": "ubuntu",
+    "OS_image_version": "latest"
+}
+run_commands = []
+env_variables = []
+expose_ports = []
+users=[]
+arguments=[]
+entrypoint_commands = []
+cmd_commands = []
+shell_commands = []
 if dockerfile_path:
-    parse_dockerfile(dockerfile_path=dockerfile_path, apt_packages=apt_get_packages, pip_packages=pip_packages)
+    parse_dockerfile(dockerfile_path=dockerfile_path,
+                     apt_packages=apt_get_packages,
+                     pip_packages=pip_packages,
+                     run_commands=run_commands,
+                     env_variables=env_variables,
+                     os=OS_data,
+                     expose_ports=expose_ports,
+                     users=users,
+                     arguments=arguments,
+                     entrypoint_commands=entrypoint_commands,
+                     cmd_commands=cmd_commands,
+                     shell_commands=shell_commands)
     
-print(apt_get_packages)
-print(pip_packages)
+# print(apt_get_packages)
+# print(pip_packages)
+# print(OS_data["OS_image"])
+# print(OS_data["OS_image_version"])
+# print(run_commands)
+# print(env_variables)
+# print(expose_ports)
+# print(users)
+# print(arguments)
+# print(entrypoint_commands)
+# print(cmd_commands)
+# print(shell_commands)
 
-OS_image="ubuntu"
-OS_image_version="latest"
 message = "testing message 123"
-content = template.render(OS_image=OS_image,
-                          OS_image_version=OS_image_version,
+content = template.render(OS_image=OS_data["OS_image"],
+                          OS_image_version=OS_data["OS_image_version"],
                           packages_to_install=pip_packages.values(),
-                          apt_get_packages=apt_get_packages.values())
+                          apt_get_packages=apt_get_packages.values(),
+                          run_commands=run_commands,
+                          env_variables=env_variables,
+                          expose_ports=expose_ports,
+                          users=users,
+                          arguments=arguments,
+                          entrypoint_commands=entrypoint_commands,
+                          cmd_commands=cmd_commands,
+                          shell_commands=shell_commands)
 
 
 with open("outputs/Dockerfile", "w") as file:

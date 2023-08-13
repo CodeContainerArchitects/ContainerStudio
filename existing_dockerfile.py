@@ -1,7 +1,6 @@
 import os
 import re
 
-
 def _find_dockerfile(path):
     for root, dirs, files in os.walk(path):
         if 'Dockerfile' in files:
@@ -21,37 +20,80 @@ def get_dockerfile_path(path):
     else:
         return None
     
-def parse_dockerfile(dockerfile_path, apt_packages, pip_packages):
+def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
+                     env_variables, os, expose_ports, users, arguments,
+                     entrypoint_commands, cmd_commands, shell_commands) :
     with open(dockerfile_path, 'r') as file:
         content = file.readlines()
-    icontent = iter(content)
+    icontent = iter(content)    
+    workdir_changed = False
+    workdir_value = None
+    os_selected = False
     for line in icontent:
-        if 'RUN' in line:
-            command = line.split()
+        command = line.split()
+        if command:
             while command[-1] == "\\":
                 next_line = next(icontent).split()
                 for word in next_line:
                     command.append(word)
             while "\\" in command:
                 command.remove("\\")
-            #print(command)                      
-            if 'apt' in command or 'apt-get' in command:
-                if 'install' in command:
-                    apt_packages = add_apt_packages(command, apt_packages)
-            if 'pip' in command:
-                if 'install' in command:
-                    pip_packages = add_pip_packages(command, pip_packages)
-            
-            
-            
-            #print(line)
-            # if 'apt' in line or 'apt-get' in line:
-            #     if 'install' in line or "\\" in line:
-            #         apt_packages.append(line)
-            # if 'pip' in line:
-            #     if 'install' in line:
-            #         pip_packages.append(line)
-    return apt_packages, pip_packages
+            whole_command = " ".join(command)
+            #print(whole_command)
+            if 'ONBUILD' not in command and 'VOLUME' not in command:
+                if 'FROM' in command and os_selected == False:
+                    image = command[command.index('FROM')+1:command.index('FROM')+2]
+                    if ':' in image[0]:
+                        parts = image[0].split(':')
+                        os["OS_image"] = parts[0]
+                        os["OS_image_version"] = parts[1]
+                    else:
+                        os["OS_image"] = image[0]
+                        os["OS_image_version"] = 'latest'
+                    os_selected = True
+                if 'MAINTAINER' in command:
+                    continue # currently not supported
+                if 'LABEL' in command:
+                    continue # currently not supported
+                if 'EXPOSE' in command:
+                    expose_ports.append(whole_command)
+                if 'USER' in command:
+                    users.append(whole_command)
+                if 'WORKDIR' in command:
+                    workdir_changed = True
+                    workdir_value = whole_command
+                if 'ARG' in command:
+                    arguments.append(whole_command)
+                if 'ENTRYPOINT' in command:
+                    entrypoint_commands.append(whole_command)
+                if 'CMD' in command:
+                    cmd_commands.append(whole_command)
+                if 'STOPSIGNAL' in command:
+                    continue # currently not supported
+                if 'HEALTHCHECK' in command:
+                    continue # currently not supported
+                if 'SHELL' in command:
+                    shell_commands.append(whole_command)
+                if 'RUN' in command:                     
+                    if 'apt' in command or 'apt-get' in command:
+                        if 'install' in command:
+                            apt_packages = add_apt_packages(command, apt_packages)
+                    elif 'pip' in command:
+                        if 'install' in command:
+                            pip_packages = add_pip_packages(command, pip_packages)
+                    else:
+                        if workdir_changed:
+                            run_commands.append(workdir_value)
+                            workdir_changed = False
+                        run_commands.append(whole_command)
+                if 'ENV' in command:
+                    env_variables.append(whole_command)
+                if 'COPY' in command:
+                    if workdir_changed:
+                        workdir_changed = False
+                    continue #TODO when COPY action will be implemented, this will be added in the future
+
+    return apt_packages, pip_packages, run_commands, env_variables, os, expose_ports, users, arguments, entrypoint_commands, cmd_commands, shell_commands
     
 def add_apt_packages(command, apt_packages):
     packages = command
@@ -67,7 +109,6 @@ def add_apt_packages(command, apt_packages):
             indexes.append(packages.index(word))
     for index in reversed(indexes):
         packages.remove(packages[index])
-    print(packages)
     
     for package in packages:
         if package not in apt_packages.keys():
@@ -88,7 +129,6 @@ def add_pip_packages(command, pip_packages):
             indexes.append(packages.index(word))
     for index in reversed(indexes):
         packages.remove(packages[index])
-    print(packages)
     
     if "requirements.txt" in packages:
         packages.remove("requirements.txt")
