@@ -1,23 +1,47 @@
 import os
+import re
 
 
 def _find_files(path, pattern):
     matching_files = []
     for root, dirs, files in os.walk(path):
-        if 'requirements.txt' in files:
-            return os.path.join(root, 'requirements.txt')
-    return None
+        for file in files:
+            if pattern.match(file):
+                relative_path = os.path.relpath(os.path.join(root, file), start=path)
+                matching_files.append(relative_path)
+    return matching_files
+
+
+def _get_file_names(files):
+    file_names = [os.path.split(file)[-1] for file in files]
+    return file_names
+
+
+def _convert_paths_to_linux(paths):
+    return [path.replace("\\", "/") for path in paths]
 
 
 def use_requirements(path):
-    result = _find_requirements(path=path)
+    pattern = re.compile(r".*requirements.*", re.IGNORECASE)
+    result = _find_files(path=path, pattern=pattern)
+    chosen_requirements = []
+    file_names = []
     if result:
-        print(f"Found requirements.txt at: {result}")
-        user_choice = input('Do you want to use found requirements.txt in a Dockerfile? y/n \n')
-        if user_choice == 'y' or user_choice == 'yes':
-            return result
-        else:
-            return None
+        file_names = _get_file_names(result)
+        result = _convert_paths_to_linux(result)
+        print(f"Found requirements.txt at:")
+        for i in range(0, len(result)):
+            print(f'{i}. {result[i]}')
+        print('Choose appropriate requirements file. To quit press x.\n')
+        while True:
+            index = input()
+            if index == 'x':
+                break
+            chosen_requirements.append(result[int(index)])
     else:
         print("File requirements.txt not found in the specified directory.")
-        return None
+
+    return chosen_requirements, file_names
+
+
+print(_find_files("C:\\Users\\aleks\\Desktop\\ContainerStudio\\outputs", re.compile(r"Dockerfile")))
