@@ -1,7 +1,8 @@
 import os
 
 
-def _find_requirements(path):
+def _find_files(path, pattern):
+    matching_files = []
     for root, dirs, files in os.walk(path):
         if 'requirements.txt' in files:
             return os.path.join(root, 'requirements.txt')
