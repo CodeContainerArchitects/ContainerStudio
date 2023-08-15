@@ -22,8 +22,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 {% if use_requirements %}
-COPY {{ use_requirements }} .
-RUN pip install -r requirements.txt
+{% for i in range(0, ranges) %}
+COPY {{ use_requirements[i] }} .
+RUN pip install -r {{ file_names[i] }}
+{% endfor %}
 {% endif%}
 
 CMD ["bash"]

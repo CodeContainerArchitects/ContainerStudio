@@ -16,13 +16,15 @@ template = environment.get_template("template-dockerfile.txt")
 OS_image="ubuntu"
 OS_image_version="latest"
 message = "testing message 123"
-path = 'C:\\Users\\aleks\\Desktop\\exampl'
-use_requirements = use_requirements(path=path)
+path = 'C:\\Users\\aleks\\Desktop\\ContainerStudio\\outputs'
+use_requirements, file_names = use_requirements(path=path)
 content = template.render(OS_image=OS_image,
                           OS_image_version=OS_image_version,
                           packages_to_install=pip_packages.values(),
                           apt_get_packages=apt_get_packages.values(),
-                          use_requirements=use_requirements)
+                          use_requirements=use_requirements,
+                          file_names=file_names,
+                          ranges=len(use_requirements))
 
 
 with open("outputs/Dockerfile", "w") as file:
