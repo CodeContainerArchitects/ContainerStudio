@@ -42,6 +42,3 @@ def use_requirements(path):
         print("File requirements.txt not found in the specified directory.")
 
     return chosen_requirements, file_names
-
-
-print(_find_files("C:\\Users\\aleks\\Desktop\\ContainerStudio\\outputs", re.compile(r"Dockerfile")))
