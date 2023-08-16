@@ -2,6 +2,7 @@ import tkinter.filedialog as fd
 import os
 import shutil
 
+parent_dir = ""
 path = ""
 working_directory = "Dockerfile_files"
 container_directory = "/files"
@@ -11,13 +12,16 @@ files = []
 def select_working_directory():
     global parent_dir
     parent_dir = fd.askdirectory(mustexist=True)
-    if parent_dir:
-        global path
-        path = os.path.join(parent_dir, working_directory)
-        if os.path.isdir(path) == False:
-            os.mkdir(path)
+    
+    if not parent_dir:
+        parent_dir = os.getcwd()
+        print(parent_dir)
+    
+    global path
+    path = os.path.join(parent_dir, working_directory)
+    if os.path.isdir(path) == False:
+        os.mkdir(path)
 
-# TODO: unify directories 
 def get_working_directory():
     return parent_dir
 

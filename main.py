@@ -2,6 +2,7 @@ import jinja2
 import subprocess
 import tkinter as tk
 import add_files
+import os
 
 def generate_dockerfile():
     pip_packages = {"jinja": "Jinja2",
@@ -24,8 +25,8 @@ def generate_dockerfile():
                             apt_get_packages=apt_get_packages.values(),
                             copy_folder_to_dockerfile=copy_folder_to_dockerfile)
 
-    path = "outputs/Dockerfile"
-    with open(path, "w") as file:
+    filename = "Dockerfile"
+    with open(os.path.join(add_files.get_working_directory(), filename), "w") as file:
         file.write(content)
 
     print(content)
