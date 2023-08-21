@@ -3,7 +3,7 @@ import os
 import shutil
 
 parent_dir = os.getcwd()
-working_directory = "Dockerfile_files"
+working_directory = "Project_files"
 path = os.path.join(parent_dir, working_directory)
 container_directory = "/files"
 files = []
