@@ -53,7 +53,8 @@ root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 select_folder_button = tk.Button(root, text = "Select folder", command = lambda:add_files.select_working_directory())
 
 # uploading files
-choose_file_button = tk.Button(root, text = "Choose file", command = lambda:add_files.select_files(root))
+choose_file_button = tk.Button(root, text = "Choose file", command = lambda:add_files.select_files(root,mode='file'))
+choose_folder_button = tk.Button(root, text = "Choose folder", command = lambda:add_files.select_files(root, mode='dir'))
 
 
 send_button = tk.Button(root, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
@@ -61,6 +62,7 @@ exit_button = tk.Button(root, text = "Exit", command = root.destroy)
 
 select_folder_button.pack()
 choose_file_button.pack()
+choose_folder_button.pack()
 send_button.pack()
 exit_button.pack()
 
