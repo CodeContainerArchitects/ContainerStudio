@@ -16,7 +16,7 @@ template = environment.get_template("template-dockerfile.txt")
 OS_image="ubuntu"
 OS_image_version="latest"
 message = "testing message 123"
-path = 'C:\\Users\\aleks\\Desktop\\ContainerStudio\\outputs'
+path = '/home/ola/Desktop/test_files'
 use_requirements, file_names = use_requirements(path=path)
 content = template.render(OS_image=OS_image,
                           OS_image_version=OS_image_version,

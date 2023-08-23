@@ -17,18 +17,13 @@ def _get_file_names(files):
     return file_names
 
 
-def _convert_paths_to_linux(paths):
-    return [path.replace("\\", "/") for path in paths]
-
-
 def use_requirements(path):
-    pattern = re.compile(r".*requirements.*", re.IGNORECASE)
+    pattern = re.compile(r".*requirements.*")
     result = _find_files(path=path, pattern=pattern)
     chosen_requirements = []
     file_names = []
     if result:
         file_names = _get_file_names(result)
-        result = _convert_paths_to_linux(result)
         print(f"Found requirements.txt at:")
         for i in range(0, len(result)):
             print(f'{i}. {result[i]}')
