@@ -1,6 +1,7 @@
 import jinja2
 import subprocess
 import tkinter as tk
+from requirements_searching import use_requirements
 
 pip_packages = {"jinja": "Jinja2",
                "mypdf2": "PyPDF2",
@@ -109,10 +110,15 @@ template = environment.get_template("template-dockerfile.txt")
 OS_image="ubuntu"
 OS_image_version="latest"
 message = "testing message 123"
+path = '/home/ola/Desktop/test_files'
+use_requirements, file_names = use_requirements(path=path)
 content = template.render(OS_image=OS_image,
                           OS_image_version=OS_image_version,
                           packages_to_install=pip_packages.values(),
-                          apt_get_packages=apt_get_packages.values())
+                          apt_get_packages=apt_get_packages.values(),
+                          use_requirements=use_requirements,
+                          file_names=file_names,
+                          ranges=len(use_requirements))
 
 
 with open("outputs/Dockerfile", "w") as file:
