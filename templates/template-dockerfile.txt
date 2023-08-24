@@ -21,6 +21,13 @@ RUN apt-get update \
 {% endfor %}
     && rm -rf /var/lib/apt/lists/*
 
+{% if use_requirements %}
+{% for i in range(0, ranges) %}
+COPY {{ use_requirements[i] }} .
+RUN pip install -r {{ file_names[i] }}
+{% endfor %}
+{% endif%}
+
 {% if copy_folder_to_dockerfile %}
 COPY {{ copy_folder_to_dockerfile }}
 {% endif %}
