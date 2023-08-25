@@ -1,5 +1,7 @@
 import os
 
+from stdlib_list import stdlib_list
+
 
 def search_imports(path_to_project):
     imports = []
@@ -15,12 +17,24 @@ def search_imports(path_to_project):
 
 
 def extract_modules(input_array):
-    modules = [element.split(" ")[1].replace("\n", "") for element in input_array]
-    return modules
+    mods = [element.split(" ")[1].replace("\n", "") for element in input_array]
+    mods = list(set(mods))
+    return mods
+
+
+def remove_build_in_modules(python_version='3.11', input_array=None):
+    if input_array is None:
+        input_array = []
+    libraries = stdlib_list(python_version)
+    mods = [mod for mod in input_array if mod not in libraries]
+    return mods
 
 
 import_lines = search_imports('/home/ola/Desktop/example/database_structures/project2')
 print(import_lines)
-
-print(extract_modules(input_array=import_lines))
+print()
+modules = extract_modules(input_array=import_lines)
+print(modules)
+print()
+print(remove_build_in_modules(input_array=modules))
 
