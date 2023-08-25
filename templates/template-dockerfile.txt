@@ -2,6 +2,9 @@ FROM {{ OS_image }}:{{ OS_image_version }}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+{% if copy_folder_to_dockerfile %}
+COPY {{ copy_folder_to_dockerfile }}
+{% endif %}
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
