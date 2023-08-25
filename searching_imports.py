@@ -14,4 +14,13 @@ def search_imports(path_to_project):
     return imports
 
 
-print(search_imports('/home/ola/Desktop/example/database_structures/project2'))
+def extract_modules(input_array):
+    modules = [element.split(" ")[1].replace("\n", "") for element in input_array]
+    return modules
+
+
+import_lines = search_imports('/home/ola/Desktop/example/database_structures/project2')
+print(import_lines)
+
+print(extract_modules(input_array=import_lines))
+
