@@ -17,6 +17,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 {{ command }}
 {% endfor %}
 
+{% if copy_folder_to_dockerfile %}
+COPY {{ copy_folder_to_dockerfile }}
+{% endif %}
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -51,3 +54,11 @@ RUN apt-get update \
 {% for command in entrypoint_commands %}
 {{ command }}
 {% endfor %}
+{% if use_requirements %}
+{% for i in range(0, ranges) %}
+COPY {{ use_requirements[i] }} .
+RUN pip install -r {{ file_names[i] }}
+{% endfor %}
+{% endif%}
+
+CMD ["bash"]
