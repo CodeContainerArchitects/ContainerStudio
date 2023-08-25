@@ -1,5 +1,6 @@
 import os
 import re
+from ContainerStudio.searching_imports import search_imports
 
 
 def _find_files(path, pattern):
@@ -34,6 +35,8 @@ def use_requirements(path):
                 break
             chosen_requirements.append(result[int(index)])
     else:
-        print("File requirements.txt not found in the specified directory.")
-
+        print("File requirements.txt not found in the specified directory")
+        user_choice = input("Do you want to search for imports your project files (y/n)?\n")
+        if user_choice == "y":
+            search_imports(path)
     return chosen_requirements, file_names
