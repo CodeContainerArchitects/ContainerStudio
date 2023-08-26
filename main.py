@@ -1,9 +1,9 @@
 import jinja2
-import subprocess
 import tkinter as tk
 import add_files
 import os
 from requirements_searching import use_requirements
+
 
 def generate_dockerfile():
     pip_packages = {"jinja": "Jinja2",
@@ -113,8 +113,7 @@ def generate_dockerfile():
     OS_image="ubuntu"
     OS_image_version="latest"
     message = "testing message 123"
-    path = '/home/ola/Desktop/test_files'
-    use_req, file_names = use_requirements(path=path)
+    use_req, file_names = use_requirements(path=add_files.get_working_directory())
     copy_folder_to_dockerfile = add_files.copy_folder_to_dockerfile()
     content = template.render(OS_image=OS_image,
                               OS_image_version=OS_image_version,
@@ -123,13 +122,14 @@ def generate_dockerfile():
                               use_requirements=use_req,
                               file_names=file_names,
                               ranges=len(use_req),
-                             copy_folder_to_dockerfile=copy_folder_to_dockerfile)
+                              copy_folder_to_dockerfile=copy_folder_to_dockerfile)
 
     filename = "Dockerfile"
     with open(os.path.join(add_files.get_working_directory(), filename), "w") as file:
         file.write(content)
 
     print(content)
+
 
 print("Try to run Dockerfile")
 # subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
@@ -149,7 +149,7 @@ center_y = int(screen_height/2 - window_height / 2)
 
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 
-#select folder 
+# select folder
 select_folder_button = tk.Button(root, text = "Select folder", command = lambda:add_files.select_working_directory())
 
 # uploading files
