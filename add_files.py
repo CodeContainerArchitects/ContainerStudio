@@ -23,6 +23,11 @@ def select_working_directory():
 def get_working_directory():
     return parent_dir
 
+<<<<<<< HEAD
+=======
+def get_project_path():
+    return path
+>>>>>>> acaf469 (Clean up GUI, add treeview window and functionality.)
 
 # opens dialog to select files to be added to Dockerfile
 def select_files(root, mode):
@@ -52,6 +57,14 @@ def copy_folder_to_directory(path):
     new_folder = os.path.basename(os.path.normpath(files))
     new_folder = os.path.join(path,new_folder)
     shutil.copytree(files, new_folder)
+    
+def delete_files_from_directory(rm_files):
+    for file in rm_files:
+        file_path = os.path.join(path, file)
+        if os.path.isfile(file_path) == True:
+            os.remove(file_path)
+        elif os.path.isdir(file_path) == True:
+            shutil.rmtree(file_path)
 
 
 def copy_folder_to_dockerfile():

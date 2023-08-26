@@ -1,8 +1,9 @@
-from gui import root
+import subprocess
+from gui import App
 
-print("Try to run Dockerfile")
+
+#print("Try to run Dockerfile")
 # subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
-
-# Main loop variable imported from GUI
 if "__name__" == "__main__":
-    root.mainloop()
+    main_window = App()
+    main_window.mainloop()
