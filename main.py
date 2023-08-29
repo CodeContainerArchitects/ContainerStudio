@@ -113,7 +113,7 @@ def generate_dockerfile():
     OS_image="ubuntu"
     OS_image_version="latest"
     message = "testing message 123"
-    use_req, file_names = use_requirements(path=add_files.get_working_directory())
+    use_req, file_names = use_requirements(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
     copy_folder_to_dockerfile = add_files.copy_folder_to_dockerfile()
     content = template.render(OS_image=OS_image,
                               OS_image_version=OS_image_version,
