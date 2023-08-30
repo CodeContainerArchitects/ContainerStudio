@@ -1,10 +1,10 @@
 import jinja2
-import subprocess
 import tkinter as tk
 from existing_dockerfile import *
 import add_files
 import os
 from requirements_searching import use_requirements
+
 
 def generate_dockerfile():
     pip_packages = {"jinja": "Jinja2",
@@ -114,8 +114,6 @@ def generate_dockerfile():
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
     template = environment.get_template("template-dockerfile.txt")
 
-    path="/home/weektor/test-repos/Auto-GPT"
-    dockerfile_path = get_dockerfile_path(path=path)
     OS_data= {
         "OS_image": "ubuntu",
         "OS_image_version": "latest"
@@ -129,8 +127,9 @@ def generate_dockerfile():
     cmd_commands = []
     shell_commands = []
     
-    use_req, file_names = use_requirements(path=path)
+    use_req, file_names = use_requirements(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
     copy_folder_to_dockerfile = add_files.copy_folder_to_dockerfile()
+    dockerfile_path = get_dockerfile_path(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
     
     if dockerfile_path:
         parse_dockerfile(dockerfile_path=dockerfile_path,
@@ -168,6 +167,7 @@ def generate_dockerfile():
                             file_names=file_names,
                             ranges=len(use_req),
                             copy_folder_to_dockerfile=copy_folder_to_dockerfile,
+                            run_commands=run_commands,
                             env_variables=env_variables,
                             expose_ports=expose_ports,
                             users=users,
@@ -181,6 +181,7 @@ def generate_dockerfile():
         file.write(content)
 
     print(content)
+
 
 print("Try to run Dockerfile")
 # subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
@@ -200,7 +201,7 @@ center_y = int(screen_height/2 - window_height / 2)
 
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 
-#select folder 
+# select folder
 select_folder_button = tk.Button(root, text = "Select folder", command = lambda:add_files.select_working_directory())
 
 # uploading files

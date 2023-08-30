@@ -23,7 +23,6 @@ def use_requirements(path):
     chosen_requirements = []
     file_names = []
     if result:
-        file_names = _get_file_names(result)
         print(f"Found requirements.txt at:")
         for i in range(0, len(result)):
             print(f'{i}. {result[i]}')
@@ -32,7 +31,9 @@ def use_requirements(path):
             index = input()
             if index == 'x':
                 break
-            chosen_requirements.append(result[int(index)])
+            chosen_requirements.append(os.path.join('Project_files', result[int(index)]))
+        chosen_requirements = list(set(chosen_requirements))
+        file_names = _get_file_names(chosen_requirements)
     else:
         print("File requirements.txt not found in the specified directory.")
 
