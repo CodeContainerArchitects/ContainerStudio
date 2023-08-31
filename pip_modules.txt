@@ -3,3 +3,6 @@ matplotlib
 gym
 simpful
 flask
+torch
+nltk
+kivy

@@ -86,12 +86,13 @@ class ModuleSearcher:
             self.pip_modules_from_file = [line.replace("\n", "") for line in f.readlines()]
 
     def _save_pip_modules(self):
-        with open("pip_modules.txt", 'a') as f:
-            print("\n".join(self.pip_modules_to_file) + "\n")
-            f.write("\n".join(self.pip_modules_to_file) + "\n")
+        if len(self.pip_modules_to_file) != 0:
+            with open("pip_modules.txt", 'a') as f:
+                print("\n".join(self.pip_modules_to_file) + "\n")
+                f.write("\n".join(self.pip_modules_to_file) + "\n")
 
 
-module_searcher = ModuleSearcher(path_to_project="/home/ola/Desktop/example_python_codes/example_3/Laboratory-AI-fuzzy")
+module_searcher = ModuleSearcher(path_to_project="/home/ola/Desktop/example_python_codes/example_4/dogs_app_kivy")
 module_searcher.get_modules()
 print(f"ALl modules: \n {module_searcher.modules} \n")
 print(f"Pip modules: \n {module_searcher.pip_modules_for_user_display} \n")
