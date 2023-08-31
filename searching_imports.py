@@ -1,6 +1,8 @@
-import copy
+import ast
 import os
-import numpy as np
+import subprocess
+import sys
+
 from stdlib_list import stdlib_list
 
 
@@ -10,13 +12,15 @@ class ModuleSearcher:
         self.python_version = python_version
         self.modules = []
         self.directories = []
+        self.pip_modules = []
+        self.external_modules = []
 
     def get_modules(self):
         self._search_imports()
-        self._extract_modules()
         self._extract_directories()
         self._remove_build_in_modules()
         self._remove_project_modules()
+        self._extract_pip_and_external_modules()
 
     def _search_imports(self):
         for root, dirs, files in os.walk(self.path_to_project):
@@ -62,8 +66,17 @@ class ModuleSearcher:
         self.directories = list(set(self.directories))
         self.directories = [item.replace(".py", "") for item in self.directories]
 
+    def _extract_pip_and_external_modules(self):
+        for i in range(len(self.modules)):
+            try:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", self.modules[i], "--dry-run"])
+                self.pip_modules.append(self.modules[i])
+            except subprocess.CalledProcessError as e:
+                print(e)
+                self.external_modules.append(self.modules[i])
 
-module_searcher = ModuleSearcher(path_to_project='/home/ola/Desktop/example_2')
+
+module_searcher = ModuleSearcher(path_to_project="/home/ola/Desktop/example_python_codes/example_2/chatbot")
 module_searcher.get_modules()
 print(module_searcher.modules)
 
