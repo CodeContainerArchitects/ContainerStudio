@@ -7,17 +7,31 @@ def _find_dockerfile(path):
             return os.path.join(root, 'Dockerfile')
     return None
 
+def _find_files(path, pattern):
+    matching_files = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if pattern.match(file):
+                relative_path = os.path.relpath(os.path.join(root, file), start=path)
+                matching_files.append(relative_path)
+    return matching_files
 
 def get_dockerfile_path(path):
-    result = _find_dockerfile(path=path)
+    pattern = re.compile(r".*Dockerfile.*")
+    result = _find_files(path=path, pattern=pattern)
     if result:
-        print(f"Found Dockerfile at: {result}")
-        user_choice = input('Do you want to use found Dockerfile as a base? y/n \n')
-        if user_choice == 'y' or user_choice == 'yes':
-            return result
+        print(f"Found Dockerfiles at:")
+        for i in range(0, len(result)):
+            print(f'{i}. {result[i]}')
+        print('Choose appropriate Dockerfile. To quit press x.\n')
+        index = input()
+        if index.isdigit():
+            file_name = os.path.join('Project_files', result[int(index)])
+            return file_name
         else:
             return None
     else:
+        print("Dockerfile not found in the specified directory.")
         return None
     
 def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,

@@ -132,6 +132,7 @@ def generate_dockerfile():
     dockerfile_path = get_dockerfile_path(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
     
     if dockerfile_path:
+        dockerfile_path = os.path.join(add_files.get_working_directory(), dockerfile_path)
         parse_dockerfile(dockerfile_path=dockerfile_path,
                         apt_packages=apt_get_packages,
                         pip_packages=pip_packages,
