@@ -32,8 +32,18 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
     for line in icontent:
         command = line.split()
         if command:
+            if command[0] == "#":
+                command = next(icontent).split()
+            if "#" in command:
+                index = command.index("#")
+                command = command[:index]
             while command[-1] == "\\":
                 next_line = next(icontent).split()
+                while next_line[0] == "#":
+                    next_line = next(icontent).split()
+                if "#" in next_line:
+                    index = next_line.index("#")
+                    next_line = next_line[:index]
                 for word in next_line:
                     command.append(word)
             while "\\" in command:
