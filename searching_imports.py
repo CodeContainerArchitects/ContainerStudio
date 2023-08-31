@@ -22,6 +22,7 @@ class ModuleSearcher:
         self._remove_project_modules()
         self._extract_pip_and_external_modules()
 
+    # look for all modules in the project
     def _search_imports(self):
         for root, dirs, files in os.walk(self.path_to_project):
             for file in files:
@@ -40,16 +41,12 @@ class ModuleSearcher:
         self.modules = [mod.split(".")[0] for mod in self.modules]
         self.modules = list(set(self.modules))
 
-    def _extract_modules(self):
-        mods = [element.split(" ")[1].replace("\n", "").replace(",", "") for element in self.modules]
-        mods = [element.split(".")[0] for element in mods]
-        mods = list(set(mods))
-        self.modules = mods
-
+    # remove build in modules e.g. numpy, os
     def _remove_build_in_modules(self):
         libraries = stdlib_list(self.python_version)
         self.modules = [mod for mod in self.modules if mod not in libraries]
 
+    # remove project modules which comes from project files
     def _remove_project_modules(self):
         to_remove = []
         for mod in self.modules:
@@ -60,6 +57,7 @@ class ModuleSearcher:
         mod = [m for m in self.modules if m not in to_remove]
         self.modules = mod
 
+    # get all names of files to delete that modules from self.modules
     def _extract_directories(self):
         self.directories = [directory.split("/") for directory in self.directories]
         self.directories = [item for sublist in self.directories for item in sublist]
