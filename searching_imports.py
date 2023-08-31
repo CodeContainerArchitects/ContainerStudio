@@ -24,9 +24,17 @@ class ModuleSearcher:
                 if file.endswith(".py"):
                     self.directories.append(os.path.relpath(os.path.join(root, file), start=self.path_to_project))
                     with open(os.path.join(root, file), 'r') as f:
-                        for l_no, line in enumerate(f):
-                            if line.strip().startswith('import') or line.strip().startswith('from'):
-                                self.modules.append(line)
+                        file_to_explore = f.read()
+                    tree = ast.parse(file_to_explore)
+                    for node in ast.walk(tree):
+                        if isinstance(node, ast.Import):
+                            for alias in node.names:
+                                self.modules.append(alias.name)
+                        elif isinstance(node, ast.ImportFrom):
+                            self.modules.append(node.module)
+        self.modules = [mod for mod in self.modules if mod is not None]
+        self.modules = [mod.split(".")[0] for mod in self.modules]
+        self.modules = list(set(self.modules))
 
     def _extract_modules(self):
         mods = [element.split(" ")[1].replace("\n", "").replace(",", "") for element in self.modules]
