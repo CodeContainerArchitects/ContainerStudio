@@ -12,7 +12,9 @@ class ModuleSearcher:
         self.python_version = python_version
         self.modules = []
         self.directories = []
-        self.pip_modules = []
+        self.pip_modules_for_user_display = []
+        self.pip_modules_from_file = []
+        self.pip_modules_to_file = []
         self.external_modules = []
 
     def get_modules(self):
@@ -65,16 +67,33 @@ class ModuleSearcher:
         self.directories = [item.replace(".py", "") for item in self.directories]
 
     def _extract_pip_and_external_modules(self):
+        self._get_pip_modules()
         for i in range(len(self.modules)):
-            try:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", self.modules[i], "--dry-run"])
-                self.pip_modules.append(self.modules[i])
-            except subprocess.CalledProcessError as e:
-                print(e)
-                self.external_modules.append(self.modules[i])
+            if self.modules[i] not in self.pip_modules_from_file:
+                try:
+                    subprocess.check_call([sys.executable, "-m", "pip", "install", self.modules[i], "--dry-run"])
+                    self.pip_modules_for_user_display.append(self.modules[i])
+                    self.pip_modules_to_file.append(self.modules[i])
+                except subprocess.CalledProcessError as e:
+                    print(e)
+                    self.external_modules.append(self.modules[i])
+            else:
+                self.pip_modules_for_user_display.append(self.modules[i])
+        self._save_pip_modules()
+
+    def _get_pip_modules(self):
+        with open("pip_modules.txt", 'r') as f:
+            self.pip_modules_from_file = [line.replace("\n", "") for line in f.readlines()]
+
+    def _save_pip_modules(self):
+        with open("pip_modules.txt", 'a') as f:
+            print("\n".join(self.pip_modules_to_file) + "\n")
+            f.write("\n".join(self.pip_modules_to_file) + "\n")
 
 
-module_searcher = ModuleSearcher(path_to_project="/home/ola/Desktop/example_python_codes/example_2/chatbot")
+module_searcher = ModuleSearcher(path_to_project="/home/ola/Desktop/example_python_codes/example_3/Laboratory-AI-fuzzy")
 module_searcher.get_modules()
-print(module_searcher.modules)
-
+print(f"ALl modules: \n {module_searcher.modules} \n")
+print(f"Pip modules: \n {module_searcher.pip_modules_for_user_display} \n")
+print(f"External modules: \n {module_searcher.external_modules} \n")
+print(f"Pip modules to file: \n {module_searcher.pip_modules_to_file} \n")
