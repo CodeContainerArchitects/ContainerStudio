@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from add_files import select_files, select_working_directory, get_working_directory, delete_files_from_directory
+from add_files import select_files, select_working_directory, get_working_directory, delete_files_from_directory, get_project_files_folder
 from generate_dockerfile import generate_dockerfile
 import os
 
@@ -93,21 +93,37 @@ class App(tk.Tk):
         center_y = int(self.screen_height/2 - self.window_height / 2)
 
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
-
+        
+        self.project_files_folder = "Project_files"
+        
+        project_files_name_label = tk.Label(self, text = "Input the name of the project files folder:")
+        self.project_files_name = tk.Text(self, width = 20, height = 1)
         #select folder 
-        select_folder_button = tk.Button(self, text = "Select folder", command = lambda:select_working_directory())
+        select_folder_button = tk.Button(self, text = "Select folder", command = lambda:self.select_working_directory())
+        
         #opens a new window 
-        project_tree_button = tk.Button(self, text = "Show project tree", command = lambda:self.open_tree_window())
+        self.project_tree_button = tk.Button(self, text = "Show project tree", state=tk.DISABLED, command = lambda:self.open_tree_window())
 
         send_button = tk.Button(self, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
         exit_button = tk.Button(self, text = "Exit", command = self.destroy)
 
+        project_files_name_label.pack()
+        self.project_files_name.pack()
         select_folder_button.pack()
-        project_tree_button.pack()
+        self.project_tree_button.pack()
         send_button.pack()
         exit_button.pack()
+        
+        self.project_files_name.insert(tk.END, self.project_files_folder)
         
     def open_tree_window(self):
         treeWindow = TreeWindow(self)
         #grab_set prevents user from interacting with main window and makes the tree window receive events
         treeWindow.grab_set()
+        
+    def select_working_directory(self):
+        select_working_directory(self.project_files_name.get(1.0, 'end-1c'))
+        working_directory = get_working_directory()
+        
+        if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED:
+            self.project_tree_button['state'] = tk.NORMAL
