@@ -49,3 +49,5 @@ cryptography
 pythran
 pygame
 Crypto
+scipy
+pandas
