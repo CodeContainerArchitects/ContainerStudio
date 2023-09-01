@@ -5,19 +5,19 @@ import subprocess
 class ModuleSearcher:
     def __init__(self, path_to_project):
         self.path_to_project = path_to_project
+        self.name_of_result_file = "packages_found.txt"
 
     def get_modules(self):
         try:
-            subprocess.run(["pipreqs", f"{self.path_to_project}", "--savepath", f"{os.path.join(os.getcwd(), 'chosen_project_requirements', 'requirements.txt')}"])
+            subprocess.run(["pipreqs", "--savepath", os.path.join("code_container_architect_founded_packages", self.name_of_result_file), f"{self.path_to_project}"])
         except FileNotFoundError:
             print("There is no such file or directory")
         except subprocess.CalledProcessError as e:
             print("Error: ", e)
         self._print_modules()
 
-    @staticmethod
-    def _print_modules():
-        with open(os.path.join(os.getcwd(), 'chosen_project_requirements', 'requirements.txt')) as f:
+    def _print_modules(self):
+        with open(os.path.join(os.getcwd(), "code_container_architect_founded_packages", self.name_of_result_file)) as f:
             for line in f:
                 line = line.strip("==")
                 module_name = line.split("==")[0]

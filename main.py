@@ -150,7 +150,7 @@ center_y = int(screen_height/2 - window_height / 2)
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 
 # select folder
-select_folder_button = tk.Button(root, text = "Select folder", command = lambda:add_files.select_working_directory())
+select_folder_button = tk.Button(root, text ="Select folder", command = lambda:add_files.select_working_directory())
 
 # uploading files
 choose_file_button = tk.Button(root, text = "Choose file", command = lambda:add_files.select_files(root,mode='file'))
