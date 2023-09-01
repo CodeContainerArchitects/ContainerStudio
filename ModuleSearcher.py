@@ -6,6 +6,8 @@ class ModuleSearcher:
     def __init__(self, path_to_project):
         self.path_to_project = path_to_project
         self.name_of_result_file = "packages_found.txt"
+        if not os.path.exists(os.path.join(os.getcwd(), "code_container_architect_founded_packages")):
+            os.mkdir(os.path.join(os.getcwd(), "code_container_architect_founded_packages"))
 
     def get_modules(self):
         try:
@@ -23,3 +25,7 @@ class ModuleSearcher:
                 module_name = line.split("==")[0]
                 module_version = line.split("==")[1]
                 print(f"{module_name}: {module_version}")
+
+
+mod_finder = ModuleSearcher(path_to_project='/home/ola/Desktop/example_python_codes/example_13/cli/Project_files')
+mod_finder.get_modules()
