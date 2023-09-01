@@ -101,10 +101,20 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
                 if 'RUN' in command:                     
                     if 'apt' in command or 'apt-get' in command:
                         if 'install' in command:
-                            apt_packages = add_apt_packages(command, apt_packages)
+                            apt_packages, rest_of_command = add_apt_packages(command, apt_packages)
+                            if rest_of_command:
+                                if workdir_changed:
+                                    run_commands.append(workdir_value)
+                                    workdir_changed = False
+                                run_commands.append(" ".join(rest_of_command))
                     elif 'pip' in command:
                         if 'install' in command:
-                            pip_packages = add_pip_packages(command, pip_packages)
+                            pip_packages, rest_of_command = add_pip_packages(command, pip_packages)
+                            if rest_of_command:
+                                if workdir_changed:
+                                    run_commands.append(workdir_value)
+                                    workdir_changed = False
+                                run_commands.append(" ".join(rest_of_command))
                     else:
                         if workdir_changed:
                             run_commands.append(workdir_value)
@@ -126,6 +136,45 @@ def add_apt_packages(command, apt_packages):
     if "&&" in packages:
         index = packages.index("&&")
         packages = packages[:index]
+    if "||" in packages:
+        index = packages.index("||")
+        packages = packages[:index]
+    if ";" in packages:
+        index = packages.index(";")
+        packages = packages[:index]
+    if ">" in packages:
+        index = packages.index(">")
+        packages = packages[:index]
+    if "<" in packages:
+        index = packages.index("<")
+        packages = packages[:index]
+    if ">>" in packages:
+        index = packages.index(">>")
+        packages = packages[:index]
+    if "<<" in packages:
+        index = packages.index("<<")
+        packages = packages[:index]
+    if "|" in packages:
+        index = packages.index("|")
+        packages = packages[:index]
+    if "&" in packages:
+        index = packages.index("&")
+        packages = packages[:index]
+    if "!" in packages:
+        index = packages.index("!")
+        packages = packages[:index]
+        
+    rest_of_command = command
+    if "apt" in rest_of_command:
+        rest_of_command.remove("apt")
+    if "apt-get" in rest_of_command: 
+        rest_of_command.remove("apt-get")
+    if "install" in rest_of_command:
+        rest_of_command.remove("install")
+        
+    for word in packages:
+        rest_of_command.remove(word)
+        
     pattern = '^-+.*'
     indexes = []
     for word in packages:
@@ -137,7 +186,8 @@ def add_apt_packages(command, apt_packages):
     for package in packages:
         if package not in apt_packages.keys():
             apt_packages[package] = package
-    return apt_packages
+            
+    return apt_packages, rest_of_command
 
 def add_pip_packages(command, pip_packages):
     packages = command
@@ -146,6 +196,40 @@ def add_pip_packages(command, pip_packages):
     if "&&" in packages:
         index = packages.index("&&")
         packages = packages[:index]
+    if "||" in packages:
+        index = packages.index("||")
+        packages = packages[:index]
+    if ";" in packages:
+        index = packages.index(";")
+        packages = packages[:index]
+    if ">" in packages:
+        index = packages.index(">")
+        packages = packages[:index]
+    if "<" in packages:
+        index = packages.index("<")
+        packages = packages[:index]
+    if ">>" in packages:
+        index = packages.index(">>")
+        packages = packages[:index]
+    if "<<" in packages:
+        index = packages.index("<<")
+        packages = packages[:index]
+    if "|" in packages:
+        index = packages.index("|")
+        packages = packages[:index]
+    if "&" in packages:
+        index = packages.index("&")
+        packages = packages[:index]
+    if "!" in packages:
+        index = packages.index("!")
+        packages = packages[:index]
+        
+    rest_of_command = command
+    if "pip" in rest_of_command:
+        rest_of_command.remove("pip")
+    if "install" in rest_of_command:
+        rest_of_command.remove("install")
+    
     pattern = '^-+.*'
     indexes = []
     for word in packages:
@@ -160,4 +244,4 @@ def add_pip_packages(command, pip_packages):
     for package in packages:
         if package not in pip_packages.keys():
             pip_packages[package] = package
-    return pip_packages
+    return pip_packages, rest_of_command
