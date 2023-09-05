@@ -175,6 +175,19 @@ def add_apt_packages(command, apt_packages):
     for word in packages:
         rest_of_command.remove(word)
         
+    was_command = False
+    for word in rest_of_command:
+        if word == "RUN":
+            continue
+        if "-" in word:
+            if not was_command:
+                rest_of_command.remove(word)
+        else:
+            was_command = True
+        
+    if len(rest_of_command) == 1:
+        rest_of_command = None
+        
     pattern = '^-+.*'
     indexes = []
     for word in packages:
@@ -237,9 +250,28 @@ def add_pip_packages(command, pip_packages):
             indexes.append(packages.index(word))
     for index in reversed(indexes):
         packages.remove(packages[index])
+        
+    for word in packages:
+        rest_of_command.remove(word)
+        
+    was_command = False
+    for word in rest_of_command:
+        if word == "RUN":
+            continue
+        if "-" in word:
+            if not was_command:
+                rest_of_command.remove(word)
+        else:
+            was_command = True
+        
+        
+    if len(rest_of_command) == 1:
+        rest_of_command = None
     
-    if "requirements.txt" in packages:
-        packages.remove("requirements.txt")
+    pattern = re.compile(r".*requirements.*")
+    for word in packages:
+        if pattern.match(word):
+            packages.remove(word)
     
     for package in packages:
         if package not in pip_packages.keys():
