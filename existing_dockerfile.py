@@ -35,13 +35,13 @@ def get_dockerfile_path(path):
         return None
     
 def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
-                     env_variables, os, expose_ports, users, arguments,
-                     entrypoint_commands, cmd_commands, shell_commands) :
+                     env_variables, os_docker, expose_ports, users, arguments,
+                     entrypoint_commands, cmd_commands, shell_commands,
+                     maintainers, volumes, labels, stop_signals, healthchecks,
+                     images, files, all_commands, files_root_dir, files_not_found) :
     with open(dockerfile_path, 'r') as file:
         content = file.readlines()
     icontent = iter(content)    
-    workdir_changed = False
-    workdir_value = None
     os_selected = False
     for line in icontent:
         command = line.split()
@@ -64,68 +64,94 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
                 command.remove("\\")
             whole_command = " ".join(command)
             #print(whole_command)
-            if 'ONBUILD' not in command and 'VOLUME' not in command:
-                if 'FROM' in command and os_selected == False:
-                    image = command[command.index('FROM')+1:command.index('FROM')+2]
-                    if ':' in image[0]:
-                        parts = image[0].split(':')
-                        os["OS_image"] = parts[0]
-                        os["OS_image_version"] = parts[1]
+            if 'ONBUILD' not in command:
+                if 'FROM' in command:
+                    if os_selected:
+                        image = command[command.index('FROM')+1:command.index('FROM')+2]
+                        if ':' in image[0]:
+                            parts = image[0].split(':')
+                            os_docker["OS_image"] = parts[0]
+                            os_docker["OS_image_version"] = parts[1]
+                        else:
+                            os_docker["OS_image"] = image[0]
+                            os_docker["OS_image_version"] = 'latest'
+                        os_selected = True
                     else:
-                        os["OS_image"] = image[0]
-                        os["OS_image_version"] = 'latest'
-                    os_selected = True
+                        all_commands.append(whole_command)
+                        images.append(whole_command)
                 if 'MAINTAINER' in command:
-                    continue # currently not supported
+                    all_commands.append(whole_command)
+                    maintainers.append(whole_command)
+                if 'VOLUME' in command:
+                    all_commands.append(whole_command)
+                    volumes.append(whole_command)
                 if 'LABEL' in command:
-                    continue # currently not supported
+                    all_commands.append(whole_command)
+                    labels.append(whole_command)
                 if 'EXPOSE' in command:
                     expose_ports.append(whole_command)
+                    all_commands.append(whole_command)
                 if 'USER' in command:
                     users.append(whole_command)
+                    all_commands.append(whole_command)
                 if 'WORKDIR' in command:
-                    workdir_changed = True
-                    workdir_value = whole_command
+                    all_commands.append(whole_command)
                 if 'ARG' in command:
                     arguments.append(whole_command)
+                    all_commands.append(whole_command)
                 if 'ENTRYPOINT' in command:
                     entrypoint_commands.append(whole_command)
+                    all_commands.append(whole_command)
                 if 'CMD' in command:
                     cmd_commands.append(whole_command)
+                    all_commands.append(whole_command)
                 if 'STOPSIGNAL' in command:
-                    continue # currently not supported
+                    all_commands.append(whole_command)
+                    stop_signals.append(whole_command)
                 if 'HEALTHCHECK' in command:
-                    continue # currently not supported
+                    all_commands.append(whole_command)
+                    healthchecks.append(whole_command)
                 if 'SHELL' in command:
                     shell_commands.append(whole_command)
+                    all_commands.append(whole_command)
                 if 'RUN' in command:                     
                     if 'apt' in command or 'apt-get' in command:
                         if 'install' in command:
                             apt_packages, rest_of_command = add_apt_packages(command, apt_packages)
                             if rest_of_command:
-                                if workdir_changed:
-                                    run_commands.append(workdir_value)
-                                    workdir_changed = False
                                 run_commands.append(" ".join(rest_of_command))
+                                all_commands.append(" ".join(rest_of_command))
                     elif 'pip' in command:
                         if 'install' in command:
                             pip_packages, rest_of_command = add_pip_packages(command, pip_packages)
                             if rest_of_command:
-                                if workdir_changed:
-                                    run_commands.append(workdir_value)
-                                    workdir_changed = False
                                 run_commands.append(" ".join(rest_of_command))
+                                all_commands.append(" ".join(rest_of_command))
                     else:
-                        if workdir_changed:
-                            run_commands.append(workdir_value)
-                            workdir_changed = False
                         run_commands.append(whole_command)
+                        all_commands.append(whole_command)
                 if 'ENV' in command:
                     env_variables.append(whole_command)
+                    all_commands.append(whole_command)
                 if 'COPY' in command:
-                    if workdir_changed:
-                        workdir_changed = False
-                    continue #TODO when COPY action will be implemented, this will be added in the future
+                    files.append(whole_command)
+                    all_commands.append(whole_command)
+                    file_names = command[command.index('COPY')+1:]
+                    file_names.remove(file_names[-1])
+                    for file_name in file_names:
+                        if file_name[0] != '-':
+                            if not os.path.exists(os.path.join(files_root_dir, file_name)):
+                                files_not_found.append(file_name)
+                if 'ADD' in command:
+                    files.append(whole_command)
+                    all_commands.append(whole_command)
+                    file_names = command[command.index('ADD')+1:]
+                    file_names.remove(file_names[-1])
+                    for file_name in file_names:
+                        if file_name[0] != '-':
+                            if not os.path.exists(os.path.join(files_root_dir, file_name)):
+                                files_not_found.append(file_name)
+                
 
     return apt_packages, pip_packages, run_commands, env_variables, os, expose_ports, users, arguments, entrypoint_commands, cmd_commands, shell_commands
     

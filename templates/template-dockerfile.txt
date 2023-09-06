@@ -1,21 +1,6 @@
-{% for command in arguments %}
-{{ command }}
-{% endfor %}
-
 FROM {{ OS_image }}:{{ OS_image_version }}
 
 ENV DEBIAN_FRONTEND=noninteractive
-{% for command in env_variables %}
-{{ command }}
-{% endfor %}
-
-{% for command in users %}
-{{ command }}
-{% endfor %}
-
-{% for command in expose_ports %}
-{{ command }}
-{% endfor %}
 
 WORKDIR /files
 
@@ -47,25 +32,14 @@ RUN apt-get update \
 {% endfor %}
     && rm -rf /var/lib/apt/lists/*
 
-{% for command in run_commands %}
-{{ command }}
-{% endfor %}
-
-{% for command in cmd_commands %}
-{{ command }}
-{% endfor %}
-
-{% for command in shell_commands %}
-{{ command }}
-{% endfor %}
-
-{% for command in entrypoint_commands %}
-{{ command }}
-{% endfor %}
 {% if use_requirements %}
 {% for i in range(0, ranges) %}
 RUN pip install -r {{ file_names[i] }}
 {% endfor %}
 {% endif%}
+
+{% for command in all_commands %}
+{{ command }}
+{% endfor %}
 
 CMD ["bash"]

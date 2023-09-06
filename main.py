@@ -126,6 +126,15 @@ def generate_dockerfile():
     entrypoint_commands = []
     cmd_commands = []
     shell_commands = []
+    maintainers = []
+    volumes = []
+    labels = []
+    stop_signals = []
+    healthchecks = []
+    images = []
+    dockerfile_files = []
+    all_commands = []
+    files_not_found = []
     
     use_req, file_names = use_requirements(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
     copy_folder_to_dockerfile = add_files.copy_folder_to_dockerfile()
@@ -133,19 +142,36 @@ def generate_dockerfile():
     
     if dockerfile_path:
         dockerfile_path = os.path.join(add_files.get_working_directory(), dockerfile_path)
+        files_root_dir=os.path.join(add_files.get_working_directory(), 'Project_files')
         parse_dockerfile(dockerfile_path=dockerfile_path,
                         apt_packages=apt_get_packages,
                         pip_packages=pip_packages,
                         run_commands=run_commands,
                         env_variables=env_variables,
-                        os=OS_data,
+                        os_docker=OS_data,
                         expose_ports=expose_ports,
                         users=users,
                         arguments=arguments,
                         entrypoint_commands=entrypoint_commands,
                         cmd_commands=cmd_commands,
-                        shell_commands=shell_commands)
+                        shell_commands=shell_commands,
+                        maintainers=maintainers,
+                        volumes=volumes,
+                        labels=labels,
+                        stop_signals=stop_signals,
+                        healthchecks=healthchecks,
+                        images=images,
+                        files=dockerfile_files,
+                        all_commands=all_commands,
+                        files_root_dir=files_root_dir,
+                        files_not_found=files_not_found)
         
+        if files_not_found:
+            print("Files not found:")
+            for file in files_not_found:
+                print(file)
+            print("Check if files are in the right directory or adjust their paths.")
+            return  
 # print(apt_get_packages)
 # print(pip_packages)
 # print(OS_data["OS_image"])
@@ -168,20 +194,11 @@ def generate_dockerfile():
                             file_names=file_names,
                             ranges=len(use_req),
                             copy_folder_to_dockerfile=copy_folder_to_dockerfile,
-                            run_commands=run_commands,
-                            env_variables=env_variables,
-                            expose_ports=expose_ports,
-                            users=users,
-                            arguments=arguments,
-                            entrypoint_commands=entrypoint_commands,
-                            cmd_commands=cmd_commands,
-                            shell_commands=shell_commands)
+                            all_commands=all_commands)
 
     filename = "Dockerfile"
     with open(os.path.join(add_files.get_working_directory(), filename), "w") as file:
         file.write(content)
-
-    print(content)
 
 
 print("Try to run Dockerfile")
