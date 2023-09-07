@@ -31,7 +31,7 @@ def use_requirements(path):
             index = input()
             if index == 'x':
                 break
-            chosen_requirements.append(os.path.join('Project_files', result[int(index)]))
+            chosen_requirements.append(result[int(index)])
         chosen_requirements = list(set(chosen_requirements))
         file_names = _get_file_names(chosen_requirements)
     else:
