@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM :latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -8,6 +8,8 @@ WORKDIR /files
 
 
 COPY createUtils /data/createUtils
+
+COPY existing_dockerfile.py /data/existing_dockerfile.py
 
 COPY Dockerfile /data/Dockerfile
 
@@ -55,6 +57,8 @@ RUN apt-get update \
         vim \
 
     && rm -rf /var/lib/apt/lists/*
+
+
 
 
 

@@ -34,8 +34,6 @@ def generate_dockerfile():
     all_commands = []
     files_not_found = []
     
-    use_req, file_names = use_requirements(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
-    copy_folder_to_dockerfile = add_files.copy_folder_to_dockerfile()
     dockerfile_path = get_dockerfile_path(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
     
     if dockerfile_path:
@@ -102,7 +100,7 @@ def generate_dockerfile():
                               all_commands=all_commands)
 
     filename = "Dockerfile"
-    with open(os.path.join(add_files.get_working_directory()+"/outputs", filename), "w") as file:
+    with open(os.path.join(add_files.get_working_directory(), filename), "w") as file:
         file.write(content)
 
     print(content)
