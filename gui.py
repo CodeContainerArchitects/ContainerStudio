@@ -10,7 +10,7 @@ class TreeWindow(tk.Toplevel):
         
         self.window_width = 600
         self.window_height = 400
-        self.padding = 10
+        self.padding = 5
         
         self.title("Project directory tree")
         center_x = int(parent.screen_width/2 - self.window_width / 2)
@@ -28,19 +28,22 @@ class TreeWindow(tk.Toplevel):
         
         self.build_tree()
         
+        buttonframe = tk.Frame(self)
+        
         # uploading files
-        choose_file_button = tk.Button(self, text = "Choose file", command = lambda:self.add_files(parent,mode='file'))
-        choose_folder_button = tk.Button(self, text = "Choose folder", command = lambda:self.add_files(parent, mode='dir'))
-        delete_items_button = tk.Button(self, text = "Delete selected items", command = lambda:self.delete_selected_items())
-        exit_button = tk.Button(self, text = "Exit", command = self.destroy)
+        choose_file_button = tk.Button(buttonframe, text = "Choose file", command = lambda:self.add_files(parent,mode='file'))
+        choose_folder_button = tk.Button(buttonframe, text = "Choose folder", command = lambda:self.add_files(parent, mode='dir'))
+        delete_items_button = tk.Button(buttonframe, text = "Delete selected items", command = lambda:self.delete_selected_items())
+        exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
         
         scrollbar.pack(side="right", fill="y")
-        self.treeview.pack()
-        treeframe.pack()
-        choose_file_button.pack(padx=self.padding)
-        choose_folder_button.pack(padx=self.padding)
-        delete_items_button.pack(padx=self.padding)
-        exit_button.pack(padx=self.padding)
+        self.treeview.pack(fill='both')
+        treeframe.pack(side=tk.TOP, fill = 'both')
+        choose_file_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        choose_folder_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        delete_items_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        exit_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        buttonframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
     
     def build_tree(self):
         path = os.path.abspath(self.directory)
@@ -91,8 +94,8 @@ class App(tk.Tk):
         # set properties of the window
         self.title("Code Container")
         
-        self.window_width = 1080
-        self.window_height = 720
+        self.window_width = 600
+        self.window_height = 400
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
         self.padding = 5
@@ -104,25 +107,26 @@ class App(tk.Tk):
         
         self.project_files_folder = "Project_files"
         
-        #project_files_name_label = tk.Label(self, text = "Input the name of the project files folder:")
-        #self.project_files_name = tk.Text(self, width = 20, height = 1)
+        mainframe = tk.Frame(self, width=self.window_width, height=self.window_height, background="#B9B4C7")
+        buttonframe = tk.Frame(mainframe, background="#B9B4C7")
+        
         #select folder 
-        select_folder_button = tk.Button(self, text = "Select folder",  command = lambda:self.select_working_directory())
+        select_folder_button = tk.Button(buttonframe, text = "Select folder",  command = lambda:self.select_working_directory())
         
         #opens a new window 
-        self.project_tree_button = tk.Button(self, text = "Show project tree", state=tk.DISABLED, command = lambda:self.open_tree_window())
+        self.project_tree_button = tk.Button(buttonframe, text = "Show project tree", state=tk.DISABLED, command = lambda:self.open_tree_window())
         
-        send_button = tk.Button(self, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
-        exit_button = tk.Button(self, text = "Exit", command = self.destroy)
+        send_button = tk.Button(buttonframe, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
+        exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
         
-        #project_files_name_label.pack()
-        #self.project_files_name.pack()
-        select_folder_button.pack(pady=self.padding)
-        self.project_tree_button.pack(pady=self.padding)
-        send_button.pack(pady=self.padding)
-        exit_button.pack(pady=self.padding)
+        mainframe.pack(side=tk.TOP)
+        buttonframe.pack(expand=True)
+        mainframe.pack_propagate(0)
         
-        #self.project_files_name.insert(tk.END, self.project_files_folder)
+        select_folder_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        self.project_tree_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        send_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        exit_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         
     def open_tree_window(self):
         tree_window = TreeWindow(self)

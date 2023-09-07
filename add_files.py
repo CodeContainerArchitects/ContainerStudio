@@ -3,7 +3,7 @@ from tkinter import messagebox
 import os
 import shutil
 
-parent_dir = ''
+parent_dir = os.getcwd()
 container_directory = "/data/"
 files = []
 
@@ -12,9 +12,8 @@ files = []
 def select_working_directory():
     global parent_dir
     parent_dir = fd.askdirectory(mustexist=True, initialdir=os.path.expanduser('~'))
-    if parent_dir != '':
-        if os.path.isdir(parent_dir) == False:
-            os.mkdir(parent_dir)
+    if os.path.isdir(parent_dir) == False:
+        os.mkdir(parent_dir)
 
 
 def get_working_directory():
