@@ -15,7 +15,7 @@ def generate_dockerfile():
     OS_image_version="latest"
     message = "testing message 123"
     use_req, file_names = use_requirements(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
-    copy_folder_to_dockerfile = add_files.copy_folder_to_dockerfile()
+    copy_folder_to_dockerfile = add_files.copy_dir_to_container()
     
     chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
     chosen_apt_packages = [apt_packages["curl"], apt_packages["vim"]]

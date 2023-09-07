@@ -9,8 +9,6 @@ WORKDIR /files
 
 COPY createUtils /data/createUtils
 
-COPY generate_dockerfile.py /data/generate_dockerfile.py
-
 COPY Dockerfile /data/Dockerfile
 
 COPY add_files.py /data/add_files.py

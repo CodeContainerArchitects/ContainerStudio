@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from add_files import select_files, select_working_directory, get_working_directory, delete_files_from_directory
-from generate_dockerfile import generate_dockerfile
+from createUtils.generate_dockerfile import generate_dockerfile
 import os
     
 class TreeWindow(tk.Toplevel):
