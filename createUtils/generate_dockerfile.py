@@ -34,14 +34,20 @@ def generate_dockerfile():
     all_commands = []
     files_not_found = []
     
+    chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
+    chosen_apt_packages = [apt_packages["curl"], apt_packages["vim"]]
+    
+    use_req, file_names = use_requirements(path=add_files.get_working_directory())
+    copy_folder_to_dockerfile = add_files.copy_dir_to_container()
+    
     dockerfile_path = get_dockerfile_path(path=add_files.get_working_directory())
     
     if dockerfile_path:
         dockerfile_path = os.path.join(add_files.get_working_directory(), dockerfile_path)
         files_root_dir=add_files.get_working_directory()
         parse_dockerfile(dockerfile_path=dockerfile_path,
-                        apt_packages=apt_packages,
-                        pip_packages=pip_packages,
+                        apt_packages=chosen_apt_packages,
+                        pip_packages=chosen_pip_packages,
                         run_commands=run_commands,
                         env_variables=env_variables,
                         os_docker=OS_data,
@@ -79,15 +85,6 @@ def generate_dockerfile():
             return
         elif index == '3':
             exit()
-
-    OS_image="ubuntu"
-    OS_image_version="latest"
-    message = "testing message 123"
-    use_req, file_names = use_requirements(path=add_files.get_working_directory())
-    copy_folder_to_dockerfile = add_files.copy_dir_to_container()
-    
-    chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
-    chosen_apt_packages = [apt_packages["curl"], apt_packages["vim"]]
     
     content = template.render(OOS_image=OS_data["OS_image"],
                               OS_image_version=OS_data["OS_image_version"],

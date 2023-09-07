@@ -236,8 +236,8 @@ def add_apt_packages(command, apt_packages):
         packages.remove(packages[index])
     
     for package in packages:
-        if package not in apt_packages.keys():
-            apt_packages[package] = package
+        if package not in apt_packages:
+            apt_packages.append(package)
             
     return apt_packages, rest_of_command
 
@@ -313,6 +313,6 @@ def add_pip_packages(command, pip_packages):
             packages.remove(word)
     
     for package in packages:
-        if package not in pip_packages.keys():
-            pip_packages[package] = package
+        if package not in pip_packages:
+            pip_packages.append(package)
     return pip_packages, rest_of_command
