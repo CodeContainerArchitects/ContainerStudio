@@ -26,7 +26,7 @@ def get_dockerfile_path(path):
         print('Choose appropriate Dockerfile. To quit press x.\n')
         index = input()
         if index.isdigit():
-            file_name = os.path.join('Project_files', result[int(index)])
+            file_name = result[int(index)]
             return file_name
         else:
             return None

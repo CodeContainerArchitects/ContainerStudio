@@ -34,11 +34,11 @@ def generate_dockerfile():
     all_commands = []
     files_not_found = []
     
-    dockerfile_path = get_dockerfile_path(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
+    dockerfile_path = get_dockerfile_path(path=add_files.get_working_directory())
     
     if dockerfile_path:
         dockerfile_path = os.path.join(add_files.get_working_directory(), dockerfile_path)
-        files_root_dir=os.path.join(add_files.get_working_directory(), 'Project_files')
+        files_root_dir=add_files.get_working_directory()
         parse_dockerfile(dockerfile_path=dockerfile_path,
                         apt_packages=apt_packages,
                         pip_packages=pip_packages,
@@ -83,7 +83,7 @@ def generate_dockerfile():
     OS_image="ubuntu"
     OS_image_version="latest"
     message = "testing message 123"
-    use_req, file_names = use_requirements(path=os.path.join(add_files.get_working_directory(), 'Project_files'))
+    use_req, file_names = use_requirements(path=add_files.get_working_directory())
     copy_folder_to_dockerfile = add_files.copy_dir_to_container()
     
     chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
