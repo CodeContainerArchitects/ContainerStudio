@@ -38,4 +38,8 @@ RUN pip install -r {{ file_names[i] }}
 {% endfor %}
 {% endif%}
 
+{% for command in all_commands %}
+{{ command }}
+{% endfor %}
+
 CMD ["bash"]
