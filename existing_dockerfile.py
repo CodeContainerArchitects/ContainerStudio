@@ -139,8 +139,16 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
                     file_names = command[command.index('COPY')+1:]
                     file_names.remove(file_names[-1])
                     for file_name in file_names:
-                        if file_name[0] != '-':
-                            if not os.path.exists(os.path.join(files_root_dir, file_name)):
+                        if file_name[0] != '-' and (file_name[0] != '.' or len(file_name) > 1 ):
+                            file_found = False                       
+                            for root, dirs, files in os.walk(files_root_dir):
+                                if file_name in files:
+                                    file_found = True
+                                    break
+                                if file_name in dirs:
+                                    file_found = True
+                                    break
+                            if not file_found:
                                 files_not_found.append(file_name)
                 if 'ADD' in command:
                     files.append(whole_command)
@@ -148,8 +156,13 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
                     file_names = command[command.index('ADD')+1:]
                     file_names.remove(file_names[-1])
                     for file_name in file_names:
-                        if file_name[0] != '-':
-                            if not os.path.exists(os.path.join(files_root_dir, file_name)):
+                        if file_name[0] != '-' and (file_name[0] != '.' or len(file_name) > 1 ):
+                            file_found = False                       
+                            for root, dirs, files in os.walk(files_root_dir):
+                                if file_name in files:
+                                    file_found = True
+                                    break
+                            if not file_found:
                                 files_not_found.append(file_name)
                 
 

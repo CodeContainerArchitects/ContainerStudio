@@ -171,7 +171,6 @@ def generate_dockerfile():
             for file in files_not_found:
                 print(file)
             print("Check if files are in the right directory or adjust their paths.")
-            return  
 # print(apt_get_packages)
 # print(pip_packages)
 # print(OS_data["OS_image"])
