@@ -1,26 +1,26 @@
 import tkinter as tk
 from tkinter import ttk
-from add_files import select_files, select_working_directory, get_working_directory, delete_files_from_directory, get_project_files_folder
+from add_files import select_files, select_working_directory, get_working_directory, delete_files_from_directory
 from generate_dockerfile import generate_dockerfile
 import os
-
+    
 class TreeWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         
         self.window_width = 600
         self.window_height = 400
-
+        self.padding = 10
         
         self.title("Project directory tree")
         center_x = int(parent.screen_width/2 - self.window_width / 2)
         center_y = int(parent.screen_height/2 - self.window_height / 2)
-
+        
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
         
         treeframe = tk.Frame(self)
-
-        self.treeview = ttk.Treeview(treeframe, show='tree')
+        
+        self.treeview = ttk.Treeview(treeframe,height=15, show='tree')
         scrollbar = ttk.Scrollbar(treeframe, orient="vertical", command=self.treeview.yview)
         self.treeview.configure(yscrollcommand=scrollbar.set)
         self.directory = get_working_directory()
@@ -37,16 +37,16 @@ class TreeWindow(tk.Toplevel):
         scrollbar.pack(side="right", fill="y")
         self.treeview.pack()
         treeframe.pack()
-        choose_file_button.pack()
-        choose_folder_button.pack()
-        delete_items_button.pack()
-        exit_button.pack()
-        
+        choose_file_button.pack(padx=self.padding)
+        choose_folder_button.pack(padx=self.padding)
+        delete_items_button.pack(padx=self.padding)
+        exit_button.pack(padx=self.padding)
+    
     def build_tree(self):
         path = os.path.abspath(self.directory)
         node=self.treeview.insert('', 'end', text=path, open=True)
         self.traverse_dir(node, path)
-        
+    
     def traverse_dir(self, parent, path):
         for dir in os.listdir(path):
             full_path = os.path.join(path, dir)
@@ -54,24 +54,31 @@ class TreeWindow(tk.Toplevel):
             id = self.treeview.insert(parent, 'end', text=dir, open=False)
             if isdir:
                 self.traverse_dir(id, full_path)
-                
+    
     def update_tree(self):
         # clear all items in the tree
         for item in self.treeview.get_children():
             self.treeview.delete(item)
         self.build_tree()
-            
+        
     def delete_selected_items(self):
         selected_items = []
         for item in self.treeview.selection():
-            item = self.treeview.item(item)
-            selected_items.append(item["text"])
+            parent_iid = self.treeview.parent(item)
+            node = []
+            while parent_iid!= '':
+                node.insert(0, self.treeview.item(parent_iid)["text"])
+                parent_iid = self.treeview.parent(parent_iid)
+            i = self.treeview.item(item, "text")
+            path = os.path.join(*node, i)
+            selected_items.append(path)
+            
+        #print(selected_items)
         
         delete_files_from_directory(selected_items)
         
-        for item in self.treeview.selection():
-            self.treeview.delete(item)
-            
+        self.update_tree()
+    
     def add_files(self, root, mode):
         select_files(root, mode)
         self.update_tree()
@@ -83,46 +90,47 @@ class App(tk.Tk):
         
         # set properties of the window
         self.title("Code Container")
-
+        
         self.window_width = 1080
         self.window_height = 720
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
-
+        self.padding = 5
+        
         center_x = int(self.screen_width/2 - self.window_width / 2)
         center_y = int(self.screen_height/2 - self.window_height / 2)
-
+        
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
         
         self.project_files_folder = "Project_files"
         
-        project_files_name_label = tk.Label(self, text = "Input the name of the project files folder:")
-        self.project_files_name = tk.Text(self, width = 20, height = 1)
+        #project_files_name_label = tk.Label(self, text = "Input the name of the project files folder:")
+        #self.project_files_name = tk.Text(self, width = 20, height = 1)
         #select folder 
-        select_folder_button = tk.Button(self, text = "Select folder", command = lambda:self.select_working_directory())
+        select_folder_button = tk.Button(self, text = "Select folder",  command = lambda:self.select_working_directory())
         
         #opens a new window 
         self.project_tree_button = tk.Button(self, text = "Show project tree", state=tk.DISABLED, command = lambda:self.open_tree_window())
-
+        
         send_button = tk.Button(self, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
         exit_button = tk.Button(self, text = "Exit", command = self.destroy)
-
-        project_files_name_label.pack()
-        self.project_files_name.pack()
-        select_folder_button.pack()
-        self.project_tree_button.pack()
-        send_button.pack()
-        exit_button.pack()
         
-        self.project_files_name.insert(tk.END, self.project_files_folder)
+        #project_files_name_label.pack()
+        #self.project_files_name.pack()
+        select_folder_button.pack(pady=self.padding)
+        self.project_tree_button.pack(pady=self.padding)
+        send_button.pack(pady=self.padding)
+        exit_button.pack(pady=self.padding)
+        
+        #self.project_files_name.insert(tk.END, self.project_files_folder)
         
     def open_tree_window(self):
-        treeWindow = TreeWindow(self)
+        tree_window = TreeWindow(self)
         #grab_set prevents user from interacting with main window and makes the tree window receive events
-        treeWindow.grab_set()
+        tree_window.grab_set()
         
     def select_working_directory(self):
-        select_working_directory(self.project_files_name.get(1.0, 'end-1c'))
+        select_working_directory()
         working_directory = get_working_directory()
         
         if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED:

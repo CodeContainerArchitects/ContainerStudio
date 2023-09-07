@@ -1,5 +1,5 @@
 from requirements_searching import use_requirements
-from add_files import copy_folder_to_dockerfile, get_working_directory
+from add_files import copy_dir_to_container, get_working_directory
 import os
 import jinja2
 
@@ -113,7 +113,7 @@ def generate_dockerfile():
     message = "testing message 123"
     path = '/home/ola/Desktop/test_files'
     use_req, file_names = use_requirements(path=path)
-    copy_folder_dockerfile = copy_folder_to_dockerfile()
+    copy_folder_to_dockerfile = copy_dir_to_container()
     content = template.render(OS_image=OS_image,
                               OS_image_version=OS_image_version,
                               packages_to_install=pip_packages.values(),
@@ -121,7 +121,7 @@ def generate_dockerfile():
                               use_requirements=use_req,
                               file_names=file_names,
                               ranges=len(use_req),
-                              copy_folder_dockerfile=copy_folder_dockerfile)
+                              copy_folder_to_dockerfile=copy_folder_to_dockerfile)
 
     filename = "Dockerfile"
     with open(os.path.join(get_working_directory(), filename), "w") as file:
