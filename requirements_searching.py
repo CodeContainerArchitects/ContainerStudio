@@ -40,7 +40,11 @@ def use_requirements(path):
         print("Requirements file not found in the project directory.")
         user_choice = input("Do you want to search for imports your project files (y/n)?\n")
         if user_choice == "y":
-            user_filename = input("Enter the name of the requirements.txt file: \n")
+            while True:
+                user_filename = input("Enter the name of the requirements file: \n")
+                if os.path.exists(os.path.join(path, user_filename)):
+                    print("File arleady exists. Choose another file name.\n")
+                else:
+                    break
             chosen_requirements, file_names = ModuleSearcher(path_to_project=path, file_name=user_filename).get_modules()
     return chosen_requirements, file_names
-
