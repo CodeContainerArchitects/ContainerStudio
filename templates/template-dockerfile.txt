@@ -10,9 +10,9 @@ COPY {{ use_requirements[i] }} .
 {% endfor %}
 {% endif%}
 
-{% if copy_folder_to_dockerfile %}
-COPY {{ copy_folder_to_dockerfile }}
-{% endif %}
+{% for file in copy_folder_to_dockerfile %}
+COPY {{ file }}
+{% endfor %}
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -37,5 +37,9 @@ RUN apt-get update \
 RUN pip install -r {{ file_names[i] }}
 {% endfor %}
 {% endif%}
+
+{% for command in all_commands %}
+{{ command }}
+{% endfor %}
 
 CMD ["bash"]
