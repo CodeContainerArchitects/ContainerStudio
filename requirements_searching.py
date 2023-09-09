@@ -43,3 +43,4 @@ def use_requirements(path):
             user_filename = input("Enter the name of the requirements.txt file: \n")
             chosen_requirements, file_names = ModuleSearcher(path_to_project=path, file_name=user_filename).get_modules()
     return chosen_requirements, file_names
+
