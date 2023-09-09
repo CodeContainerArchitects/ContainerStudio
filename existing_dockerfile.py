@@ -46,7 +46,7 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
     for line in icontent:
         command = line.split()
         if command:
-            if command[0] == "#":
+            while command[0] == "#":
                 command = next(icontent).split()
             if "#" in command:
                 index = command.index("#")
@@ -171,6 +171,7 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
 def add_apt_packages(command, apt_packages):
     packages = command
     index = packages.index("install")
+    first_index = index
     packages = packages[index+1:]
     if "&&" in packages:
         index = packages.index("&&")
@@ -202,30 +203,6 @@ def add_apt_packages(command, apt_packages):
     if "!" in packages:
         index = packages.index("!")
         packages = packages[:index]
-        
-    rest_of_command = command
-    if "apt" in rest_of_command:
-        rest_of_command.remove("apt")
-    if "apt-get" in rest_of_command: 
-        rest_of_command.remove("apt-get")
-    if "install" in rest_of_command:
-        rest_of_command.remove("install")
-        
-    for word in packages:
-        rest_of_command.remove(word)
-        
-    was_command = False
-    for word in rest_of_command:
-        if word == "RUN":
-            continue
-        if "-" in word:
-            if not was_command:
-                rest_of_command.remove(word)
-        else:
-            was_command = True
-        
-    if len(rest_of_command) == 1:
-        rest_of_command = None
         
     pattern = '^-+.*'
     indexes = []
@@ -239,11 +216,18 @@ def add_apt_packages(command, apt_packages):
         if package not in apt_packages:
             apt_packages.append(package)
             
+    last_index = command.index(packages[-1])
+    rest_of_command = command[:first_index-1] + command[last_index+1:]
+    
+    if len(rest_of_command) == 1:
+        rest_of_command = None
+            
     return apt_packages, rest_of_command
 
 def add_pip_packages(command, pip_packages):
     packages = command
     index = packages.index("install")
+    first_index = index
     packages = packages[index+1:]
     if "&&" in packages:
         index = packages.index("&&")
@@ -275,12 +259,6 @@ def add_pip_packages(command, pip_packages):
     if "!" in packages:
         index = packages.index("!")
         packages = packages[:index]
-        
-    rest_of_command = command
-    if "pip" in rest_of_command:
-        rest_of_command.remove("pip")
-    if "install" in rest_of_command:
-        rest_of_command.remove("install")
     
     pattern = '^-+.*'
     indexes = []
@@ -290,23 +268,6 @@ def add_pip_packages(command, pip_packages):
     for index in reversed(indexes):
         packages.remove(packages[index])
         
-    for word in packages:
-        rest_of_command.remove(word)
-        
-    was_command = False
-    for word in rest_of_command:
-        if word == "RUN":
-            continue
-        if "-" in word:
-            if not was_command:
-                rest_of_command.remove(word)
-        else:
-            was_command = True
-        
-        
-    if len(rest_of_command) == 1:
-        rest_of_command = None
-    
     pattern = re.compile(r".*requirements.*")
     for word in packages:
         if pattern.match(word):
@@ -315,4 +276,11 @@ def add_pip_packages(command, pip_packages):
     for package in packages:
         if package not in pip_packages:
             pip_packages.append(package)
+            
+    last_index = command.index(packages[-1])
+    rest_of_command = command[:first_index-1] + command[last_index+1:]
+    
+    if len(rest_of_command) == 1:
+        rest_of_command = None
+    
     return pip_packages, rest_of_command
