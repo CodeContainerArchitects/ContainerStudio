@@ -74,17 +74,6 @@ def generate_dockerfile():
                 print(file)
             print("Check if files are in the right directory or adjust their paths.")
             
-        print("Please, choose which Dockerfile should be used:")
-        print("1. Dockerfile from the project:", dockerfile_path)
-        print("2. Generated Dockerfile:", os.path.join(add_files.get_working_directory(), 'Dockerfile'))
-        print("3. None (exit)")
-        index=0
-        while index not in ['1', '2', '3']:
-            index = input()
-        if index == '1':
-            return
-        elif index == '3':
-            exit()
     
     content = template.render(OOS_image=OS_data["OS_image"],
                               OS_image_version=OS_data["OS_image_version"],
