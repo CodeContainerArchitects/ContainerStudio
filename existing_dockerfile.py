@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 
 def _find_dockerfile(path):
     for root, dirs, files in os.walk(path):
@@ -23,10 +24,19 @@ def get_dockerfile_path(path):
         print(f"Found Dockerfiles at:")
         for i in range(0, len(result)):
             print(f'{i}. {result[i]}')
-        print('Choose appropriate Dockerfile. To quit press x.\n')
+        print('Choose appropriate Dockerfile, which will be used as a base. To quit press x.\n')
         index = input()
         if index.isdigit():
             file_name = result[int(index)]
+            print("Do you want to copy selected Dockerfile (y/n)?")
+            option = input()
+            if option == 'y':
+                print("Enter the name of the copy of selected Dockerfile: ")
+                copy_file_name = input()
+                while os.path.exists(os.path.join(path, copy_file_name)):
+                    print("File arleady exists. Choose another file name.\n")
+                    copy_file_name = input()
+                shutil.copyfile(os.path.join(path, file_name), os.path.join(path, copy_file_name))
             return file_name
         else:
             return None
