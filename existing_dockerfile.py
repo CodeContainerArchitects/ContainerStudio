@@ -212,8 +212,9 @@ def add_apt_packages(command, apt_packages):
         if package not in apt_packages:
             apt_packages.append(package)
             
-    last_index = command.index(packages[-1])
-    rest_of_command = command[:first_index-1] + command[last_index+1:]
+    if packages:
+        last_index = command.index(packages[-1])
+        rest_of_command = command[:first_index-1] + command[last_index+1:]
     
     if len(rest_of_command) == 1:
         rest_of_command = None
@@ -273,8 +274,9 @@ def add_pip_packages(command, pip_packages):
         if package not in pip_packages:
             pip_packages.append(package)
             
-    last_index = command.index(packages[-1])
-    rest_of_command = command[:first_index-1] + command[last_index+1:]
+    if packages:
+        last_index = command.index(packages[-1])
+        rest_of_command = command[:first_index-1] + command[last_index+1:]
     
     if len(rest_of_command) == 1:
         rest_of_command = None
