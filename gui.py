@@ -12,10 +12,12 @@ class EntryWindow(tk.Toplevel):
     def __init__(self, parent, callback):
         super().__init__(parent)
 
+        # self variables
         self.file_name = ""
         self.callback = callback
         self.directory = get_working_directory()
 
+        # window properties
         self.window_width = 600
         self.window_height = 400
         self.screen_width = self.winfo_screenwidth()
@@ -63,9 +65,15 @@ class EntryWindow(tk.Toplevel):
 
 
 class ManageRequirementsWindow(tk.Toplevel):
-    def __init__(self, parent):
+    def __init__(self, parent, get_chosen_requirements):
         super().__init__(parent)
 
+        # variables
+        self.file_names = None
+        self.chosen_requirements = None
+        self.callback = get_chosen_requirements
+
+        # window properties
         self.window_width = 600
         self.window_height = 400
         self.padding = 5
@@ -114,7 +122,6 @@ class ManageRequirementsWindow(tk.Toplevel):
     def create_requirements(self):
         def callback_create_requirements(file_name):
             if file_name != '':
-                print(file_name)
                 module_searcher = ModuleSearcher(path_to_project=self.directory, file_name=file_name)
                 module_searcher.get_modules()
                 self.search_for_requirements()
@@ -122,12 +129,12 @@ class ManageRequirementsWindow(tk.Toplevel):
         entry_window.grab_set()
 
     def apply(self):
-        chosen_requirements = []
+        self.chosen_requirements = []
         for i in self.list_of_requirements.curselection():
-            chosen_requirements.append(self.list_of_requirements.get(i))
-        print(chosen_requirements)
-        file_names = [os.path.split(file)[-1] for file in chosen_requirements]
-        return chosen_requirements, file_names
+            self.chosen_requirements.append(self.list_of_requirements.get(i))
+        self.file_names = [os.path.split(file)[-1] for file in self.chosen_requirements]
+        self.callback(self.chosen_requirements, self.file_names)
+        self.destroy()
 
 
 class TreeWindow(tk.Toplevel):
@@ -157,10 +164,10 @@ class TreeWindow(tk.Toplevel):
         buttonframe = tk.Frame(self)
         
         # uploading files
-        choose_file_button = tk.Button(buttonframe, text = "Choose file", command = lambda:self.add_files(parent,mode='file'))
-        choose_folder_button = tk.Button(buttonframe, text = "Choose folder", command = lambda:self.add_files(parent, mode='dir'))
-        delete_items_button = tk.Button(buttonframe, text = "Delete selected items", command = lambda:self.delete_selected_items())
-        exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
+        choose_file_button = tk.Button(buttonframe, text="Choose file", command=lambda: self.add_files(parent,mode='file'))
+        choose_folder_button = tk.Button(buttonframe, text="Choose folder", command=lambda: self.add_files(parent, mode='dir'))
+        delete_items_button = tk.Button(buttonframe, text="Delete selected items", command=lambda: self.delete_selected_items())
+        exit_button = tk.Button(buttonframe, text="Exit", command=self.destroy)
         
         scrollbar.pack(side="right", fill="y")
         self.treeview.pack(fill='both')
@@ -203,9 +210,7 @@ class TreeWindow(tk.Toplevel):
             selected_items.append(path)
             
         # print(selected_items)
-        
         delete_files_from_directory(selected_items)
-        
         self.update_tree()
     
     def add_files(self, root, mode):
@@ -216,7 +221,11 @@ class TreeWindow(tk.Toplevel):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        
+
+        # variables
+        self.chosen_requirements = []
+        self.file_names = []
+
         # set properties of the window
         self.title("Code Container")
         
@@ -243,7 +252,7 @@ class App(tk.Tk):
         # manage requirements_button
         self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
 
-        send_button = tk.Button(buttonframe, text="Generate Dockerfile", command=lambda: generate_dockerfile())
+        send_button = tk.Button(buttonframe, text="Generate Dockerfile", command=lambda: generate_dockerfile(chosen_requirements=self.chosen_requirements, file_names=self.file_names))
         exit_button = tk.Button(buttonframe, text="Exit", command=self.destroy)
         
         mainframe.pack(side=tk.TOP)
@@ -261,8 +270,12 @@ class App(tk.Tk):
         # grab_set prevents user from interacting with main window and makes the tree window receive events
         tree_window.grab_set()
 
+    def get_chosen_requirements(self, chosen_requirements, file_names):
+        self.chosen_requirements = chosen_requirements
+        self.file_names = file_names
+
     def open_manage_requirements_window(self):
-        manage_requirements_window = ManageRequirementsWindow(self)
+        manage_requirements_window = ManageRequirementsWindow(self, self.get_chosen_requirements)
         manage_requirements_window.grab_set()
         
     def select_working_directory(self):
