@@ -112,13 +112,13 @@ class ManageRequirementsWindow(tk.Toplevel):
                 self.list_of_requirements.insert(tk.END, file)
 
     def create_requirements(self):
-        def callback(file_name):
+        def callback_create_requirements(file_name):
             if file_name != '':
                 print(file_name)
                 module_searcher = ModuleSearcher(path_to_project=self.directory, file_name=file_name)
                 module_searcher.get_modules()
                 self.search_for_requirements()
-        entry_window = EntryWindow(self, callback)
+        entry_window = EntryWindow(self, callback_create_requirements)
         entry_window.grab_set()
 
     def apply(self):
@@ -243,7 +243,7 @@ class App(tk.Tk):
         # manage requirements_button
         self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
 
-        send_button = tk.Button(buttonframe, text="Generate Dockerfile", command=lambda:generate_dockerfile())
+        send_button = tk.Button(buttonframe, text="Generate Dockerfile", command=lambda: generate_dockerfile())
         exit_button = tk.Button(buttonframe, text="Exit", command=self.destroy)
         
         mainframe.pack(side=tk.TOP)
