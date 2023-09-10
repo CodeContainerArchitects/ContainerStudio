@@ -1,8 +1,65 @@
+import re
 import tkinter as tk
 from tkinter import ttk
 from add_files import select_files, select_working_directory, get_working_directory, delete_files_from_directory
 from createUtils.generate_dockerfile import generate_dockerfile
+from requirements_searching import _find_files
+from ModuleSearcher import ModuleSearcher
 import os
+
+
+class EntryWindow(tk.Toplevel):
+    def __init__(self, parent, callback):
+        super().__init__(parent)
+
+        self.file_name = ""
+        self.callback = callback
+        self.directory = get_working_directory()
+
+        self.window_width = 600
+        self.window_height = 400
+        self.screen_width = self.winfo_screenwidth()
+        self.screen_height = self.winfo_screenheight()
+        self.padding = 5
+
+        center_x = int(self.screen_width / 2 - self.window_width / 2)
+        center_y = int(self.screen_height / 2 - self.window_height / 2)
+        self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
+
+        self.title("Entry requirements file name")
+
+        label_for_entry = tk.Label(self, text="Enter requirements file name: ")
+        self.entry = tk.Entry(self, textvariable=tk.StringVar())
+        self.label_for_message = tk.Label(self, text="")
+        buttons_frame = tk.Frame(self)
+        ok_button = tk.Button(buttons_frame, text="Ok", command=lambda: self.ok_button_clicked())
+        cancel_button = tk.Button(buttons_frame, text="Cancel", command=lambda: self.cancel_button_clicked())
+
+        label_for_entry.pack(side=tk.TOP, pady=self.padding, fill=tk.BOTH)
+        self.entry.pack(side=tk.TOP, pady=self.padding, fill=tk.BOTH)
+        self.label_for_message.pack(side=tk.TOP, pady=self.padding, fill=tk.BOTH)
+        buttons_frame.pack(side=tk.BOTTOM, pady=self.padding, fill=tk.BOTH)
+        ok_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        cancel_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    def get_user_input(self):
+        return self.file_name
+
+    def destroy_object(self):
+        self.destroy()
+
+    def ok_button_clicked(self):
+        if os.path.exists(os.path.join(self.directory, self.entry.get())):
+            self.label_for_message.config(text="File already exists. Choose another name.", fg="red")
+        else:
+            self.label_for_message.config(text=f"Creating {self.file_name} file...", fg="green")
+            self.update_idletasks()
+            self.file_name = self.entry.get()
+            self.callback(self.file_name)
+            self.destroy()
+
+    def cancel_button_clicked(self):
+        self.destroy()
 
 
 class ManageRequirementsWindow(tk.Toplevel):
@@ -12,6 +69,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         self.window_width = 600
         self.window_height = 400
         self.padding = 5
+        self.directory = get_working_directory()
 
         self.title("Manage requirements")
         center_x = int(parent.screen_width / 2 - self.window_width / 2)
@@ -25,7 +83,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         create_requirements_button = tk.Button(button_frame_upper, text="Create requirements", command=lambda: self.create_requirements())
 
         # create list of requirements
-        list_of_requirements = tk.Listbox(self, height=6, selectmode=tk.EXTENDED)
+        self.list_of_requirements = tk.Listbox(self, height=6, selectmode=tk.EXTENDED)
 
         # create label for list of requirements
         label_for_list_of_requirements = tk.Label(self, text="Founded requirements files: \n")
@@ -40,18 +98,36 @@ class ManageRequirementsWindow(tk.Toplevel):
         search_for_requirements_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         create_requirements_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         label_for_list_of_requirements.pack(side=tk.TOP, fill='x')
-        list_of_requirements.pack(side=tk.LEFT, pady=self.padding, fill='both', expand=True)
+        self.list_of_requirements.pack(side=tk.LEFT, pady=self.padding, fill='both', expand=True)
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
 
     def search_for_requirements(self):
-        pass
+        result = _find_files(path=self.directory, pattern=re.compile(r".*requirements.*"))
+        self.list_of_requirements.delete(0, tk.END)
+        if len(result) == 0:
+            self.list_of_requirements.insert(tk.END, "No requirements files founded")
+        else:
+            for file in result:
+                self.list_of_requirements.insert(tk.END, file)
 
     def create_requirements(self):
-        pass
+        def callback(file_name):
+            if file_name != '':
+                print(file_name)
+                module_searcher = ModuleSearcher(path_to_project=self.directory, file_name=file_name)
+                module_searcher.get_modules()
+                self.search_for_requirements()
+        entry_window = EntryWindow(self, callback)
+        entry_window.grab_set()
 
     def apply(self):
-        pass
+        chosen_requirements = []
+        for i in self.list_of_requirements.curselection():
+            chosen_requirements.append(self.list_of_requirements.get(i))
+        print(chosen_requirements)
+        file_names = [os.path.split(file)[-1] for file in chosen_requirements]
+        return chosen_requirements, file_names
 
 
 class TreeWindow(tk.Toplevel):
@@ -97,7 +173,7 @@ class TreeWindow(tk.Toplevel):
     
     def build_tree(self):
         path = os.path.abspath(self.directory)
-        node=self.treeview.insert('', 'end', text=path, open=True)
+        node = self.treeview.insert('', 'end', text=path, open=True)
         self.traverse_dir(node, path)
     
     def traverse_dir(self, parent, path):
@@ -165,10 +241,10 @@ class App(tk.Tk):
         # opens a new window
         self.project_tree_button = tk.Button(buttonframe, text="Show project tree", state=tk.DISABLED, command=lambda: self.open_tree_window())
         # manage requirements_button
-        self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.NORMAL, command=lambda: self.open_manage_requirements_window())
+        self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
 
-        send_button = tk.Button(buttonframe, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
-        exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
+        send_button = tk.Button(buttonframe, text="Generate Dockerfile", command=lambda:generate_dockerfile())
+        exit_button = tk.Button(buttonframe, text="Exit", command=self.destroy)
         
         mainframe.pack(side=tk.TOP)
         buttonframe.pack(expand=True)

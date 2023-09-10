@@ -2,7 +2,7 @@ import subprocess
 from gui import App
 
 
-#print("Try to run Dockerfile")
+# print("Try to run Dockerfile")
 # subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
 
 if __name__ == "__main__":
