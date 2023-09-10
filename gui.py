@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from add_files import select_files, select_working_directory, get_working_directory, delete_files_from_directory
-from createUtils.generate_dockerfile import generate_dockerfile
+from createUtils.generate_dockerfile import DockerfileGenerator
 import os
     
 class TreeWindow(tk.Toplevel):
@@ -88,8 +88,10 @@ class TreeWindow(tk.Toplevel):
 
 
 class App(tk.Tk):
-    def __init__(self):
+    def __init__(self, dockerfile_generator):
         super().__init__()
+        
+        self.dockerfile_generator = dockerfile_generator
         
         # set properties of the window
         self.title("Code Container")
@@ -116,7 +118,7 @@ class App(tk.Tk):
         #opens a new window 
         self.project_tree_button = tk.Button(buttonframe, text = "Show project tree", state=tk.DISABLED, command = lambda:self.open_tree_window())
         
-        send_button = tk.Button(buttonframe, text = "Generate Dockerfile", command=lambda:generate_dockerfile())
+        send_button = tk.Button(buttonframe, text = "Generate Dockerfile", command=lambda:self.dockerfile_generator.generate_dockerfile())
         exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
         
         mainframe.pack(side=tk.TOP)

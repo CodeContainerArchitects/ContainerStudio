@@ -1,21 +1,8 @@
 import os
 import re
 import shutil
+from createUtils.common_utils import _find_files
 
-def _find_dockerfile(path):
-    for root, dirs, files in os.walk(path):
-        if 'Dockerfile' in files:
-            return os.path.join(root, 'Dockerfile')
-    return None
-
-def _find_files(path, pattern):
-    matching_files = []
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            if pattern.match(file):
-                relative_path = os.path.relpath(os.path.join(root, file), start=path)
-                matching_files.append(relative_path)
-    return matching_files
 
 def get_dockerfile_path(path):
     pattern = re.compile(r".*Dockerfile.*")
@@ -73,7 +60,6 @@ def parse_dockerfile(dockerfile_path, apt_packages, pip_packages, run_commands,
             while "\\" in command:
                 command.remove("\\")
             whole_command = " ".join(command)
-            #print(whole_command)
             if 'ONBUILD' not in command:
                 if 'FROM' in command:
                     if os_selected:
