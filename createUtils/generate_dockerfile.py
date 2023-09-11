@@ -4,7 +4,7 @@ from createUtils.package_listing import apt_packages, pip_packages
 from existing_dockerfile import *
 
 
-def generate_dockerfile(chosen_requirements, file_names):
+def generate_dockerfile(chosen_requirements, file_names, chosen_pip_packages=[], chosen_apt_packages=[]):
 
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
     template = environment.get_template("template-dockerfile.txt")
@@ -30,9 +30,6 @@ def generate_dockerfile(chosen_requirements, file_names):
     dockerfile_files = []
     all_commands = []
     files_not_found = []
-    
-    chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
-    chosen_apt_packages = [apt_packages["curl"], apt_packages["vim"]]
     
     copy_folder_to_dockerfile = add_files.copy_dir_to_container()
     
