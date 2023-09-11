@@ -1,13 +1,10 @@
 import jinja2
-import tkinter as tk
 import add_files
-import os
-from requirements_searching import use_requirements
 from createUtils.package_listing import apt_packages, pip_packages
 from existing_dockerfile import *
 
-def generate_dockerfile():
-    
+
+def generate_dockerfile(chosen_requirements, file_names):
 
     environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
     template = environment.get_template("template-dockerfile.txt")
@@ -37,7 +34,6 @@ def generate_dockerfile():
     chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
     chosen_apt_packages = [apt_packages["curl"], apt_packages["vim"]]
     
-    use_req, file_names = use_requirements(path=add_files.get_working_directory())
     copy_folder_to_dockerfile = add_files.copy_dir_to_container()
     
     dockerfile_path = get_dockerfile_path(path=add_files.get_working_directory())
@@ -79,9 +75,9 @@ def generate_dockerfile():
                               OS_image_version=OS_data["OS_image_version"],
                               packages_to_install=chosen_pip_packages,
                               apt_get_packages=chosen_apt_packages,
-                              use_requirements=use_req,
+                              use_requirements=chosen_requirements,
                               file_names=file_names,
-                              ranges=len(use_req),
+                              ranges=len(chosen_requirements),
                               copy_folder_to_dockerfile=copy_folder_to_dockerfile,
                               all_commands=all_commands)
 
