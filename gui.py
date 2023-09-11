@@ -5,6 +5,7 @@ from add_files import select_files, select_working_directory, get_working_direct
 from createUtils.generate_dockerfile import generate_dockerfile
 from requirements_searching import _find_files
 from ModuleSearcher import ModuleSearcher
+from createUtils.package_listing import pip_packages, apt_packages
 import os
 
 
@@ -225,7 +226,16 @@ class App(tk.Tk):
         # variables
         self.chosen_requirements = []
         self.file_names = []
+        self.chosen_pip_packages = []
+        self.chosen_apt_packages = []
 
+        def set_chosen_pip_packages(event):
+            selected_pip_indices = pip_packages_listbox.curselection()
+            self.chosen_pip_packages = [pip_packages_listbox.get(index) for index in selected_pip_indices]
+
+        def set_chosen_apt_packages(event):
+            selected_apt_indices = apt_packages_listbox.curselection()
+            self.chosen_apt_packages = [apt_packages_listbox.get(index) for index in selected_apt_indices]
         # set properties of the window
         self.title("Code Container")
         
@@ -251,8 +261,18 @@ class App(tk.Tk):
         self.project_tree_button = tk.Button(buttonframe, text="Show project tree", state=tk.DISABLED, command=lambda: self.open_tree_window())
         # manage requirements_button
         self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
+        
+        pip_packages_listvar = tk.StringVar(value=list(pip_packages.values()))
+        pip_packages_listbox = tk.Listbox(buttonframe, listvariable=pip_packages_listvar, height=5, selectmode='multiple')
+        
+        pip_packages_listbox.bind('<<ListboxSelect>>', set_chosen_pip_packages)
+        
+        apt_packages_listvar = tk.StringVar(value=list(apt_packages.values()))
+        apt_packages_listbox = tk.Listbox(buttonframe, listvariable=apt_packages_listvar, height=5, selectmode='multiple')
+        
+        apt_packages_listbox.bind('<<ListboxSelect>>', set_chosen_apt_packages)
 
-        send_button = tk.Button(buttonframe, text="Generate Dockerfile", command=lambda: generate_dockerfile(chosen_requirements=self.chosen_requirements, file_names=self.file_names))
+        send_button = tk.Button(buttonframe, text="Generate Dockerfile", command=lambda: generate_dockerfile(chosen_requirements=self.chosen_requirements, file_names=self.file_names, chosen_pip_packages=self.chosen_pip_packages, chosen_apt_packages=self.chosen_apt_packages))
         exit_button = tk.Button(buttonframe, text="Exit", command=self.destroy)
         
         mainframe.pack(side=tk.TOP)
@@ -264,6 +284,12 @@ class App(tk.Tk):
         self.manage_requirements_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         send_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         exit_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        pip_packages_listbox.pack(pady=self.padding, side=tk.TOP, fill='x')
+        apt_packages_listbox.pack(pady=self.padding, side=tk.TOP, fill='x')
+        
+        
+        
+
         
     def open_tree_window(self):
         tree_window = TreeWindow(self)
