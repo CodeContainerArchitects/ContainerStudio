@@ -3,7 +3,7 @@ import add_files
 import os
 from requirements_searching import use_requirements
 from createUtils.package_listing import apt_packages, pip_packages
-from existing_dockerfile import parse_dockerfile, get_dockerfile_path
+from existing_dockerfile import DockerfileParser
 from CoreApp import CoreApp
 
 class DockerfileGenerator:
@@ -19,31 +19,15 @@ class DockerfileGenerator:
         use_req, file_names = use_requirements(path=add_files.get_working_directory())
         copy_folder_to_dockerfile = add_files.copy_dir_to_container()
         
-        dockerfile_path = get_dockerfile_path(path=add_files.get_working_directory())
+        self.coreApp.project_root_dir = add_files.get_working_directory()
+        parser = DockerfileParser(self.coreApp)
+        
+        dockerfile_path = parser.get_dockerfile_path()
         
         if dockerfile_path:
             dockerfile_path = os.path.join(add_files.get_working_directory(), dockerfile_path)
-            parse_dockerfile(dockerfile_path=dockerfile_path,
-                            apt_packages=self.coreApp.chosen_apt_packages,
-                            pip_packages=self.coreApp.chosen_pip_packages,
-                            run_commands=self.coreApp.run_commands,
-                            env_variables=self.coreApp.env_variables,
-                            os_docker=self.coreApp.OS_data,
-                            expose_ports=self.coreApp.expose_ports,
-                            users=self.coreApp.users,
-                            arguments=self.coreApp.arguments,
-                            entrypoint_commands=self.coreApp.entrypoint_commands,
-                            cmd_commands=self.coreApp.cmd_commands,
-                            shell_commands=self.coreApp.shell_commands,
-                            maintainers=self.coreApp.maintainers,
-                            volumes=self.coreApp.volumes,
-                            labels=self.coreApp.labels,
-                            stop_signals=self.coreApp.stop_signals,
-                            healthchecks=self.coreApp.healthchecks,
-                            images=self.coreApp.images,
+            parser.parse_dockerfile(dockerfile_path=dockerfile_path,
                             files=self.dockerfile_files,
-                            all_commands=self.coreApp.all_commands,
-                            files_root_dir=self.coreApp.project_root_dir,
                             files_not_found=self.files_not_found)
             
             if self.files_not_found:
