@@ -159,6 +159,3 @@ class CoreApp:
 
     def set_requirements_files_names(self, value):
         self.requirements_files_names = value
-
-        
-    

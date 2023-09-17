@@ -1,13 +1,14 @@
 import jinja2
 import os
-import add_files
+from ProjectTree import ProjectTree
 from createUtils.package_listing import apt_packages, pip_packages
-from existing_dockerfile import DockerfileParser
+from DockerfileParser import DockerfileParser
 from CoreApp import CoreApp
 
 class DockerfileGenerator:
-    def __init__(self, coreApp):
+    def __init__(self, coreApp, projectTree):
         self.coreApp = coreApp
+        self.projectTree = projectTree
         self.environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
         self.template = self.environment.get_template("template-dockerfile.txt")
         self.files_not_found = []
@@ -15,15 +16,14 @@ class DockerfileGenerator:
         self.dockerfile_files = []
 
     def generate_dockerfile(self):
-        copy_folder_to_dockerfile = add_files.copy_dir_to_container()
+        copy_folder_to_dockerfile = self.projectTree.copy_dir_to_container()
         
-        self.coreApp.project_root_dir = add_files.get_working_directory()
         parser = DockerfileParser(self.coreApp)
         
         dockerfile_path = parser.get_dockerfile_path()
         
         if dockerfile_path:
-            dockerfile_path = os.path.join(add_files.get_working_directory(), dockerfile_path)
+            dockerfile_path = os.path.join(self.coreApp.get_project_root_dir(), dockerfile_path)
             parser.parse_dockerfile(dockerfile_path=dockerfile_path,
                             files=self.dockerfile_files,
                             files_not_found=self.files_not_found)
@@ -46,7 +46,7 @@ class DockerfileGenerator:
                                 all_commands=self.coreApp.all_commands)
 
         filename = "Dockerfile"
-        with open(os.path.join(add_files.get_working_directory(), filename), "w") as file:
+        with open(os.path.join(self.coreApp.get_project_root_dir(), filename), "w") as file:
             file.write(content)
 
         print(content)

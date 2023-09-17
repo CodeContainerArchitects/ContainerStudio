@@ -1,7 +1,7 @@
 import subprocess
-from gui import App
+from gui.MainApp import App
 from CoreApp import CoreApp
-from createUtils.generate_dockerfile import DockerfileGenerator
+from createUtils.DockerfileGenerator import DockerfileGenerator
 
 # print("Try to run Dockerfile")
 # subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
