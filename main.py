@@ -1,10 +1,12 @@
 import subprocess
-from gui import App
-
+from gui.MainApp import App
+from CoreApp import CoreApp
+from createUtils.DockerfileGenerator import DockerfileGenerator
 
 # print("Try to run Dockerfile")
 # subprocess.call(["bash", "scripts/dockerfile_runner.sh"])
 
 if __name__ == "__main__":
-    main_window = App()
+    coreApp = CoreApp()
+    main_window = App(coreApp)
     main_window.mainloop()
