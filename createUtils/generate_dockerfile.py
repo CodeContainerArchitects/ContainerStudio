@@ -1,7 +1,6 @@
 import jinja2
-import add_files
 import os
-from requirements_searching import use_requirements
+import add_files
 from createUtils.package_listing import apt_packages, pip_packages
 from existing_dockerfile import DockerfileParser
 from CoreApp import CoreApp
@@ -16,7 +15,6 @@ class DockerfileGenerator:
         self.dockerfile_files = []
 
     def generate_dockerfile(self):
-        use_req, file_names = use_requirements(path=add_files.get_working_directory())
         copy_folder_to_dockerfile = add_files.copy_dir_to_container()
         
         self.coreApp.project_root_dir = add_files.get_working_directory()
@@ -41,9 +39,9 @@ class DockerfileGenerator:
                                 OS_image_version=self.coreApp.OS_data["OS_image_version"],
                                 packages_to_install=self.coreApp.chosen_pip_packages,
                                 apt_get_packages=self.coreApp.chosen_apt_packages,
-                                use_requirements=use_req,
-                                file_names=file_names,
-                                ranges=len(use_req),
+                                use_requirements=self.coreApp.chosen_requirements,
+                                file_names=self.coreApp.requirements_files_names,
+                                ranges=len(self.coreApp.chosen_requirements),
                                 copy_folder_to_dockerfile=copy_folder_to_dockerfile,
                                 all_commands=self.coreApp.all_commands)
 
