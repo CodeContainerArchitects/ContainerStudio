@@ -5,6 +5,8 @@ from createUtils.DockerfileGenerator import DockerfileGenerator
 import os
 import re
 from createUtils.common_utils import _find_files
+from tkinter import messagebox as messagebox
+from tkinter.filedialog import asksaveasfile
 
 class GeneratorWindow(tk.Toplevel):
     def __init__(self, parent):
@@ -62,6 +64,15 @@ class GeneratorWindow(tk.Toplevel):
             if dockerfile_index or dockerfile_index == 0:
                 dockerfile_path = self.list_of_dockerfiles.get(dockerfile_index)
                 generator.set_dockerfile_path(dockerfile_path)
+                res=messagebox.askquestion("Copy Dockerfile", "Do you want to make a copy of selected Dockerfile?")
+                if res == 'yes':
+                    f = asksaveasfile(filetypes=[("All Files","*.*")], initialdir=parent.coreApp.project_root_dir, initialfile=dockerfile_path+"_copy")
+                    if f is not None:
+                        orig_file = open(os.path.join(parent.coreApp.project_root_dir, dockerfile_path), "r")
+                        content = orig_file.read()
+                        f.write(content)
+                        orig_file.close()
+                        f.close()
         generator.generate_dockerfile()
         
     
