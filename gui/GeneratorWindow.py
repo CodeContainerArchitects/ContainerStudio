@@ -48,6 +48,12 @@ class GeneratorWindow(tk.Toplevel):
     def search_for_dockerfile(self, parent):
         pattern = re.compile(r".*Dockerfile.*")
         result = _find_files(path=parent.coreApp.project_root_dir, pattern=pattern)
+        self.list_of_dockerfiles.delete(0, tk.END)
+        if len(result) == 0:
+            self.list_of_dockerfiles.insert(tk.END, "No Dockerfiles found")
+        else:
+            for file in result:
+                self.list_of_dockerfiles.insert(tk.END, file)
         
     def create_dockerfile(self):
         pass
