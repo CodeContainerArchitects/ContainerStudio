@@ -12,7 +12,6 @@ class App(tk.Tk):
         
         self.coreApp = coreApp
         self.projectTree = ProjectTree()
-        self.dockerfile_generator = DockerfileGenerator(coreApp, self.projectTree)
 
         # set properties of the window
         self.title("Code Container")

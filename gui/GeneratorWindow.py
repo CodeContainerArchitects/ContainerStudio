@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from DockerfileParser import DockerfileParser
+from createUtils.DockerfileGenerator import DockerfileGenerator
 import os
 import re
 from createUtils.common_utils import _find_files
@@ -11,8 +12,6 @@ class GeneratorWindow(tk.Toplevel):
         self.window_width = 600
         self.window_height = 400
         self.padding = 5
-        
-        self.parser = DockerfileParser(parent.coreApp)
         
         self.title("Generate Files")
         center_x = int(parent.screen_width/2 - self.window_width / 2)
@@ -27,7 +26,7 @@ class GeneratorWindow(tk.Toplevel):
         label_for_list_of_dockerfiles = tk.Label(self, text="Found existing Dockerfiles: \n")
         
         button_frame_middle = tk.Frame(self)
-        create_dockerfile_button = tk.Button(button_frame_middle, text="Create Dockerfile", command=lambda: self.create_dockerfile())
+        create_dockerfile_button = tk.Button(button_frame_middle, text="Create Dockerfile", command=lambda: self.create_dockerfile(parent))
         create_compose_button = tk.Button(button_frame_middle, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose())
         
         button_frame_lower = tk.Frame(self)
@@ -55,8 +54,16 @@ class GeneratorWindow(tk.Toplevel):
             for file in result:
                 self.list_of_dockerfiles.insert(tk.END, file)
         
-    def create_dockerfile(self):
-        pass
+    def create_dockerfile(self, parent):
+        generator = DockerfileGenerator(parent.coreApp, parent.projectTree)
+        dockerfile_selected = self.list_of_dockerfiles.curselection()
+        if dockerfile_selected:
+            dockerfile_index = dockerfile_selected[0]
+            if dockerfile_index or dockerfile_index == 0:
+                dockerfile_path = self.list_of_dockerfiles.get(dockerfile_index)
+                generator.set_dockerfile_path(dockerfile_path)
+        generator.generate_dockerfile()
+        
     
     def create_compose(self):
         pass
