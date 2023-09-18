@@ -55,7 +55,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         result = _find_files(path=self.directory, pattern=re.compile(r".*requirements.*"))
         self.list_of_requirements.delete(0, tk.END)
         if len(result) == 0:
-            self.list_of_requirements.insert(tk.END, "No requirements files founded")
+            self.list_of_requirements.insert(tk.END, "No requirements files found")
         else:
             for file in result:
                 self.list_of_requirements.insert(tk.END, file)
