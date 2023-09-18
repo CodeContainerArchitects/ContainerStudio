@@ -28,13 +28,6 @@ class DockerfileGenerator:
             parser.parse_dockerfile(dockerfile_path=dockerfile_path,
                             files=self.dockerfile_files,
                             files_not_found=self.files_not_found)
-            
-            if self.files_not_found:
-                print("Files not found:")
-                for file in self.files_not_found:
-                    print(file)
-                print("Check if files are in the right directory or adjust their paths.")
-                
         
         content = self.template.render(OS_image=self.coreApp.OS_data["OS_image"],
                                 OS_image_version=self.coreApp.OS_data["OS_image_version"],

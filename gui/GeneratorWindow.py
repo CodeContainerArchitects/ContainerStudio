@@ -7,6 +7,7 @@ import re
 from createUtils.common_utils import _find_files
 from tkinter import messagebox as messagebox
 from tkinter.filedialog import asksaveasfile
+from gui.FilesNotFoundWindow import FilesNotFoundWindow
 
 class GeneratorWindow(tk.Toplevel):
     def __init__(self, parent):
@@ -32,8 +33,7 @@ class GeneratorWindow(tk.Toplevel):
         create_compose_button = tk.Button(button_frame_middle, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose())
         
         button_frame_lower = tk.Frame(self)
-        apply_button = tk.Button(button_frame_lower, text="Save", command=lambda: self.apply())
-        cancel_button = tk.Button(button_frame_lower, text="Cancel", command=self.destroy)
+        cancel_button = tk.Button(button_frame_lower, text="Return to main menu", command=self.destroy)
         
         button_frame_upper.pack(side=tk.TOP, pady=self.padding, fill='both')
         button_frame_lower.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
@@ -43,7 +43,6 @@ class GeneratorWindow(tk.Toplevel):
         self.list_of_dockerfiles.pack(side=tk.LEFT, pady=self.padding, fill='both', expand=True)
         create_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         create_compose_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         
     def search_for_dockerfile(self, parent):
@@ -74,10 +73,9 @@ class GeneratorWindow(tk.Toplevel):
                         orig_file.close()
                         f.close()
         generator.generate_dockerfile()
-        
+        if generator.files_not_found:
+            filesNotFoundWindow = FilesNotFoundWindow(self, generator.files_not_found)
+            filesNotFoundWindow.grab_set()
     
     def create_compose(self):
-        pass
-    
-    def apply(self):
         pass
