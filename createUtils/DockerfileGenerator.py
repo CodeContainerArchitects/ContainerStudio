@@ -14,26 +14,20 @@ class DockerfileGenerator:
         self.files_not_found = []
         self.dockerfile_path = ""
         self.dockerfile_files = []
+        
+    def set_dockerfile_path(self, path):
+        self.dockerfile_path = path
 
     def generate_dockerfile(self):
         copy_folder_to_dockerfile = self.projectTree.copy_dir_to_container()
         
         parser = DockerfileParser(self.coreApp)
         
-        dockerfile_path = parser.get_dockerfile_path()
-        
-        if dockerfile_path:
-            dockerfile_path = os.path.join(self.coreApp.get_project_root_dir(), dockerfile_path)
+        if self.dockerfile_path:
+            dockerfile_path = os.path.join(self.coreApp.get_project_root_dir(), self.dockerfile_path)
             parser.parse_dockerfile(dockerfile_path=dockerfile_path,
                             files=self.dockerfile_files,
                             files_not_found=self.files_not_found)
-            
-            if self.files_not_found:
-                print("Files not found:")
-                for file in self.files_not_found:
-                    print(file)
-                print("Check if files are in the right directory or adjust their paths.")
-                
         
         content = self.template.render(OS_image=self.coreApp.OS_data["OS_image"],
                                 OS_image_version=self.coreApp.OS_data["OS_image_version"],

@@ -4,6 +4,7 @@ from createUtils.DockerfileGenerator import DockerfileGenerator
 from createUtils.package_listing import pip_packages, apt_packages
 from gui.TreeWindow import TreeWindow
 from gui.ManageRequirementsWindow import ManageRequirementsWindow
+from gui.GeneratorWindow import GeneratorWindow
 
 class App(tk.Tk):
     def __init__(self, coreApp):
@@ -11,7 +12,6 @@ class App(tk.Tk):
         
         self.coreApp = coreApp
         self.projectTree = ProjectTree()
-        self.dockerfile_generator = DockerfileGenerator(coreApp, self.projectTree)
 
         # set properties of the window
         self.title("Code Container")
@@ -52,7 +52,7 @@ class App(tk.Tk):
         
         self.apt_packages_listbox.bind('<<ListboxSelect>>', self.set_chosen_apt_packages)
         
-        self.send_button = tk.Button(buttonframe, text = "Generate Dockerfile", state=tk.DISABLED, command=lambda:self.dockerfile_generator.generate_dockerfile())
+        self.send_button = tk.Button(buttonframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
         exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
         
         mainframe.pack(side=tk.TOP)
@@ -101,3 +101,7 @@ class App(tk.Tk):
             self.project_tree_button['state'] = tk.NORMAL
             self.manage_requirements_button['state'] = tk.NORMAL
             self.send_button['state'] = tk.NORMAL
+            
+    def open_generate(self):
+        self.generate_window = GeneratorWindow(self)
+        self.generate_window.grab_set()
