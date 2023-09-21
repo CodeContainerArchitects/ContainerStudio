@@ -42,13 +42,13 @@ class App(tk.Tk):
         
         pip_packages_label = tk.Label(buttonframe, text="Select pip packages")
         pip_packages_listvar = tk.StringVar(value=list(pip_packages.values()))
-        self.pip_packages_listbox = tk.Listbox(buttonframe, listvariable=pip_packages_listvar, height=5, selectmode='multiple')
+        self.pip_packages_listbox = tk.Listbox(buttonframe, listvariable=pip_packages_listvar, height=5, selectmode='multiple', exportselection=0)
         
         self.pip_packages_listbox.bind('<<ListboxSelect>>', self.set_chosen_pip_packages)
         
         apt_packages_label = tk.Label(buttonframe, text="Select apt packages")
         apt_packages_listvar = tk.StringVar(value=list(apt_packages.values()))
-        self.apt_packages_listbox = tk.Listbox(buttonframe, listvariable=apt_packages_listvar, height=5, selectmode='multiple')
+        self.apt_packages_listbox = tk.Listbox(buttonframe, listvariable=apt_packages_listvar, height=5, selectmode='multiple', exportselection=0)
         
         self.apt_packages_listbox.bind('<<ListboxSelect>>', self.set_chosen_apt_packages)
         
