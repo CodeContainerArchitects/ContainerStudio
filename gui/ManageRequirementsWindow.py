@@ -1,5 +1,7 @@
 import re
 import tkinter as tk
+from tkinter import DISABLED
+
 from requirements_searching import _find_files
 from ModuleSearcher import ModuleSearcher
 from gui.EntryWindow import EntryWindow
@@ -29,7 +31,7 @@ class ManageRequirementsWindow(tk.Toplevel):
 
         # create upper buttons
         button_frame_upper = tk.Frame(self)
-        search_for_requirements_button = tk.Button(button_frame_upper, text="Search for requirements", command=lambda: self.search_for_requirements())
+        self.search_for_requirements_button = tk.Button(button_frame_upper, text="Search for requirements", command=lambda: self.search_for_requirements())
         create_requirements_button = tk.Button(button_frame_upper, text="Create requirements", command=lambda: self.create_requirements(parent))
 
         # create list of requirements
@@ -45,28 +47,31 @@ class ManageRequirementsWindow(tk.Toplevel):
 
         button_frame_upper.pack(side=tk.TOP, pady=self.padding, fill='both')
         button_frame_lower.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
-        search_for_requirements_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        self.search_for_requirements_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         create_requirements_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         label_for_list_of_requirements.pack(side=tk.TOP, fill='x')
         self.list_of_requirements.pack(side=tk.LEFT, pady=self.padding, fill='both', expand=True)
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
 
-    def search_for_requirements(self):
+    def search_for_requirements(self, requirements_file=None):
         result = _find_files(path=self.directory, pattern=re.compile(r".*requirements.*"))
         self.list_of_requirements.delete(0, tk.END)
-        if len(result) == 0:
+        if len(result) == 0 and requirements_file is None:
             self.list_of_requirements.insert(tk.END, "No requirements files found")
         else:
             for file in result:
                 self.list_of_requirements.insert(tk.END, file)
+        if requirements_file is not None and "requirements" not in requirements_file:
+            self.list_of_requirements.insert(tk.END, requirements_file)
 
     def create_requirements(self, parent):
         def callback_create_requirements(file_name):
             if file_name != '':
                 module_searcher = ModuleSearcher(path_to_project=self.directory, file_name=file_name)
                 module_searcher.get_modules()
-                self.search_for_requirements()
+                self.search_for_requirements(requirements_file=file_name)
+                self.search_for_requirements_button.configure(state=DISABLED)
         entry_window = EntryWindow(self, parent.projectTree.get_working_directory(), callback_create_requirements)
         entry_window.grab_set()
 
