@@ -5,6 +5,7 @@ from ModuleSearcher import ModuleSearcher
 from gui.EntryWindow import EntryWindow
 import os
 
+
 class ManageRequirementsWindow(tk.Toplevel):
     def __init__(self, parent, get_chosen_requirements):
         super().__init__(parent)

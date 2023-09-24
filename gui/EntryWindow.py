@@ -1,6 +1,7 @@
 import tkinter as tk
 import os
 
+
 class EntryWindow(tk.Toplevel):
     def __init__(self, parent, directory, callback):
         super().__init__(parent)
@@ -47,9 +48,9 @@ class EntryWindow(tk.Toplevel):
         if os.path.exists(os.path.join(self.directory, self.entry.get())):
             self.label_for_message.config(text="File already exists. Choose another name.", fg="red")
         else:
+            self.file_name = self.entry.get()
             self.label_for_message.config(text=f"Creating {self.file_name} file...", fg="green")
             self.update_idletasks()
-            self.file_name = self.entry.get()
             self.callback(self.file_name)
             self.destroy()
 
