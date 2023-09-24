@@ -29,8 +29,8 @@ class TreeWindow(tk.Toplevel):
         buttonframe = tk.Frame(self)
         
         # uploading files
-        choose_file_button = tk.Button(buttonframe, text="Choose file", command=lambda: self.add_files(parent,mode='file'))
-        choose_folder_button = tk.Button(buttonframe, text="Choose folder", command=lambda: self.add_files(parent, mode='dir'))
+        choose_file_button = tk.Button(buttonframe, text="Add file", command=lambda: self.add_files(parent,mode='file'))
+        choose_folder_button = tk.Button(buttonframe, text="Add folder", command=lambda: self.add_files(parent, mode='dir'))
         delete_items_button = tk.Button(buttonframe, text="Delete selected items", command=lambda: self.delete_selected_items(parent))
         exit_button = tk.Button(buttonframe, text="Exit", command=self.destroy)
         
