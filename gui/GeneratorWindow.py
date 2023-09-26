@@ -33,7 +33,7 @@ class GeneratorWindow(tk.Toplevel):
         create_compose_button = tk.Button(button_frame_middle, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose())
         
         button_frame_lower = tk.Frame(self)
-        cancel_button = tk.Button(button_frame_lower, text="Return to main menu", command=self.destroy)
+        cancel_button = tk.Button(button_frame_lower, text="Exit", command=self.destroy)
         
         button_frame_upper.pack(side=tk.TOP, pady=self.padding, fill='both')
         button_frame_lower.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
