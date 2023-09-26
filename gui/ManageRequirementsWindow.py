@@ -1,9 +1,8 @@
 import re
 import tkinter as tk
 from tkinter import DISABLED
-
-from requirements_searching import _find_files
 from ModuleSearcher import ModuleSearcher
+from createUtils.common_utils import _find_files
 from gui.EntryWindow import EntryWindow
 import os
 
