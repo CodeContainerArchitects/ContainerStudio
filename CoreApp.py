@@ -1,5 +1,6 @@
 from createUtils.package_listing import apt_packages, pip_packages
 
+
 class CoreApp:
     def __init__(self):
         self.OS_data = {

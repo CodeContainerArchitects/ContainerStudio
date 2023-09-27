@@ -67,7 +67,7 @@ class ManageRequirementsWindow(tk.Toplevel):
     def create_requirements(self, parent):
         def callback_create_requirements(file_name):
             if file_name != '':
-                module_searcher = ModuleSearcher(path_to_project=self.directory, file_name=file_name)
+                module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name)
                 module_searcher.get_modules()
                 self.search_for_requirements(requirements_file=file_name)
                 self.search_for_requirements_button.configure(state=DISABLED)
