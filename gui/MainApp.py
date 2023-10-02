@@ -6,6 +6,7 @@ from gui.TreeWindow import TreeWindow
 from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
 
+
 class App(tk.Tk):
     def __init__(self, coreApp):
         super().__init__()
