@@ -11,12 +11,13 @@ class ModuleSearcher:
         self.requirements_file_name = requirements_file_name
         self.path_to_requirements_file = os.path.join(self.path_to_project, self.requirements_file_name)
         self.apt_modules = []
+        self.not_known_modules = []
 
     def get_modules(self):
         try:
             subprocess.run(["pipreqs", "--savepath", self.path_to_requirements_file, f"{self.path_to_project}"])
             self._find_subprocess()
-            return [os.path.relpath(self.path_to_requirements_file, start=self.path_to_project)], [self.requirements_file_name]
+            return [os.path.relpath(self.path_to_requirements_file, start=self.path_to_project)], [self.requirements_file_name], self.apt_modules, self.not_known_modules
         except FileNotFoundError:
             print("There is no such file or directory")
         except subprocess.CalledProcessError as e:
@@ -28,13 +29,24 @@ class ModuleSearcher:
                 if file.endswith(".py"):
                     with open(os.path.join(root, file)) as f:
                         file_content = f.readlines()
+                    # search for aliases to subprocess
+                    subprocess_alias = ''
+                    for line in file_content:
+                        if not line.startswith('#') and line.startswith('import subprocess as'):
+                            subprocess_alias = line.split('as')[1].replace('\n', '')
                     for line in file_content:
                         if not line.startswith("#"):
                             command = ''
-                            if 'subprocess.run(["' in line:
-                                command = line.split('"')[1]
-                            elif "subprocess.run(['" in line:
-                                command = line.split("'")[1]
+                            if subprocess_alias == '':
+                                if 'subprocess.run(["' in line:
+                                    command = line.split('"')[1].replace('\n', '')
+                                elif "subprocess.run(['" in line:
+                                    command = line.split("'")[1].replace('\n', '')
+                            else:
+                                if f'{subprocess_alias}.run(["' in line:
+                                    command = line.split('"')[1].replace('\n', '')
+                                elif f"{subprocess_alias}.run(['" in line:
+                                    command = line.split("'")[1].replace('\n', '')
                             print(command)
                             if command != '':
                                 subprocess_result = 1
@@ -49,7 +61,7 @@ class ModuleSearcher:
                                     if command in apt_packages:
                                         self.apt_modules.append(command)
                                     else:
-                                        print(command)
+                                        self.not_known_modules.append(command)
 
     def _print_modules(self):
         with open(os.path.join(self.path_to_project, self.requirements_file_name)) as f:
