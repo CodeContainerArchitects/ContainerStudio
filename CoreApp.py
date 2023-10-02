@@ -137,6 +137,9 @@ class CoreApp:
     def set_chosen_apt_packages(self, value):
         self.chosen_apt_packages = value
 
+    def add_apt_package(self, value):
+        self.chosen_apt_packages.extend(value)
+
     def get_project_root_dir(self):
         return self.project_root_dir
 

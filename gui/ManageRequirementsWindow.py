@@ -8,13 +8,14 @@ import os
 
 
 class ManageRequirementsWindow(tk.Toplevel):
-    def __init__(self, parent, get_chosen_requirements):
+    def __init__(self, parent, set_chosen_requirements):
         super().__init__(parent)
 
         # variables
         self.file_names = None
+        self.apt_packages = None
         self.chosen_requirements = None
-        self.callback = get_chosen_requirements
+        self.callback = set_chosen_requirements
 
         # window properties
         self.window_width = 600
@@ -68,7 +69,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         def callback_create_requirements(file_name):
             if file_name != '':
                 module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name)
-                module_searcher.get_modules()
+                _, _, self.apt_packages, self.not_known_packages = module_searcher.get_modules()
                 self.search_for_requirements(requirements_file=file_name)
                 self.search_for_requirements_button.configure(state=DISABLED)
         entry_window = EntryWindow(self, parent.projectTree.get_working_directory(), callback_create_requirements)
@@ -79,5 +80,5 @@ class ManageRequirementsWindow(tk.Toplevel):
         for i in self.list_of_requirements.curselection():
             self.chosen_requirements.append(self.list_of_requirements.get(i))
         self.file_names = [os.path.split(file)[-1] for file in self.chosen_requirements]
-        self.callback(self.chosen_requirements, self.file_names)
+        self.callback(self.chosen_requirements, self.file_names, self.apt_packages)
         self.destroy()
