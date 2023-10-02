@@ -29,25 +29,47 @@ class ModuleSearcher:
                 if file.endswith(".py"):
                     with open(os.path.join(root, file)) as f:
                         file_content = f.readlines()
-                    # search for aliases to subprocess
+
+                    # detect subprocess alias
                     subprocess_alias = ''
+                    subprocess_functions = []
                     for line in file_content:
                         if not line.startswith('#') and line.startswith('import subprocess as'):
                             subprocess_alias = line.split('as')[1].replace('\n', '')
+                        if line.startswith('from subprocess import'):
+                            subprocess_functions = [item.strip() for item in line.split('import')[1].replace('\n', '').split(',')]
+                    subprocess_alias = 'subprocess' if subprocess_alias == '' else subprocess_alias
+
+                    # find subprocess
                     for line in file_content:
                         if not line.startswith("#"):
                             command = ''
-                            if subprocess_alias == '':
-                                if 'subprocess.run(["' in line:
-                                    command = line.split('"')[1].replace('\n', '')
-                                elif "subprocess.run(['" in line:
-                                    command = line.split("'")[1].replace('\n', '')
+
+                            # subprocess or subprocess alias
+                            if (f'{subprocess_alias}.run(["' in line
+                                    or f'{subprocess_alias}.call(["' in line
+                                    or f'{subprocess_alias}.check_call(["' in line
+                                    or f'{subprocess_alias}.check_output(["' in line
+                                    or f'{subprocess_alias}.Popen(["' in line
+                                    or f'{subprocess_alias}.getstatusoutput("' in line
+                                    or f'{subprocess_alias}.getoutput("') in line:
+                                command = line.split('"')[1].replace('\n', '')
+                            elif (f"{subprocess_alias}.run(['" in line
+                                  or f"{subprocess_alias}.call(['" in line
+                                  or f"{subprocess_alias}.check_call(['" in line
+                                  or f"{subprocess_alias}.check_output(['" in line
+                                  or f"{subprocess_alias}.Popen(['" in line
+                                  or f"{subprocess_alias}.getstatusoutput('" in line
+                                  or f"{subprocess_alias}.getoutput('" in line):
+                                command = line.split("'")[1].replace('\n', '')
                             else:
-                                if f'{subprocess_alias}.run(["' in line:
-                                    command = line.split('"')[1].replace('\n', '')
-                                elif f"{subprocess_alias}.run(['" in line:
-                                    command = line.split("'")[1].replace('\n', '')
-                            print(command)
+                                # subprocess function
+                                for func in subprocess_functions:
+                                    if f'{func}(["' in line or f'{func}("' in line:
+                                        command = line.split('"')[1].replace('\n', '')
+                                    elif f"{func}(['" in line or f"{func}(" in line:
+                                        command = line.split("'")[1].replace('\n', '')
+
                             if command != '':
                                 subprocess_result = 1
                                 try:
