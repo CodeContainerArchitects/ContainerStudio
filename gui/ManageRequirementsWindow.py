@@ -6,6 +6,8 @@ from createUtils.common_utils import _find_files
 from gui.EntryWindow import EntryWindow
 import os
 
+from gui.UnknownPackagesFoundWindow import UnknownPackagesFoundWindow
+
 
 class ManageRequirementsWindow(tk.Toplevel):
     def __init__(self, parent, set_chosen_requirements):
@@ -13,7 +15,7 @@ class ManageRequirementsWindow(tk.Toplevel):
 
         # variables
         self.file_names = None
-        self.apt_packages = None
+        self.apt_packages = []
         self.chosen_requirements = None
         self.callback = set_chosen_requirements
 
@@ -65,6 +67,9 @@ class ManageRequirementsWindow(tk.Toplevel):
         if requirements_file is not None and "requirements" not in requirements_file:
             self.list_of_requirements.insert(tk.END, requirements_file)
 
+    def add_to_apt_package_list(self, value):
+        self.apt_packages.extend(value)
+
     def create_requirements(self, parent):
         def callback_create_requirements(file_name):
             if file_name != '':
@@ -72,6 +77,8 @@ class ManageRequirementsWindow(tk.Toplevel):
                 _, _, self.apt_packages, self.not_known_packages = module_searcher.get_modules()
                 self.search_for_requirements(requirements_file=file_name)
                 self.search_for_requirements_button.configure(state=DISABLED)
+                if len(self.not_known_packages) != 0:
+                    UnknownPackagesFoundWindow(parent=self, unknown_packages=self.not_known_packages, callback_function=self.add_to_apt_package_list)
         entry_window = EntryWindow(self, parent.projectTree.get_working_directory(), callback_create_requirements)
         entry_window.grab_set()
 
@@ -80,5 +87,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         for i in self.list_of_requirements.curselection():
             self.chosen_requirements.append(self.list_of_requirements.get(i))
         self.file_names = [os.path.split(file)[-1] for file in self.chosen_requirements]
+        # remove duplicates
+        self.apt_packages = list(set(self.apt_packages))
         self.callback(self.chosen_requirements, self.file_names, self.apt_packages)
         self.destroy()
