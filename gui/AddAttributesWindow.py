@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 
+from gui.attributes.AddPortsWindow import AddPortsWindow
+from gui.attributes.AddEnvVariablesWindow import AddEnvVariablesWindow
+
 class AddAttributesWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -28,7 +31,9 @@ class AddAttributesWindow(tk.Toplevel):
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         
     def add_ports(self, parent):
-        AddPortsWindow(self, parent)
+        add_ports_window = AddPortsWindow(self, parent)
+        add_ports_window.grab_set()
         
     def add_env_variables(self, parent):
-        AddEnvVariablesWindow(self, parent)
+        add_env_vars_window = AddEnvVariablesWindow(self, parent)
+        add_env_vars_window.grab_set()
