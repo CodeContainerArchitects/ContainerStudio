@@ -6,6 +6,7 @@ from gui.TreeWindow import TreeWindow
 from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
 
+
 class App(tk.Tk):
     def __init__(self, coreApp):
         super().__init__()
@@ -84,12 +85,13 @@ class App(tk.Tk):
         # grab_set prevents user from interacting with main window and makes the tree window receive events
         tree_window.grab_set()
 
-    def get_chosen_requirements(self, chosen_requirements, file_names):
+    def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
         self.coreApp.set_requirements_files_names(file_names)
+        self.coreApp.add_apt_package(apt_packages)
 
     def open_manage_requirements_window(self):
-        manage_requirements_window = ManageRequirementsWindow(self, self.get_chosen_requirements)
+        manage_requirements_window = ManageRequirementsWindow(self, self.set_chosen_requirements)
         manage_requirements_window.grab_set()
         
     def select_working_directory(self):

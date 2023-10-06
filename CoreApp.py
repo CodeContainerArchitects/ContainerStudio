@@ -1,5 +1,6 @@
 from createUtils.package_listing import apt_packages, pip_packages
 
+
 class CoreApp:
     def __init__(self):
         self.OS_data = {
@@ -135,6 +136,9 @@ class CoreApp:
 
     def set_chosen_apt_packages(self, value):
         self.chosen_apt_packages = value
+
+    def add_apt_package(self, value):
+        self.chosen_apt_packages.extend(value)
 
     def get_project_root_dir(self):
         return self.project_root_dir

@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 class FilesNotFoundWindow(tk.Toplevel):
     def __init__(self, parent, files_not_found):
         super().__init__(parent)
