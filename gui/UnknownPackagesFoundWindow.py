@@ -33,6 +33,7 @@ class UnknownPackagesFoundWindow(tk.Toplevel):
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
 
+        unknown_packages = list(set(unknown_packages))
         for i in range(0, len(unknown_packages)):
             self.list_of_packages.insert(tk.END, unknown_packages[i])
 

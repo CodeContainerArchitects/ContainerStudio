@@ -52,7 +52,7 @@ class ModuleSearcher:
                                     or f'{subprocess_alias}.check_output(["' in line
                                     or f'{subprocess_alias}.Popen(["' in line
                                     or f'{subprocess_alias}.getstatusoutput("' in line
-                                    or f'{subprocess_alias}.getoutput("') in line:
+                                    or f'{subprocess_alias}.getoutput("' in line):
                                 command = line.split('"')[1].replace('\n', '')
                             elif (f"{subprocess_alias}.run(['" in line
                                   or f"{subprocess_alias}.call(['" in line
@@ -67,7 +67,7 @@ class ModuleSearcher:
                                 for func in subprocess_functions:
                                     if f'{func}(["' in line or f'{func}("' in line:
                                         command = line.split('"')[1].replace('\n', '')
-                                    elif f"{func}(['" in line or f"{func}(" in line:
+                                    elif f"{func}(['" in line or f"{func}('" in line:
                                         command = line.split("'")[1].replace('\n', '')
 
                             if command != '':
