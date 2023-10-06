@@ -28,13 +28,16 @@ class App(tk.Tk):
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
         self.configure(background='#B9B4C7')
         
-        self.project_files_folder = "Project_files"
-        
         mainframe = tk.Frame(self, width=self.window_width, height=self.window_height)
         buttonframe = tk.Frame(mainframe)
         
         # select folder
         select_folder_button = tk.Button(buttonframe, text="Select folder",  command=lambda: self.select_working_directory())
+        
+        self.folder_name = "No folder selected."
+        
+        self.folder_label = tk.Label(buttonframe, text=self.folder_name, justify=tk.LEFT, width=20, padx = self.padding)
+        
         # opens a new window
         self.project_tree_button = tk.Button(buttonframe, text="Show project tree", state=tk.DISABLED, command=lambda: self.open_tree_window())
         # manage requirements_button
@@ -59,7 +62,9 @@ class App(tk.Tk):
         buttonframe.pack(expand=True)
         mainframe.pack_propagate(0)
         
+        
         select_folder_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        self.folder_label.pack(pady=self.padding, side=tk.TOP)
         self.project_tree_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.manage_requirements_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         pip_packages_label.pack(pady=self.padding, side=tk.TOP, fill='x')
@@ -96,6 +101,7 @@ class App(tk.Tk):
         self.projectTree.select_working_directory()
         working_directory = self.projectTree.get_working_directory()
         self.coreApp.set_project_root_dir(working_directory)
+        self.folder_label['text'] = working_directory
         
         if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED and self.manage_requirements_button['state'] == tk.DISABLED and self.send_button['state'] == tk.DISABLED:
             self.project_tree_button['state'] = tk.NORMAL
