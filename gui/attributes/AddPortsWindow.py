@@ -18,7 +18,7 @@ class AddPortsWindow(tk.Toplevel):
         self.ports_list = tk.Listbox(self, height=6, selectmode=tk.SINGLE)
         label_for_ports_list = tk.Label(self, text="Ports: \n")
         button_frame_upper = tk.Frame(self)
-        add_ports_button = tk.Button(button_frame_upper, text="Add port", command=lambda: self.add_ports())
+        add_ports_button = tk.Button(button_frame_upper, text="Add port", command=lambda: self.add_ports(grandparent))
         delete_ports_button = tk.Button(button_frame_upper, text="Delete port", command=lambda: self.delete_ports())
         button_frame_lower = tk.Frame(self)
         cancel_button = tk.Button(button_frame_lower, text="Cancel", command=self.destroy)
@@ -40,7 +40,10 @@ class AddPortsWindow(tk.Toplevel):
         self.temp_container_port = ''
         self.temp_host_port = ''
         
-    def add_ports(self):
+    def insert_into_list(self, value):
+        self.ports_list.insert(tk.END, value)
+    
+    def add_ports(self, grandparent):
         self.temp_container_port = ''
         self.temp_host_port = ''
         def get_container_port(value):
@@ -49,14 +52,14 @@ class AddPortsWindow(tk.Toplevel):
         def get_host_port(value):
             if value != '':
                 self.temp_host_port = value
-        container_port_window = InsertValueWindow(self, "Enter container port", "Enter container port: ", get_container_port)
-        container_port_window.grab_set()
-        host_port_window = InsertValueWindow(self, "Enter host port", "Enter host port: ", get_host_port)
+#        container_port_window = InsertValueWindow(self, "Enter container port", "Enter container port: ", get_container_port, grandparent.screen_width/2, grandparent.screen_height/2)
+#        container_port_window.grab_set()
+        host_port_window = InsertValueWindow(self, "Enter host port", "Enter host port: ", self.insert_into_list, grandparent.screen_width/2, grandparent.screen_height/2)
         host_port_window.grab_set()
         if self.temp_container_port != '':
             if self.temp_host_port == '':
                 self.temp_host_port = f"-{self.temp_container_port}"
-            self.env_variables_list.insert(tk.END, f"{self.temp_host_port}={self.temp_container_port}")
+            self.ports_list.insert(tk.END, f"{self.temp_host_port}={self.temp_container_port}")
             self.ports[self.temp_host_port] = self.temp_container_port
             
     def delete_ports(self):
