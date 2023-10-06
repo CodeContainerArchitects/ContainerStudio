@@ -12,5 +12,5 @@ def _find_files(path, pattern):
 
 
 def _add_line_to_file(line, path_to_file):
-    with open(path_to_file, "w") as f:
-        f.write(line)
+    with open(path_to_file, "a") as f:
+        f.write(line + '\n')
