@@ -2,11 +2,11 @@ import tkinter as tk
 
 
 class UnknownPackagesFoundWindow(tk.Toplevel):
-    def __init__(self, parent, unknown_packages, callback_function):
+    def __init__(self, parent, unknown_packages):
         super().__init__(parent)
 
         # variables
-        self.callback_function = callback_function
+        self.parent = parent
 
         # window properties
         self.title("Unknown packages")
@@ -41,5 +41,5 @@ class UnknownPackagesFoundWindow(tk.Toplevel):
         chosen_packages = []
         for i in self.list_of_packages.curselection():
             chosen_packages.append(self.list_of_packages.get(i))
-        self.callback_function(chosen_packages)
+        self.parent.add_to_apt_package_list(chosen_packages)
         self.destroy()
