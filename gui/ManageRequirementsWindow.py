@@ -65,9 +65,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         result = _find_files(path=self.directory, pattern=re.compile(r".*requirements.*"))
 
         # delete comment if it exists
-        if self.list_of_requirements.size() > 0:
-            if "No requirements files found" in self.list_of_requirements.get(0):
-                self.list_of_requirements.delete(0, tk.END)
+        self.delete_no_files_found_comment()
 
         if len(result) == 0 and self.list_of_requirements.size() == 0:
             self.list_of_requirements.insert(tk.END, "No requirements files found")
@@ -77,9 +75,15 @@ class ManageRequirementsWindow(tk.Toplevel):
                     self.list_of_requirements.insert(tk.END, file)
 
     def add_to_list_requirements(self, value):
-        if value not in self.list_of_requirements.get(0, tk.END):
+        self.delete_no_files_found_comment()
+        if os.path.relpath(value, start=self.directory) not in self.list_of_requirements.get(0, tk.END):
             value = os.path.relpath(value, start=self.directory)
             self.list_of_requirements.insert(tk.END, value)
+
+    def delete_no_files_found_comment(self):
+        if self.list_of_requirements.size() > 0:
+            if "No requirements files found" in self.list_of_requirements.get(0):
+                self.list_of_requirements.delete(0, tk.END)
 
     def add_requirements_manual(self):
         TreeRequirementsWindow(parent=self)
@@ -90,10 +94,7 @@ class ManageRequirementsWindow(tk.Toplevel):
                 module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name)
                 _, _, self.apt_packages, self.not_known_packages = module_searcher.get_modules()
 
-                # delete comment "no requirements files" when it is in a list
-                if self.list_of_requirements.size() > 0:
-                    if "No requirements files found" in self.list_of_requirements.get(0):
-                        self.list_of_requirements.delete(0, tk.END)
+                self.delete_no_files_found_comment()
 
                 self.list_of_requirements.insert(tk.END, file_name)
                 if len(self.not_known_packages) != 0:
