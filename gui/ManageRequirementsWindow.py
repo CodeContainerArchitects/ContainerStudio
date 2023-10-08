@@ -76,9 +76,6 @@ class ManageRequirementsWindow(tk.Toplevel):
                 if file not in self.list_of_requirements.get(0, tk.END):
                     self.list_of_requirements.insert(tk.END, file)
 
-    def add_to_apt_package_list(self, value):
-        self.apt_packages.extend(value)
-
     def add_to_list_requirements(self, value):
         if value not in self.list_of_requirements.get(0, tk.END):
             value = os.path.relpath(value, start=self.directory)

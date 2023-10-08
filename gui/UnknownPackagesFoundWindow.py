@@ -41,5 +41,5 @@ class UnknownPackagesFoundWindow(tk.Toplevel):
         chosen_packages = []
         for i in self.list_of_packages.curselection():
             chosen_packages.append(self.list_of_packages.get(i))
-        self.parent.add_to_apt_package_list(chosen_packages)
+        self.parent.apt_packages.extend(chosen_packages)
         self.destroy()
