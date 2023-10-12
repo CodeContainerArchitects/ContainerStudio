@@ -3,6 +3,7 @@ import tkinter as tk
 from ModuleSearcher import ModuleSearcher
 from createUtils.common_utils import _find_files
 from gui.EntryWindow import EntryWindow
+from gui.PipAptPackageWindow import PipAptPackageWindow
 from gui.TreeRequirementsWindow import TreeRequirementsWindow
 
 import os
@@ -17,6 +18,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         # variables
         self.file_names = None
         self.apt_packages = []
+        self.apt_pip_packages = []
         self.chosen_requirements = None
         self.callback = set_chosen_requirements
 
@@ -91,11 +93,12 @@ class ManageRequirementsWindow(tk.Toplevel):
         def callback_create_requirements(file_name):
             if file_name != '':
                 module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name)
-                _, _, self.apt_packages, self.not_known_packages = module_searcher.get_modules()
+                _, _, self.apt_packages, self.not_known_packages, self.apt_pip_packages = module_searcher.get_modules()
 
                 self.delete_no_files_found_comment()
-
                 self.list_of_requirements.insert(tk.END, file_name)
+                if len(self.apt_pip_packages) != 0:
+                    PipAptPackageWindow(parent=self, path=os.path.join(self.directory, file_name))
                 if len(self.not_known_packages) != 0:
                     UnknownPackagesFoundWindow(parent=self, unknown_packages=self.not_known_packages)
         entry_window = EntryWindow(self, parent.projectTree.get_working_directory(), callback_create_requirements)

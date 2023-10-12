@@ -12,6 +12,7 @@ class ModuleSearcher:
         self.requirements_file_name = requirements_file_name
         self.path_to_requirements_file = os.path.join(self.path_to_project, self.requirements_file_name)
         self.apt_modules = []
+        self.apt_pip_modules = []
         self.not_known_modules = []
 
     def get_modules(self):
@@ -19,13 +20,14 @@ class ModuleSearcher:
             subprocess.run(["pipreqs", "--savepath", self.path_to_requirements_file, f"{self.path_to_project}"])
             self._find_subprocess()
             self._find_os()
-            return [os.path.relpath(self.path_to_requirements_file, start=self.path_to_project)], [self.requirements_file_name], self.apt_modules, self.not_known_modules
+            return [os.path.relpath(self.path_to_requirements_file, start=self.path_to_project)], [self.requirements_file_name], self.apt_modules, self.not_known_modules, self.apt_pip_modules
         except FileNotFoundError:
             print("There is no such file or directory")
         except subprocess.CalledProcessError as e:
             print("Error: ", e)
 
-    def _find_alias_and_functions(self, name, file_content):
+    @staticmethod
+    def _find_alias_and_functions(name, file_content):
         alias = ''
         functions = []
         for line in file_content:
@@ -43,7 +45,9 @@ class ModuleSearcher:
                 subprocess_result = subprocess.run(['pip', 'install', command, '--dry-run'])
             except subprocess.CalledProcessError as e:
                 print("something went wrong")
-            if subprocess_result.returncode == 0:
+            if subprocess_result.returncode == 0 and command in apt_packages.values():
+                self.apt_pip_modules.append(command)
+            elif subprocess_result.returncode == 0:
                 _add_line_to_file(line=command, path_to_file=self.path_to_requirements_file)
             else:
                 # check if apt-module
@@ -92,6 +96,7 @@ class ModuleSearcher:
                             command = ''
                             # subprocess or subprocess alias
                             if (f'{subprocess_alias}.run(["' in line
+                                    or f'{subprocess_alias}.run("' in line
                                     or f'{subprocess_alias}.call(["' in line
                                     or f'{subprocess_alias}.call("' in line
                                     or f'{subprocess_alias}.check_call(["' in line
@@ -104,6 +109,7 @@ class ModuleSearcher:
                                     or f'{subprocess_alias}.getoutput("' in line):
                                 command = line.split('"')[1].replace('\n', '').split(' ')[0]
                             elif (f"{subprocess_alias}.run(['" in line
+                                  or f"{subprocess_alias}.run('" in line
                                   or f"{subprocess_alias}.call(['" in line
                                   or f"{subprocess_alias}.call('" in line
                                   or f"{subprocess_alias}.check_call(['" in line
