@@ -22,8 +22,9 @@ class CoreApp:
         self.healthchecks = []
         self.images = []
         self.all_commands = []
-        self.chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
-        self.chosen_apt_packages = [apt_packages["curl"], apt_packages["vim"]]
+        self.chosen_pip_packages = []
+        self.chosen_apt_packages = []
+        self.subprocess_apt_packages = []
         self.project_root_dir = ""
         self.dockerfile_filename = ""
         self.chosen_requirements = []

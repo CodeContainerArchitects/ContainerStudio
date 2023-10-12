@@ -88,7 +88,7 @@ class App(tk.Tk):
     def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
         self.coreApp.set_requirements_files_names(file_names)
-        self.coreApp.add_apt_package(apt_packages)
+        self.coreApp.subprocess_apt_packages = apt_packages
 
     def open_manage_requirements_window(self):
         manage_requirements_window = ManageRequirementsWindow(self, self.set_chosen_requirements)
