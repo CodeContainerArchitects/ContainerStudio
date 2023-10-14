@@ -141,4 +141,5 @@ apt_packages = {"git": "git",
     "ffmpeg": "ffmpeg",
     "audacity": "audacity",
     "darktable": "darktable",
-    "krita": "krita",}
+    "krita": "krita",
+    "sed": "sed",}
