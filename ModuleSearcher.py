@@ -3,7 +3,7 @@ import string
 import subprocess
 
 from createUtils.common_utils import _add_line_to_file
-from createUtils.package_listing import apt_packages
+from createUtils.package_listing import apt_packages, build_in_packages
 
 
 class ModuleSearcher:
@@ -39,7 +39,7 @@ class ModuleSearcher:
         return alias, functions
 
     def _analyze_command(self, command):
-        if command != '':
+        if command != '' and command not in build_in_packages:
             subprocess_result = 1
             try:
                 subprocess_result = subprocess.run(['pip', 'install', command, '--dry-run'])
