@@ -42,4 +42,12 @@ RUN pip install -r {{ file_names[i] }}
 {{ command }}
 {% endfor %}
 
+{% for key, value in env_variables.items() %}
+ENV {{ key }}={{ value }}
+{% endfor %}
+
+{% for host_port, container_port in ports.items() %}
+EXPOSE {{ container_port }}
+{% endfor %}
+
 CMD ["bash"]
