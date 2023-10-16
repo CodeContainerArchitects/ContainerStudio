@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from gui.attributes.InsertValueWindow import InsertValueWindow
+from gui.attributes.InsertDoubleValueWindow import InsertDoubleValueWindow
 
 class AddPortsWindow(tk.Toplevel):
     def __init__(self, parent, grandparent):
@@ -34,39 +34,41 @@ class AddPortsWindow(tk.Toplevel):
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         
         self.ports = grandparent.coreApp.get_expose_ports()
-        for host_port, container_port in self.ports:
-            self.ports_list.insert(tk.END, f"{host_port}={container_port}")
-            
-        self.temp_container_port = ''
-        self.temp_host_port = ''
+        for host_port, container_port in self.ports.items():
+            if host_port == f"-{container_port}":
+                self.ports_list.insert(tk.END, f":{container_port}")
+            else:
+                self.ports_list.insert(tk.END, f"{host_port}:{container_port}")
         
-    def insert_into_list(self, value):
-        self.ports_list.insert(tk.END, value)
+    def insert_into_list(self, host_port, container_port):
+        if container_port == "":
+            tk.messagebox.showerror("Error", "Container port cannot be empty!")
+            return
+        if host_port in self.ports:
+            tk.messagebox.showerror("Error", "This port on host is already taken!")
+            return
+        if container_port in self.ports.values():
+            tk.messagebox.showerror("Error", "This port in container is already exposed!")
+            return
+        self.ports_list.insert(tk.END, f"{host_port}:{container_port}")
+        if host_port == "":
+            host_port = f"-{container_port}"
+        self.ports[host_port] = container_port
     
     def add_ports(self, grandparent):
-        self.temp_container_port = ''
-        self.temp_host_port = ''
-        def get_container_port(value):
-            if value != '':
-                self.temp_container_port = value
-        def get_host_port(value):
-            if value != '':
-                self.temp_host_port = value
-#        container_port_window = InsertValueWindow(self, "Enter container port", "Enter container port: ", get_container_port, grandparent.screen_width/2, grandparent.screen_height/2)
-#        container_port_window.grab_set()
-        host_port_window = InsertValueWindow(self, "Enter host port", "Enter host port: ", self.insert_into_list, grandparent.screen_width/2, grandparent.screen_height/2)
+        host_port_window = InsertDoubleValueWindow(self, "Enter port values", "Enter host port: ", "Enter container port", self.insert_into_list, grandparent.screen_width/2, grandparent.screen_height/2)
         host_port_window.grab_set()
-        if self.temp_container_port != '':
-            if self.temp_host_port == '':
-                self.temp_host_port = f"-{self.temp_container_port}"
-            self.ports_list.insert(tk.END, f"{self.temp_host_port}={self.temp_container_port}")
-            self.ports[self.temp_host_port] = self.temp_container_port
             
     def delete_ports(self):
         selected_ports = self.ports_list.curselection()
         if selected_ports:
             port_index = selected_ports[0]
             if port_index or port_index == 0:
+                list_item = self.ports_list.get(port_index)
+                host_port = list_item.split(':')[0]
+                if host_port == "":
+                    host_port = f"-{list_item.split(':')[1]}"
+                self.ports.pop(host_port)
                 self.ports_list.delete(port_index)
                 
     def apply_ports(self, grandparent):
