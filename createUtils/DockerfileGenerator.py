@@ -37,6 +37,8 @@ class DockerfileGenerator:
                                 file_names=self.coreApp.requirements_files_names,
                                 ranges=len(self.coreApp.chosen_requirements),
                                 copy_folder_to_dockerfile=copy_folder_to_dockerfile,
+                                env_variables=self.coreApp.env_variables,
+                                ports=self.coreApp.expose_ports,
                                 all_commands=self.coreApp.all_commands)
 
         filename = "Dockerfile"

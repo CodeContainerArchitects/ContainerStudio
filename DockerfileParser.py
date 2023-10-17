@@ -85,7 +85,9 @@ class DockerfileParser:
                         self.coreApp.all_commands.append(whole_command)
                         self.coreApp.labels.append(whole_command)
                     if 'EXPOSE' in command:
-                        self.coreApp.expose_ports.append(whole_command)
+                        container_port = whole_command.split()[1]
+                        host_port = f"-{container_port}"
+                        self.coreApp.expose_ports[host_port] = container_port
                         self.coreApp.all_commands.append(whole_command)
                     if 'USER' in command:
                         self.coreApp.users.append(whole_command)
@@ -127,7 +129,9 @@ class DockerfileParser:
                             self.coreApp.run_commands.append(whole_command)
                             self.coreApp.all_commands.append(whole_command)
                     if 'ENV' in command:
-                        self.coreApp.env_variables.append(whole_command)
+                        key = whole_command.split()[1].split('=')[0]
+                        value = whole_command.split()[1].split('=')[1]
+                        self.coreApp.env_variables[key] = value
                         self.coreApp.all_commands.append(whole_command)
                     if 'COPY' in command:
                         files.append(whole_command)

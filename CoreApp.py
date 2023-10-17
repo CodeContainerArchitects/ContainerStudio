@@ -8,8 +8,8 @@ class CoreApp:
             "OS_image_version": "latest"
         }
         self.run_commands = []
-        self.env_variables = []
-        self.expose_ports = []
+        self.env_variables = {}
+        self.expose_ports = {}
         self.users = []
         self.arguments = []
         self.entrypoint_commands = []
