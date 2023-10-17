@@ -1,10 +1,10 @@
 import tkinter as tk
 from ProjectTree import ProjectTree
 from createUtils.DockerfileGenerator import DockerfileGenerator
-from createUtils.package_listing import pip_packages, apt_packages
 from gui.TreeWindow import TreeWindow
 from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
+from gui.PackageListWindow import PackageListWindow
 
 class App(tk.Tk):
     def __init__(self, coreApp):
@@ -43,17 +43,7 @@ class App(tk.Tk):
         # manage requirements_button
         self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
         
-        pip_packages_label = tk.Label(buttonframe, text="Select pip packages")
-        pip_packages_listvar = tk.StringVar(value=list(pip_packages.values()))
-        self.pip_packages_listbox = tk.Listbox(buttonframe, listvariable=pip_packages_listvar, height=5, selectmode='multiple', exportselection=0)
-        
-        self.pip_packages_listbox.bind('<<ListboxSelect>>', self.set_chosen_pip_packages)
-        
-        apt_packages_label = tk.Label(buttonframe, text="Select apt packages")
-        apt_packages_listvar = tk.StringVar(value=list(apt_packages.values()))
-        self.apt_packages_listbox = tk.Listbox(buttonframe, listvariable=apt_packages_listvar, height=5, selectmode='multiple', exportselection=0)
-        
-        self.apt_packages_listbox.bind('<<ListboxSelect>>', self.set_chosen_apt_packages)
+        self.package_list_button = tk.Button(buttonframe, text="Select apt and pip packages", state=tk.DISABLED, command=lambda: self.open_packages_list_window())
         
         self.send_button = tk.Button(buttonframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
         exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
@@ -62,27 +52,13 @@ class App(tk.Tk):
         buttonframe.pack(expand=True)
         mainframe.pack_propagate(0)
         
-        
         select_folder_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.folder_label.pack(pady=self.padding, side=tk.TOP)
         self.project_tree_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.manage_requirements_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        pip_packages_label.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.pip_packages_listbox.pack(pady=self.padding, side=tk.TOP, fill='x')
-        apt_packages_label.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.apt_packages_listbox.pack(pady=self.padding, side=tk.TOP, fill='x')
+        self.package_list_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.send_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         exit_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        
-    def set_chosen_pip_packages(self, event):
-        selected_pip_indices = self.pip_packages_listbox.curselection()
-        chosen_pip_packages = [self.pip_packages_listbox.get(index) for index in selected_pip_indices]
-        self.coreApp.set_chosen_pip_packages(chosen_pip_packages)
-
-    def set_chosen_apt_packages(self, event):
-        selected_apt_indices = self.apt_packages_listbox.curselection()
-        chosen_apt_packages = [self.apt_packages_listbox.get(index) for index in selected_apt_indices]
-        self.coreApp.set_chosen_apt_packages(chosen_apt_packages)
         
     def open_tree_window(self):
         tree_window = TreeWindow(self)
@@ -97,16 +73,21 @@ class App(tk.Tk):
         manage_requirements_window = ManageRequirementsWindow(self, self.get_chosen_requirements)
         manage_requirements_window.grab_set()
         
+    def open_packages_list_window(self):
+        packages_list_window = PackageListWindow(self)
+        packages_list_window.grab_set()
+        
     def select_working_directory(self):
         self.projectTree.select_working_directory()
         working_directory = self.projectTree.get_working_directory()
         self.coreApp.set_project_root_dir(working_directory)
         self.folder_label['text'] = working_directory
         
-        if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED and self.manage_requirements_button['state'] == tk.DISABLED and self.send_button['state'] == tk.DISABLED:
+        if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED and self.manage_requirements_button['state'] == tk.DISABLED and self.send_button['state'] == tk.DISABLED and self.package_list_button['state'] == tk.DISABLED:
             self.project_tree_button['state'] = tk.NORMAL
             self.manage_requirements_button['state'] = tk.NORMAL
             self.send_button['state'] = tk.NORMAL
+            self.package_list_button['state'] = tk.NORMAL
             
     def open_generate(self):
         self.generate_window = GeneratorWindow(self)
