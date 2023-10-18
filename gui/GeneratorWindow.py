@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from DockerfileParser import DockerfileParser
 from createUtils.DockerfileGenerator import DockerfileGenerator
+from createUtils.DockerComposeGenerator import DockerComposeGenerator
 import os
 import re
 from createUtils.common_utils import _find_files
@@ -30,7 +31,7 @@ class GeneratorWindow(tk.Toplevel):
         
         button_frame_middle = tk.Frame(self)
         create_dockerfile_button = tk.Button(button_frame_middle, text="Create Dockerfile", command=lambda: self.create_dockerfile(parent))
-        create_compose_button = tk.Button(button_frame_middle, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose())
+        self.create_compose_button = tk.Button(button_frame_middle, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose(parent))
         
         button_frame_lower = tk.Frame(self)
         cancel_button = tk.Button(button_frame_lower, text="Exit", command=self.destroy)
@@ -42,7 +43,7 @@ class GeneratorWindow(tk.Toplevel):
         label_for_list_of_dockerfiles.pack(side=tk.TOP, fill='x')
         self.list_of_dockerfiles.pack(side=tk.LEFT, pady=self.padding, fill='both', expand=True)
         create_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        create_compose_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        self.create_compose_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         
     def search_for_dockerfile(self, parent):
@@ -76,6 +77,8 @@ class GeneratorWindow(tk.Toplevel):
         if generator.files_not_found:
             filesNotFoundWindow = FilesNotFoundWindow(self, generator.files_not_found)
             filesNotFoundWindow.grab_set()
+        self.create_compose_button.config(state=tk.NORMAL)
     
-    def create_compose(self):
-        pass
+    def create_compose(self, parent):
+        generator = DockerComposeGenerator(parent.coreApp, "test-project" ,parent.projectTree)
+        generator.generate_compose()
