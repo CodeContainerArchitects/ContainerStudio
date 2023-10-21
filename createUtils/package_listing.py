@@ -142,3 +142,8 @@ apt_packages = {"git": "git",
     "audacity": "audacity",
     "darktable": "darktable",
     "krita": "krita",}
+
+dummy_version = ['1.1.1', '1.1.2', '1.1.3', '2.0']
+
+def get_package_versions(mode, package_name):
+    return dummy_version
