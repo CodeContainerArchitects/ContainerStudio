@@ -6,7 +6,7 @@ class PackageListWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         
-        self.window_width = 600
+        self.window_width = 800
         self.window_height = 400
         self.padding = 10
         self.screen_width = self.winfo_screenwidth()
