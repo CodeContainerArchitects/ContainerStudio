@@ -1,5 +1,6 @@
 import tkinter as tk
 from ProjectTree import ProjectTree
+from gui.BasicConfigurationWindow import BasicConfigurationWindow
 from gui.TreeWindow import TreeWindow
 from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
@@ -41,7 +42,9 @@ class App(tk.Tk):
         
         # opens a new window
         self.project_tree_button = tk.Button(buttonframe, text="Show project tree", state=tk.DISABLED, command=lambda: self.open_tree_window())
-        # manage requirements_button
+
+        self.basic_configuration_button = tk.Button(buttonframe, text="Basic configuration", state=tk.DISABLED, command=lambda: self.open_basic_configuration_window())
+
         self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
         
         self.package_list_button = tk.Button(buttonframe, text="Select apt and pip packages", state=tk.DISABLED, command=lambda: self.open_packages_list_window())
@@ -58,6 +61,7 @@ class App(tk.Tk):
         select_folder_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.folder_label.pack(pady=self.padding, side=tk.TOP)
         self.project_tree_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        self.basic_configuration_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.manage_requirements_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.package_list_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.add_attributes_button.pack(pady=self.padding, side=tk.TOP, fill='x')
@@ -68,6 +72,10 @@ class App(tk.Tk):
         tree_window = TreeWindow(self)
         # grab_set prevents user from interacting with main window and makes the tree window receive events
         tree_window.grab_set()
+
+    def open_basic_configuration_window(self):
+        basic_confguration_window = BasicConfigurationWindow(self)
+        # basic_confguration_window.grab_set()
 
     def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages, requirements_pip_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
@@ -91,6 +99,7 @@ class App(tk.Tk):
         
         if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED and self.manage_requirements_button['state'] == tk.DISABLED and self.send_button['state'] == tk.DISABLED and self.package_list_button['state'] == tk.DISABLED:
             self.project_tree_button['state'] = tk.NORMAL
+            self.basic_configuration_button['state'] = tk.NORMAL
             self.manage_requirements_button['state'] = tk.NORMAL
             self.send_button['state'] = tk.NORMAL
             self.package_list_button['state'] = tk.NORMAL

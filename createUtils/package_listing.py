@@ -209,3 +209,7 @@ build_in_packages = [
     "who",
     "whoami"
 ]
+
+python_versions = ['3.12', '3.11', '3.10']
+
+os_versions = ['ubuntu 22', 'debian', 'ubuntu 20.04']
