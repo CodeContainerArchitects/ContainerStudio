@@ -5,6 +5,7 @@ from createUtils.package_listing import apt_packages, pip_packages
 from DockerfileParser import DockerfileParser
 from CoreApp import CoreApp
 
+
 class DockerfileGenerator:
     def __init__(self, coreApp, projectTree):
         self.coreApp = coreApp
@@ -26,12 +27,13 @@ class DockerfileGenerator:
         if self.dockerfile_path:
             dockerfile_path = os.path.join(self.coreApp.get_project_root_dir(), self.dockerfile_path)
             parser.parse_dockerfile(dockerfile_path=dockerfile_path,
-                            files=self.dockerfile_files,
-                            files_not_found=self.files_not_found)
+                                    files=self.dockerfile_files,
+                                    files_not_found=self.files_not_found)
         
         res_apt_packages = self.coreApp.chosen_apt_packages | self.coreApp.subprocess_apt_packages
         content = self.template.render(OS_image=self.coreApp.OS_data["OS_image"],
                                 OS_image_version=self.coreApp.OS_data["OS_image_version"],
+                                python_version=self.coreApp.python_version,
                                 packages_to_install=self.coreApp.chosen_pip_packages,
                                 apt_get_packages=res_apt_packages,
                                 use_requirements=self.coreApp.chosen_requirements,
