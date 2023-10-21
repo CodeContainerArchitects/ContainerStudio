@@ -1,9 +1,10 @@
 import os
 from tkinter import END
 
+
 def _find_files(path, pattern):
     matching_files = []
-    for root, dirs ,files in os.walk(path):
+    for root, dirs, files in os.walk(path):
         for file in files:
             if pattern.match(file):
                 relative_path = os.path.relpath(os.path.join(root, file), start=path)
@@ -15,3 +16,7 @@ def update_list(listbox, data):
         
         for item in data:
             listbox.insert(END, item)
+
+def _add_line_to_file(line, path_to_file):
+    with open(path_to_file, "a") as f:
+        f.write(line + '\n')

@@ -1,10 +1,11 @@
 import tkinter as tk
 from ProjectTree import ProjectTree
-from createUtils.DockerfileGenerator import DockerfileGenerator
 from gui.TreeWindow import TreeWindow
 from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
 from gui.PackageListWindow import PackageListWindow
+from gui.AddAttributesWindow import AddAttributesWindow
+
 
 class App(tk.Tk):
     def __init__(self, coreApp):
@@ -36,7 +37,7 @@ class App(tk.Tk):
         
         self.folder_name = "No folder selected."
         
-        self.folder_label = tk.Label(buttonframe, text=self.folder_name, justify=tk.LEFT, width=20, padx = self.padding)
+        self.folder_label = tk.Label(buttonframe, text=self.folder_name, justify=tk.LEFT, width=25, padx = self.padding)
         
         # opens a new window
         self.project_tree_button = tk.Button(buttonframe, text="Show project tree", state=tk.DISABLED, command=lambda: self.open_tree_window())
@@ -46,6 +47,8 @@ class App(tk.Tk):
         self.package_list_button = tk.Button(buttonframe, text="Select apt and pip packages", state=tk.DISABLED, command=lambda: self.open_packages_list_window())
         
         self.send_button = tk.Button(buttonframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
+        
+        self.add_attributes_button = tk.Button(buttonframe, text = "Customize Dockerfile Attributes", state=tk.DISABLED, command=lambda:self.open_add_attributes())
         exit_button = tk.Button(buttonframe, text = "Exit", command = self.destroy)
         
         mainframe.pack(side=tk.TOP)
@@ -57,6 +60,7 @@ class App(tk.Tk):
         self.project_tree_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.manage_requirements_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.package_list_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        self.add_attributes_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         self.send_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         exit_button.pack(pady=self.padding, side=tk.TOP, fill='x')
         
@@ -65,12 +69,13 @@ class App(tk.Tk):
         # grab_set prevents user from interacting with main window and makes the tree window receive events
         tree_window.grab_set()
 
-    def get_chosen_requirements(self, chosen_requirements, file_names):
+    def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
         self.coreApp.set_requirements_files_names(file_names)
+        self.coreApp.subprocess_apt_packages = apt_packages
 
     def open_manage_requirements_window(self):
-        manage_requirements_window = ManageRequirementsWindow(self, self.get_chosen_requirements)
+        manage_requirements_window = ManageRequirementsWindow(self, self.set_chosen_requirements)
         manage_requirements_window.grab_set()
         
     def open_packages_list_window(self):
@@ -88,7 +93,12 @@ class App(tk.Tk):
             self.manage_requirements_button['state'] = tk.NORMAL
             self.send_button['state'] = tk.NORMAL
             self.package_list_button['state'] = tk.NORMAL
+            self.add_attributes_button['state'] = tk.NORMAL
             
     def open_generate(self):
         self.generate_window = GeneratorWindow(self)
         self.generate_window.grab_set()
+        
+    def open_add_attributes(self):
+        self.add_attributes_window = AddAttributesWindow(self)
+        self.add_attributes_window.grab_set()

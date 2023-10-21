@@ -1,5 +1,6 @@
 from createUtils.package_listing import apt_packages, pip_packages
 
+
 class CoreApp:
     def __init__(self):
         self.OS_data = {
@@ -7,8 +8,8 @@ class CoreApp:
             "OS_image_version": "latest"
         }
         self.run_commands = []
-        self.env_variables = []
-        self.expose_ports = []
+        self.env_variables = {}
+        self.expose_ports = {}
         self.users = []
         self.arguments = []
         self.entrypoint_commands = []
@@ -21,8 +22,9 @@ class CoreApp:
         self.healthchecks = []
         self.images = []
         self.all_commands = []
-        self.chosen_pip_packages = [pip_packages["numpy"], pip_packages["pandas"]]
-        self.chosen_apt_packages = [apt_packages["curl"], apt_packages["vim"]]
+        self.chosen_pip_packages = []
+        self.chosen_apt_packages = []
+        self.subprocess_apt_packages = []
         self.project_root_dir = ""
         self.dockerfile_filename = ""
         self.chosen_requirements = []
@@ -135,7 +137,6 @@ class CoreApp:
             self.chosen_pip_packages.append(value)
             
     def delete_chosen_pip_packages(self, values):
-        print(self.chosen_pip_packages)
         for value in values:
             if value in self.chosen_pip_packages:
                 self.chosen_pip_packages.remove(value)
@@ -155,6 +156,9 @@ class CoreApp:
         for value in values:
             if value in self.chosen_apt_packages:
                 self.chosen_apt_packages.remove(value)
+
+    def add_apt_package(self, value):
+        self.chosen_apt_packages.extend(value)
 
     def get_project_root_dir(self):
         return self.project_root_dir

@@ -75,7 +75,6 @@ class PackageListWindow(tk.Toplevel):
             chosen_packages_indices = self.pip_packages_listbox.curselection()
             chosen_packages = [self.pip_packages_listbox.get(index) for index in chosen_packages_indices]
             if chosen_packages:
-                print(chosen_packages)
                 self.parent.coreApp.delete_chosen_pip_packages(chosen_packages)
                 update_list(self.pip_packages_listbox, self.parent.coreApp.get_chosen_pip_packages())
         elif mode == 'apt':
