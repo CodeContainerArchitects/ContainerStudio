@@ -80,5 +80,5 @@ class GeneratorWindow(tk.Toplevel):
         self.create_compose_button.config(state=tk.NORMAL)
     
     def create_compose(self, parent):
-        generator = DockerComposeGenerator(parent.coreApp, "test-project" ,parent.projectTree)
+        generator = DockerComposeGenerator(parent.coreApp, "test-project", parent.projectTree)
         generator.generate_compose()

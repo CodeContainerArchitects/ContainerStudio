@@ -11,7 +11,7 @@ class DockerComposeGenerator:
         self.dockerfile_name = "Dockerfile"
         self.compose_name = "docker-compose.yml"
         self.compose_version = "3"
-        self.context = projectTree
+        self.context = projectTree.parent_dir
         self.restart = "always"
         
     def generate_compose(self):
