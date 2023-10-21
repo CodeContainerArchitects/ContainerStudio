@@ -51,8 +51,8 @@ class ModuleSearcher:
                 _add_line_to_file(line=command, path_to_file=self.path_to_requirements_file)
             else:
                 # check if apt-module
-                if command in apt_packages.values():
-                    self.apt_modules.append(command)
+                if command in apt_packages.keys():
+                    self.apt_modules[command] = "no version: "
                 else:
                     self.not_known_modules.append(command)
 

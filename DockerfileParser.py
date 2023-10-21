@@ -211,8 +211,8 @@ class DockerfileParser:
             packages.remove(packages[index])
         
         for package in packages:
-            if package not in apt_packages:
-                apt_packages.append(package)
+            if package not in apt_packages.keys():
+                apt_packages[package] = "no version: package from existing Dockerfile"
                 
         if packages:
             last_index = command.index(packages[-1])
@@ -273,8 +273,8 @@ class DockerfileParser:
                 packages.remove(word)
         
         for package in packages:
-            if package not in pip_packages:
-                pip_packages.append(package)
+            if package not in pip_packages.keys():
+                pip_packages[package] = "no version: package from existing Dockerfile"
                 
         if packages:
             last_index = command.index(packages[-1])

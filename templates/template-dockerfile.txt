@@ -20,15 +20,23 @@ RUN apt-get update \
         python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-{% for package in packages_to_install %}
-RUN pip3 install {{ package }}
+{% for name, version in packages_to_install.items() %}
+{% if "no version" in version %}
+RUN pip3 install {{ name }}
+{% else %}
+RUN pip3 install {{ name }}=={{ version }}
+{% endif %}
 {% endfor %}
 
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-{% for package in apt_get_packages %}
-        {{ package }} \
+{% for name, version in apt_get_packages.items() %}
+{% if "no version" in version %}
+        {{ name }} \
+{% else %}
+        {{ name }}={{ version }} \
+{% endif %}
 {% endfor %}
     && rm -rf /var/lib/apt/lists/*
 

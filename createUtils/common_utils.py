@@ -16,6 +16,12 @@ def update_list(listbox, data):
         
         for item in data:
             listbox.insert(END, item)
+            
+def update_list_dict(listbox, data):
+        listbox.delete(0, END)
+        
+        for name, version in data.items():
+            listbox.insert(END, f'{name} ({version})')
 
 def _add_line_to_file(line, path_to_file):
     with open(path_to_file, "a") as f:

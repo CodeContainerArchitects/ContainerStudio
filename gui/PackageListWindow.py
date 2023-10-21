@@ -1,5 +1,6 @@
 import tkinter as tk
 from createUtils.common_utils import update_list
+from createUtils.common_utils import update_list_dict
 from gui.PackageSearchWindow import PackageSearchWindow
 
 class PackageListWindow(tk.Toplevel):
@@ -29,11 +30,11 @@ class PackageListWindow(tk.Toplevel):
         
         pip_packages_label = tk.Label(pipframe, text="Selected pip packages")
         self.pip_packages_listbox = tk.Listbox(pipframe, height=10, width=45, selectmode='multiple')
-        update_list(self.pip_packages_listbox, self.parent.coreApp.get_chosen_pip_packages())
+        update_list_dict(self.pip_packages_listbox, self.parent.coreApp.get_chosen_pip_packages())
         
         apt_packages_label = tk.Label(aptframe, text="Selected apt packages")
         self.apt_packages_listbox = tk.Listbox(aptframe, height=10, width=45, selectmode='multiple')
-        update_list(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
+        update_list_dict(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
         
         add_pip_button = tk.Button(pipframe, text="Add pip package", command=lambda: self.add_package('pip'))
         add_apt_button = tk.Button(aptframe, text="Add apt package", command=lambda: self.add_package('apt'))
@@ -59,11 +60,11 @@ class PackageListWindow(tk.Toplevel):
     def add_package(self, mode):
         def callback_add_package(chosen_package, chosen_package_version):
             if mode == 'pip':
-                self.parent.coreApp.add_chosen_pip_package(chosen_package)
-                update_list(self.pip_packages_listbox, self.parent.coreApp.get_chosen_pip_packages())
+                self.parent.coreApp.add_chosen_pip_package(chosen_package, chosen_package_version)
+                update_list_dict(self.pip_packages_listbox, self.parent.coreApp.get_chosen_pip_packages())
             elif mode == 'apt':
-                self.parent.coreApp.add_chosen_apt_package(chosen_package)
-                update_list(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
+                self.parent.coreApp.add_chosen_apt_package(chosen_package, chosen_package_version)
+                update_list_dict(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
 
         package_search_window = PackageSearchWindow(self, mode, callback_add_package)
         package_search_window.grab_set()
@@ -76,10 +77,10 @@ class PackageListWindow(tk.Toplevel):
             chosen_packages = [self.pip_packages_listbox.get(index) for index in chosen_packages_indices]
             if chosen_packages:
                 self.parent.coreApp.delete_chosen_pip_packages(chosen_packages)
-                update_list(self.pip_packages_listbox, self.parent.coreApp.get_chosen_pip_packages())
+                update_list_dict(self.pip_packages_listbox, self.parent.coreApp.get_chosen_pip_packages())
         elif mode == 'apt':
             chosen_packages_indices = self.apt_packages_listbox.curselection()
             chosen_packages = [self.apt_packages_listbox.get(index) for index in chosen_packages_indices]
             if chosen_packages:
                 self.parent.coreApp.delete_chosen_apt_packages(chosen_packages)
-                update_list(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
+                update_list_dict(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())

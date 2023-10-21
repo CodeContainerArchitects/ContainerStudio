@@ -29,10 +29,11 @@ class DockerfileGenerator:
                             files=self.dockerfile_files,
                             files_not_found=self.files_not_found)
         
+        res_apt_packages = self.coreApp.chosen_apt_packages | self.coreApp.subprocess_apt_packages
         content = self.template.render(OS_image=self.coreApp.OS_data["OS_image"],
                                 OS_image_version=self.coreApp.OS_data["OS_image_version"],
                                 packages_to_install=self.coreApp.chosen_pip_packages,
-                                apt_get_packages=self.coreApp.chosen_apt_packages + self.coreApp.subprocess_apt_packages,
+                                apt_get_packages=res_apt_packages,
                                 use_requirements=self.coreApp.chosen_requirements,
                                 file_names=self.coreApp.requirements_files_names,
                                 ranges=len(self.coreApp.chosen_requirements),
