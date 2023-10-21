@@ -1,0 +1,21 @@
+version: {{ compose_version }}
+services:
+    {{ project_name }}:
+        build:
+            context: {{ context }}
+            dockerfile: {{ dockerfile_name }}
+        {% if env_variables %}
+        environment:
+            {% for key, value in env_variables.items() %}
+            {{ key }}={{ value }}
+            {% endfor %}
+        {% endif %}
+        {% if ports %}
+        ports:
+            {% for host_port, container_port in ports.items() %}
+            {% if '-' not in host_port %}
+            {{ host_port }}:{{ container_port }}
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+        restart: {{ restart }}
