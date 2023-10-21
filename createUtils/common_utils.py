@@ -1,4 +1,5 @@
 import os
+from tkinter import END
 
 
 def _find_files(path, pattern):
@@ -10,6 +11,11 @@ def _find_files(path, pattern):
                 matching_files.append(relative_path)
     return matching_files
 
+def update_list(listbox, data):
+        listbox.delete(0, END)
+        
+        for item in data:
+            listbox.insert(END, item)
 
 def _add_line_to_file(line, path_to_file):
     with open(path_to_file, "a") as f:

@@ -81,3 +81,4 @@ class TreeWindow(tk.Toplevel):
     def add_files(self, parent, mode):
         parent.projectTree.select_files(parent, mode)
         self.update_tree()
+        

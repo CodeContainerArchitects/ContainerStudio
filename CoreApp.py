@@ -131,12 +131,31 @@ class CoreApp:
 
     def set_chosen_pip_packages(self, value):
         self.chosen_pip_packages = value
+        
+    def add_chosen_pip_package(self, value):
+        if value not in self.chosen_pip_packages:
+            self.chosen_pip_packages.append(value)
+            
+    def delete_chosen_pip_packages(self, values):
+        for value in values:
+            if value in self.chosen_pip_packages:
+                self.chosen_pip_packages.remove(value)
+                
 
     def get_chosen_apt_packages(self):
         return self.chosen_apt_packages
 
-    def set_chosen_apt_packages(self, value):
+    def set_chosen_apt_package(self, value):
         self.chosen_apt_packages = value
+        
+    def add_chosen_apt_package(self, value):
+        if value not in self.chosen_apt_packages:
+            self.chosen_apt_packages.append(value)
+            
+    def delete_chosen_apt_packages(self, values):
+        for value in values:
+            if value in self.chosen_apt_packages:
+                self.chosen_apt_packages.remove(value)
 
     def add_apt_package(self, value):
         self.chosen_apt_packages.extend(value)
