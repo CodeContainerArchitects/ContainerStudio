@@ -8,7 +8,7 @@ class PackageSearchWindow(tk.Toplevel):
         super().__init__(parent)
         
         self.window_width = 800
-        self.window_height = 370
+        self.window_height = 500
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
         self.padding = 5
