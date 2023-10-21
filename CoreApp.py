@@ -25,6 +25,7 @@ class CoreApp:
         self.chosen_pip_packages = []
         self.chosen_apt_packages = []
         self.subprocess_apt_packages = []
+        self.requirements_pip_packages = []
         self.project_root_dir = ""
         self.dockerfile_filename = ""
         self.chosen_requirements = []
