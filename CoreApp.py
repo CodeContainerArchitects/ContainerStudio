@@ -25,6 +25,7 @@ class CoreApp:
         self.chosen_pip_packages = []
         self.chosen_apt_packages = []
         self.subprocess_apt_packages = []
+        self.requirements_pip_packages = []
         self.project_root_dir = ""
         self.dockerfile_filename = ""
         self.chosen_requirements = []
@@ -127,7 +128,7 @@ class CoreApp:
         self.all_commands = value
 
     def get_chosen_pip_packages(self):
-        return self.chosen_pip_packages
+        return self.chosen_pip_packages + self.requirements_pip_packages
 
     def set_chosen_pip_packages(self, value):
         self.chosen_pip_packages = value
@@ -143,7 +144,7 @@ class CoreApp:
                 
 
     def get_chosen_apt_packages(self):
-        return self.chosen_apt_packages
+        return self.chosen_apt_packages + self.subprocess_apt_packages
 
     def set_chosen_apt_package(self, value):
         self.chosen_apt_packages = value

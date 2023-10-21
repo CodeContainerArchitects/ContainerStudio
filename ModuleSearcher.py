@@ -17,7 +17,7 @@ class ModuleSearcher:
 
     def get_modules(self):
         try:
-            subprocess.run(["pipreqs", "--savepath", self.path_to_requirements_file, f"{self.path_to_project}"])
+            subprocess.run(["pipreqs", "--savepath", self.path_to_requirements_file, f"{self.path_to_project}", "--mode", "no-pin"])
             self._find_subprocess()
             self._find_os()
             return [os.path.relpath(self.path_to_requirements_file, start=self.path_to_project)], [self.requirements_file_name], self.apt_modules, self.not_known_modules, self.apt_pip_modules

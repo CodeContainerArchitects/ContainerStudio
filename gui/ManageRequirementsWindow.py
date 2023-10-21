@@ -5,9 +5,8 @@ from createUtils.common_utils import _find_files
 from gui.EntryWindow import EntryWindow
 from gui.PipAptPackageWindow import PipAptPackageWindow
 from gui.TreeRequirementsWindow import TreeRequirementsWindow
-
+from pip_requirements_parser import RequirementsFile
 import os
-
 from gui.UnknownPackagesFoundWindow import UnknownPackagesFoundWindow
 
 
@@ -19,7 +18,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         self.file_names = None
         self.apt_packages = []
         self.apt_pip_packages = []
-        self.chosen_requirements = None
+        self.chosen_requirements = []
         self.callback = set_chosen_requirements
 
         # window properties
@@ -106,11 +105,22 @@ class ManageRequirementsWindow(tk.Toplevel):
 
     def apply(self):
         self.chosen_requirements = []
+        requirements_pip_packages = []
         for i in self.list_of_requirements.curselection():
             self.chosen_requirements.append(self.list_of_requirements.get(i))
         self.file_names = [os.path.split(file)[-1] for file in self.chosen_requirements]
 
         # remove duplicates
         self.apt_packages = list(set(self.apt_packages))
-        self.callback(self.chosen_requirements, self.file_names, self.apt_packages)
+
+        # parse choosen requirements
+        for r in self.chosen_requirements:
+            rf = RequirementsFile.from_file(os.path.join(self.directory, r))
+            for req in rf.requirements:
+                d = req.to_dict()
+                requirements_pip_packages.append(d["name"])
+        print(requirements_pip_packages)
+
+        # give requirements_pip_packages to the main list
+        self.callback(self.chosen_requirements, self.file_names, self.apt_packages, requirements_pip_packages)
         self.destroy()
