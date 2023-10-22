@@ -30,6 +30,8 @@ class CoreApp:
         self.dockerfile_filename = ""
         self.chosen_requirements = []
         self.requirements_files_names = []
+        self.operating_systems = ""
+        self.python_version = ""
 
     def get_OS_data(self):
         return self.OS_data
@@ -186,3 +188,9 @@ class CoreApp:
 
     def set_requirements_files_names(self, value):
         self.requirements_files_names = value
+
+    def get_operating_system(self):
+        return self.operating_systems
+
+    def get_python_version(self):
+        return self.python_version
