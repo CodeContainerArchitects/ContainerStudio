@@ -69,10 +69,11 @@ class App(tk.Tk):
         # grab_set prevents user from interacting with main window and makes the tree window receive events
         tree_window.grab_set()
 
-    def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages):
+    def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages, requirements_pip_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
         self.coreApp.set_requirements_files_names(file_names)
         self.coreApp.subprocess_apt_packages = apt_packages
+        self.coreApp.requirements_pip_packages = requirements_pip_packages
 
     def open_manage_requirements_window(self):
         manage_requirements_window = ManageRequirementsWindow(self, self.set_chosen_requirements)
