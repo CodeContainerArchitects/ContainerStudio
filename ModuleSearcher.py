@@ -11,7 +11,7 @@ class ModuleSearcher:
         self.path_to_project = path_to_project
         self.requirements_file_name = requirements_file_name
         self.path_to_requirements_file = os.path.join(self.path_to_project, self.requirements_file_name)
-        self.apt_modules = []
+        self.apt_modules = {}
         self.apt_pip_modules = []
         self.not_known_modules = []
 
