@@ -150,7 +150,7 @@ dummy_version = ['1.1.1', '1.1.2', '1.1.3', '2.0']
 
 def get_package_versions(mode, package_name):
     if mode == "apt":
-        version = dummy_version
+        version = ["latest"]
     else:
         output = subprocess.check_output(f"pip index versions {package_name} | tail -1 | cut -d ':' -f 2", shell=True)
         version = output.decode().strip().split(", ")

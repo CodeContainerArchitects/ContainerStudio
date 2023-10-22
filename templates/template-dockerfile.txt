@@ -32,7 +32,7 @@ RUN pip3 install {{ name }}=={{ version }}
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
 {% for name, version in apt_get_packages.items() %}
-{% if "no version" in version %}
+{% if "latest" in version %}
         {{ name }} \
 {% else %}
         {{ name }}={{ version }} \
