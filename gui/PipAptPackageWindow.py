@@ -58,5 +58,5 @@ class PipAptPackageWindow(tk.Toplevel):
             if if_pip.get():
                 _add_line_to_file(line=item, path_to_file=self.path)
             if if_apt.get():
-                self.parent.apt_packages.append(item)
+                self.parent.apt_packages[item] = "no version: subprocess"
         self.destroy()

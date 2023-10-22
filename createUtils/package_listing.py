@@ -1,3 +1,5 @@
+import subprocess
+
 pip_packages = {
     'numpy': 'numpy',
     'pandas': 'pandas',
@@ -147,7 +149,12 @@ apt_packages = {"git": "git",
 dummy_version = ['1.1.1', '1.1.2', '1.1.3', '2.0']
 
 def get_package_versions(mode, package_name):
-    return dummy_version
+    if mode == "apt":
+        version = ["latest"]
+    else:
+        output = subprocess.check_output(f"pip index versions {package_name} | tail -1 | cut -d ':' -f 2", shell=True)
+        version = output.decode().strip().split(", ")
+    return version
 
 build_in_packages = [
     "chmod",

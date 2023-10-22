@@ -22,10 +22,10 @@ class CoreApp:
         self.healthchecks = []
         self.images = []
         self.all_commands = []
-        self.chosen_pip_packages = []
-        self.chosen_apt_packages = []
-        self.subprocess_apt_packages = []
-        self.requirements_pip_packages = []
+        self.chosen_pip_packages = {}
+        self.chosen_apt_packages = {}
+        self.subprocess_apt_packages = {}
+        self.requirements_pip_packages = {}
         self.project_root_dir = ""
         self.dockerfile_filename = ""
         self.chosen_requirements = []
@@ -128,35 +128,37 @@ class CoreApp:
         self.all_commands = value
 
     def get_chosen_pip_packages(self):
-        return self.chosen_pip_packages + self.requirements_pip_packages
+        return self.chosen_pip_packages | self.requirements_pip_packages
 
     def set_chosen_pip_packages(self, value):
         self.chosen_pip_packages = value
         
-    def add_chosen_pip_package(self, value):
-        if value not in self.chosen_pip_packages:
-            self.chosen_pip_packages.append(value)
+    def add_chosen_pip_package(self, name, version):
+        if name not in self.chosen_pip_packages.keys():
+            self.chosen_pip_packages[name] = version
             
     def delete_chosen_pip_packages(self, values):
         for value in values:
-            if value in self.chosen_pip_packages:
-                self.chosen_pip_packages.remove(value)
+            if value in self.chosen_pip_packages.keys():
+                self.chosen_pip_packages.pop(value)
                 
 
     def get_chosen_apt_packages(self):
-        return self.chosen_apt_packages + self.subprocess_apt_packages
+        print(self.chosen_apt_packages)
+        print(self.subprocess_apt_packages)
+        return self.chosen_apt_packages | self.subprocess_apt_packages
 
     def set_chosen_apt_package(self, value):
         self.chosen_apt_packages = value
         
-    def add_chosen_apt_package(self, value):
-        if value not in self.chosen_apt_packages:
-            self.chosen_apt_packages.append(value)
+    def add_chosen_apt_package(self, name, version):
+        if name not in self.chosen_apt_packages.keys():
+            self.chosen_apt_packages[name] = version
             
     def delete_chosen_apt_packages(self, values):
         for value in values:
-            if value in self.chosen_apt_packages:
-                self.chosen_apt_packages.remove(value)
+            if value in self.chosen_apt_packages.keys():
+                self.chosen_apt_packages.pop(value)
 
     def add_apt_package(self, value):
         self.chosen_apt_packages.extend(value)
