@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 pip_packages = {
     'numpy': 'numpy',
@@ -147,7 +148,8 @@ apt_packages = {"git": "git",
     "sed": "sed",}
 
 dummy_version = ['1.1.1', '1.1.2', '1.1.3', '2.0']
-
+    
+    
 def get_package_versions(mode, package_name):
     if mode == "apt":
         version = ["latest"]
@@ -212,4 +214,32 @@ build_in_packages = [
 
 python_versions = ['3.12', '3.11', '3.10']
 
-os_versions = ['ubuntu 22', 'debian', 'ubuntu 20.04']
+os_versions = ['ubuntu22tls', 'debian10', 'debian11','debian12', 'ubuntu20tls', 'ubuntu23']
+def load_apt_to_dict(os_name):
+    file_content = []
+    parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    try:
+        with open(f'{parent_directory}/modules_listings/apt/{os_name}.txt', 'r') as file:
+            content = file.read()
+            lines = content.split('\n')
+            file_content = {line.strip(): line.strip() for line in lines if line.strip()}
+    except FileNotFoundError:
+        file_content = None
+
+    return file_content
+
+def load_pip_to_dict():
+    file_content = []
+    parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    try:
+        with open(f'{parent_directory}/modules_listings/pip/all_pip_packages.txt', 'r') as file:
+            content = file.read()
+            lines = content.split('\n')
+            file_content = {line.strip(): line.strip() for line in lines if line.strip()}
+    except FileNotFoundError:
+        file_content = None
+
+    return file_content
+
+apt_packages = load_apt_to_dict("ubuntu20tls")
+pip_packages = load_pip_to_dict()
