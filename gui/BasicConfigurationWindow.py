@@ -113,5 +113,7 @@ class BasicConfigurationWindow(tk.Toplevel):
 
     def apply(self):
         self.parent.coreApp.python_version = self.chosen_python
-        self.parent.coreApp.operating_system = self.chosen_os
+        chosen_system_split = self.chosen_os.split(":")
+        self.parent.coreApp.OS_data["OS_image"] = chosen_system_split[0]
+        self.parent.coreApp.OS_data["OS_image_version"] = chosen_system_split[1]
         self.destroy()
