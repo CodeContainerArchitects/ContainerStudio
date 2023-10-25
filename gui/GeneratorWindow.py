@@ -29,20 +29,24 @@ class GeneratorWindow(tk.Toplevel):
         
         button_frame_middle = tk.Frame(self)
         
-        choice_label = tk.Label(self, text="Choose Dockerfile optimalisation", justify=tk.LEFT, width=25, padx = self.padding)
+        choice_label = tk.Label(button_frame_middle, text="Choose Dockerfile optimalisation", width=25, padx = self.padding)
         choice_options = [["Project files", 1], ["Installing new apt/pip packages", 2]]
         self.chosen_option = tk.IntVar()
         self.chosen_option.set(1)
         
-        create_dockerfile_button = tk.Button(button_frame_middle, text="Create Dockerfile", command=lambda: self.create_dockerfile(parent))
-        self.create_compose_button = tk.Button(button_frame_middle, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose(parent))
+        button_frame_dockerfile_buttons = tk.Frame(self)
+        
+        create_dockerfile_button = tk.Button(button_frame_dockerfile_buttons, text="Create Dockerfile", command=lambda: self.create_dockerfile(parent))
+        self.create_compose_button = tk.Button(button_frame_dockerfile_buttons, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose(parent))
         
         button_frame_lower = tk.Frame(self)
         cancel_button = tk.Button(button_frame_lower, text="Exit", command=self.destroy)
         
         button_frame_upper.pack(side=tk.TOP, pady=self.padding, fill='both')
         button_frame_lower.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
+        button_frame_dockerfile_buttons.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
         button_frame_middle.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
+
         search_for_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         label_for_list_of_dockerfiles.pack(side=tk.TOP, fill='x')
         self.list_of_dockerfiles.pack(side=tk.LEFT, pady=self.padding, fill='both', expand=True)
@@ -65,9 +69,11 @@ class GeneratorWindow(tk.Toplevel):
         else:
             for file in result:
                 self.list_of_dockerfiles.insert(tk.END, file)
+                
         
     def create_dockerfile(self, parent):
-        parent.coreApp.set_template_version(self.chosen_option)
+        print(self.chosen_option.get())
+        parent.coreApp.set_template_version(self.chosen_option.get())
         generator = DockerfileGenerator(parent.coreApp, parent.projectTree)
         dockerfile_selected = self.list_of_dockerfiles.curselection()
         if dockerfile_selected:
