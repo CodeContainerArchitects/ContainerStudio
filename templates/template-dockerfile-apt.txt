@@ -14,7 +14,6 @@ EXPOSE {{ container_port }}
 
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository -y ppa:deadsnakes/ppa
-
 RUN --mount=type=cache,target=/var/cache/apt \ 
     apt-get update \
     && apt-get install -y --no-install-recommends \
