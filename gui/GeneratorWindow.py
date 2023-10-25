@@ -1,6 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
-from DockerfileParser import DockerfileParser
 from createUtils.DockerfileGenerator import DockerfileGenerator
 from createUtils.DockerComposeGenerator import DockerComposeGenerator
 import os
@@ -30,18 +28,34 @@ class GeneratorWindow(tk.Toplevel):
         label_for_list_of_dockerfiles = tk.Label(self, text="Found existing Dockerfiles: \n")
         
         button_frame_middle = tk.Frame(self)
-        create_dockerfile_button = tk.Button(button_frame_middle, text="Create Dockerfile", command=lambda: self.create_dockerfile(parent))
-        self.create_compose_button = tk.Button(button_frame_middle, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose(parent))
+        
+        choice_label = tk.Label(button_frame_middle, text="Choose Dockerfile optimalisation", width=25, padx = self.padding)
+        choice_options = [["Project files", 1], ["Installing new apt/pip packages", 2]]
+        self.chosen_option = tk.IntVar()
+        self.chosen_option.set(1)
+        
+        button_frame_dockerfile_buttons = tk.Frame(self)
+        
+        create_dockerfile_button = tk.Button(button_frame_dockerfile_buttons, text="Create Dockerfile", command=lambda: self.create_dockerfile(parent))
+        self.create_compose_button = tk.Button(button_frame_dockerfile_buttons, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose(parent))
         
         button_frame_lower = tk.Frame(self)
         cancel_button = tk.Button(button_frame_lower, text="Exit", command=self.destroy)
         
         button_frame_upper.pack(side=tk.TOP, pady=self.padding, fill='both')
         button_frame_lower.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
+        button_frame_dockerfile_buttons.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
         button_frame_middle.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
+
         search_for_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         label_for_list_of_dockerfiles.pack(side=tk.TOP, fill='x')
         self.list_of_dockerfiles.pack(side=tk.LEFT, pady=self.padding, fill='both', expand=True)
+        
+        choice_label.pack(side=tk.LEFT, pady=self.padding)
+        for choice in choice_options:
+            button = tk.Radiobutton(button_frame_middle, text=choice[0], value=choice[1], padx=self.padding,  variable=self.chosen_option)
+            button.pack(side=tk.LEFT, pady=self.padding)
+        
         create_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         self.create_compose_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
@@ -55,8 +69,11 @@ class GeneratorWindow(tk.Toplevel):
         else:
             for file in result:
                 self.list_of_dockerfiles.insert(tk.END, file)
+                
         
     def create_dockerfile(self, parent):
+        print(self.chosen_option.get())
+        parent.coreApp.set_template_version(self.chosen_option.get())
         generator = DockerfileGenerator(parent.coreApp, parent.projectTree)
         dockerfile_selected = self.list_of_dockerfiles.curselection()
         if dockerfile_selected:

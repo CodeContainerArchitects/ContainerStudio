@@ -32,6 +32,7 @@ class CoreApp:
         self.requirements_files_names = []
         self.operating_systems = ""
         self.python_version = ""
+        self.template_version = None
 
     def get_OS_data(self):
         return self.OS_data
@@ -194,3 +195,9 @@ class CoreApp:
 
     def get_python_version(self):
         return self.python_version
+    
+    def set_template_version(self, value):
+        self.template_version = value
+    
+    def get_template_version(self):
+        return self.template_version
