@@ -7,7 +7,7 @@ class DockerfileGenerator:
     def __init__(self, coreApp, projectTree):
         self.coreApp = coreApp
         self.projectTree = projectTree
-        self.environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
+        self.environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"), trim_blocks=True, lstrip_blocks=True)
         
         if self.coreApp.get_template_version() == 1:
             self.template = self.environment.get_template("template-dockerfile-copy.txt")

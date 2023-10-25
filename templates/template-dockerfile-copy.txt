@@ -7,17 +7,16 @@ WORKDIR /files
 {% for key, value in env_variables.items() %}
 ENV {{ key }}={{ value }}
 {% endfor %}
-
 {% for host_port, container_port in ports.items() %}
 EXPOSE {{ container_port }}
 {% endfor %}
+
 RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
         python3-pip \
     && rm -rf /var/lib/apt/lists/*
-
 RUN --mount=type=cache,target=/var/cache/apt \ 
     apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -29,7 +28,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
 {% endif %}
 {% endfor %}
     && rm -rf /var/lib/apt/lists/*
-
 {% for name, version in packages_to_install.items() %}
 {% if "no version" in version %}
 RUN --mount=type=cache,target=/root/.cache pip3 install {{ name }}
