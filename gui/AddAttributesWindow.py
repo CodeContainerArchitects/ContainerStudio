@@ -1,8 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
 
 from gui.attributes.AddPortsWindow import AddPortsWindow
 from gui.attributes.AddEnvVariablesWindow import AddEnvVariablesWindow
+
 
 class AddAttributesWindow(tk.Toplevel):
     def __init__(self, parent):
@@ -20,14 +20,25 @@ class AddAttributesWindow(tk.Toplevel):
         button_frame_upper = tk.Frame(self)
         add_ports_button = tk.Button(button_frame_upper, text="Add ports", command=lambda: self.add_ports(parent))
         add_env_variables_button = tk.Button(button_frame_upper, text="Add environment variables", command=lambda: self.add_env_variables(parent))
-        
+
+        button_frame_upper_1 = tk.Frame(self)
+        add_entrypoint_button = tk.Button(button_frame_upper_1, text="Add entry point", command=lambda: self.add_entry_point(parent))
+        add_volumes_button = tk.Button(button_frame_upper_1, text="Add volumes", command=lambda: self.add_volumes(parent))
+
+        button_frame_upper_2 = tk.Frame(self)
+        add_user_button = tk.Button(button_frame_upper_2, text="Add users", command=lambda: self.add_users(parent))
+        add_run_commands_button = tk.Button(button_frame_upper_2, text="Add commands", command=lambda: self.add_commands(parent))
+
         button_frame_lower = tk.Frame(self)
         cancel_button = tk.Button(button_frame_lower, text="Return to main menu", command=self.destroy)
         
         button_frame_upper.pack(side=tk.TOP, pady=self.padding, fill='both')
+        button_frame_upper_1.pack(side=tk.TOP, pady=self.padding, fill='both')
         button_frame_lower.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
         add_ports_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        add_env_variables_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        add_env_variables_button.pack(side=tk.RIGHT, pady=self.padding, fill='x', expand=True)
+        add_entrypoint_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        add_volumes_button.pack(side=tk.RIGHT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         
     def add_ports(self, parent):
@@ -37,3 +48,15 @@ class AddAttributesWindow(tk.Toplevel):
     def add_env_variables(self, parent):
         add_env_vars_window = AddEnvVariablesWindow(self, parent)
         add_env_vars_window.grab_set()
+
+    def add_entry_point(self, parent):
+        pass
+
+    def add_volumes(self, parent):
+        pass
+
+    def add_users(self, parent):
+        pass
+
+    def add_commands(self, parent):
+        pass
