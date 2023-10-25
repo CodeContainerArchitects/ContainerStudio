@@ -11,14 +11,14 @@ ENV {{ key }}={{ value }}
 {% for host_port, container_port in ports.items() %}
 EXPOSE {{ container_port }}
 {% endfor %}
-RUN --mount=type=cache, target=/var/cache/apt \
+RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update \
     && apt-get install -y --no-install-recommends \
         python3 \
         python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN --mount=type=cache, target=/var/cache/apt \ 
+RUN --mount=type=cache,target=/var/cache/apt \ 
     apt-get update \
     && apt-get install -y --no-install-recommends \
 {% for name, version in apt_get_packages.items() %}
@@ -32,9 +32,9 @@ RUN --mount=type=cache, target=/var/cache/apt \
 
 {% for name, version in packages_to_install.items() %}
 {% if "no version" in version %}
-RUN --mount=type=cache, target=/root/.cache pip3 install {{ name }}
+RUN --mount=type=cache,target=/root/.cache pip3 install {{ name }}
 {% else %}
-RUN --mount=type=cache, target=/root/.cache pip3 install {{ name }}=={{ version }}
+RUN --mount=type=cache,target=/root/.cache pip3 install {{ name }}=={{ version }}
 {% endif %}
 {% endfor %}
 
@@ -45,7 +45,7 @@ COPY {{ use_requirements[i] }} .
 {% endif%}
 {% if use_requirements %}
 {% for i in range(0, ranges) %}
-RUN --mount=type=cache, target=/root/.cache pip install -r {{ file_names[i] }}
+RUN --mount=type=cache,target=/root/.cache pip install -r {{ file_names[i] }}
 {% endfor %}
 {% endif%}
 
