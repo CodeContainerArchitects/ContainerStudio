@@ -1,9 +1,6 @@
 import jinja2
 import os
-from ProjectTree import ProjectTree
-from createUtils.package_listing import apt_packages, pip_packages
 from DockerfileParser import DockerfileParser
-from CoreApp import CoreApp
 
 
 class DockerfileGenerator:
@@ -11,7 +8,12 @@ class DockerfileGenerator:
         self.coreApp = coreApp
         self.projectTree = projectTree
         self.environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"))
-        self.template = self.environment.get_template("template-dockerfile.txt")
+        
+        if self.coreApp.get_template_version() == 1:
+            self.template = self.environment.get_template("template-dockerfile-copy.txt")
+        elif self.coreApp. get_template_version() == 2:
+            self.template = self.environment.get_template("template-dockerfile-apt.txt")
+
         self.files_not_found = []
         self.dockerfile_path = ""
         self.dockerfile_files = []
