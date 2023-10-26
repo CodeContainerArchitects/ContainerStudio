@@ -3,10 +3,7 @@ from createUtils.package_listing import apt_packages, pip_packages
 
 class CoreApp:
     def __init__(self):
-        self.OS_data = {
-            "OS_image": "ubuntu",
-            "OS_image_version": "latest"
-        }
+        self.OS_data = {}
         self.run_commands = []
         self.env_variables = {}
         self.expose_ports = {}

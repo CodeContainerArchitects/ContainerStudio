@@ -212,9 +212,9 @@ build_in_packages = [
     "whoami"
 ]
 
-python_versions = ['3.12', '3.11', '3.10']
+python_versions = ['3.12', '3.11', '3.10', '3.9', '3.8', '3.7', '3.6', '3.5']
 
-os_versions = ['ubuntu22tls', 'debian10', 'debian11','debian12', 'ubuntu20tls', 'ubuntu23']
+os_versions = ['debian:10', 'debian:11', 'debian:12','ubuntu:20.04', 'ubuntu:22.04', 'ubuntu:23.04']
 def load_apt_to_dict(os_name):
     file_content = []
     parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
