@@ -60,4 +60,5 @@ class AddAttributesWindow(tk.Toplevel):
         pass
 
     def add_commands(self, parent):
-        pass
+        add_commands_window = AddCommandsWindow()
+        add_commands_window.grab_set()

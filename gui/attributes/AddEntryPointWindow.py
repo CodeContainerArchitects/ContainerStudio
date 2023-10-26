@@ -41,12 +41,13 @@ class AddEntryPointWindow(tk.Toplevel):
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
 
-        # self.ports = grandparent.coreApp.get_expose_ports()
-        # for host_port, container_port in self.ports.items():
-        #     if host_port == f"-{container_port}":
-        #         self.ports_list.insert(tk.END, f":{container_port}")
-        #     else:
-        #         self.ports_list.insert(tk.END, f"{host_port}:{container_port}")
+        # to show what was previously added
+        items = grandparent.coreApp.entry_point[1:len(grandparent.coreApp.entry_point)-1]
+        if len(items) != 0:
+            items = items.replace('"', '').split(", ")
+            for item in items:
+                self.parameters_list.insert(tk.END, item)
+            self._update_entry_point_layout()
 
     def _insert_into_list(self, param):
         if param == "":
