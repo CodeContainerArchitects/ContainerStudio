@@ -53,4 +53,6 @@ RUN --mount=type=cache,target=/root/.cache pip install -r {{ file_names[i] }}
 COPY {{ file }}
 {% endfor %}
 
-CMD ["bash"]
+{% if entry_point %}
+ENTRYPOINT {{ entry_point }}
+{% endif %}

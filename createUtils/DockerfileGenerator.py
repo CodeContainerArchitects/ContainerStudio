@@ -44,7 +44,8 @@ class DockerfileGenerator:
                                 copy_folder_to_dockerfile=copy_folder_to_dockerfile,
                                 env_variables=self.coreApp.env_variables,
                                 ports=self.coreApp.expose_ports,
-                                all_commands=self.coreApp.all_commands)
+                                all_commands=self.coreApp.all_commands,
+                                entry_point=self.coreApp.entry_point)
 
         filename = "Dockerfile"
         with open(os.path.join(self.coreApp.get_project_root_dir(), filename), "w") as file:

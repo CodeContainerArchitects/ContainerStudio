@@ -56,4 +56,6 @@ RUN --mount=type=cache,target=/root/.cache pip3 install {{ name }}=={{ version }
 {% endif %}
 {% endfor %}
 
-CMD ["bash"]
+{% if entry_point %}
+ENTRYPOINT {{ entry_point }}
+{% endif %}

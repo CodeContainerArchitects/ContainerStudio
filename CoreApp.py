@@ -30,6 +30,7 @@ class CoreApp:
         self.operating_systems = ""
         self.python_version = ""
         self.template_version = None
+        self.entry_point = ""
 
     def get_OS_data(self):
         return self.OS_data

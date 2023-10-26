@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+
 
 class InsertValueWindow(tk.Toplevel):
     def __init__(self, parent, title, string, callback, width, height):
