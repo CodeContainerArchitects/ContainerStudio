@@ -5,13 +5,14 @@ from createUtils.package_listing import get_package_versions
 
 
 class BasicConfigurationWindow(tk.Toplevel):
-    def __init__(self, parent):
+    def __init__(self, parent, callback):
         super().__init__(parent)
 
         # variables
         self.chosen_os = ''
         self.chosen_python = ''
         self.parent = parent
+        self.callback = callback
 
         # appearance
         self.window_width = 800
@@ -38,7 +39,6 @@ class BasicConfigurationWindow(tk.Toplevel):
         self.entry_version.bind("<KeyRelease>", self.check_python_versions)
         self.version_listbox = tk.Listbox(python_frame, height=15, width=47, selectmode=tk.SINGLE, exportselection=0)
         self.version_listbox.bind('<<ListboxSelect>>', self.set_python_version)
-
         # os
         os_label = tk.Label(os_frame, text="Select Operating System:")
         self.entry_os = tk.Entry(os_frame, width=47)
@@ -48,8 +48,18 @@ class BasicConfigurationWindow(tk.Toplevel):
 
         update_list(self.version_listbox, python_versions)
         update_list(self.os_listbox, os_versions)
-
-        self.apply_button = tk.Button(button_frame, text="Apply", state=tk.DISABLED, command=lambda: self.apply())
+        
+        if parent.coreApp.python_version:
+            index_python = self.version_listbox.get(0, tk.END).index(parent.coreApp.python_version)
+            self.version_listbox.select_set(index_python)
+            self.chosen_python = self.version_listbox.get(index_python)
+        
+        if parent.coreApp.OS_data:
+            index_os = self.os_listbox.get(0, tk.END).index(f"{parent.coreApp.OS_data['OS_image']}:{parent.coreApp.OS_data['OS_image_version']}")
+            self.os_listbox.select_set(index_os)
+            self.chosen_os = self.os_listbox.get(index_os)
+            
+        self.apply_button = tk.Button(button_frame, text="Apply", command=lambda: self.apply())
         exit_button = tk.Button(button_frame, text="Cancel", command=self.destroy)
 
         # python frame
@@ -93,27 +103,19 @@ class BasicConfigurationWindow(tk.Toplevel):
         selected_index = self.version_listbox.curselection()
         self.chosen_python = self.version_listbox.get(selected_index)
 
-        if self.chosen_python != '':
-            if self.apply_button['state'] == tk.DISABLED:
-                self.apply_button['state'] = tk.NORMAL
-        else:
-            if self.apply_button['state'] == tk.NORMAL:
-                self.apply_button['state'] = tk.DISABLED
-
     def set_operating_system(self, event):
         selected_index = self.os_listbox.curselection()
         self.chosen_os = self.os_listbox.get(selected_index)
 
-        if self.chosen_os != '':
-            if self.apply_button['state'] == tk.DISABLED:
-                self.apply_button['state'] = tk.NORMAL
-        else:
-            if self.apply_button['state'] == tk.NORMAL:
-                self.apply_button['state'] = tk.DISABLED
-
     def apply(self):
-        self.parent.coreApp.python_version = self.chosen_python
-        chosen_system_split = self.chosen_os.split(":")
-        self.parent.coreApp.OS_data["OS_image"] = chosen_system_split[0]
-        self.parent.coreApp.OS_data["OS_image_version"] = chosen_system_split[1]
-        self.destroy()
+        selected_index_os = self.os_listbox.curselection()
+        selected_index_python = self.version_listbox.curselection()
+        if selected_index_os:
+            if selected_index_python:
+                chosen_system_split = self.chosen_os.split(":")
+                self.callback(chosen_system_split[0], chosen_system_split[1], self.chosen_python)
+                self.destroy()
+            else:
+                tk.messagebox.showerror("Error", "Python version must be selected!")
+        else:
+            tk.messagebox.showerror("Error", "Operating system must be selected!")

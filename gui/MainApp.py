@@ -74,8 +74,17 @@ class App(tk.Tk):
         tree_window.grab_set()
 
     def open_basic_configuration_window(self):
-        basic_confguration_window = BasicConfigurationWindow(self)
-        # basic_confguration_window.grab_set()
+        basic_confguration_window = BasicConfigurationWindow(self, self.set_os_and_python)
+        basic_confguration_window.grab_set()
+            
+    def set_os_and_python(self, os_name, os_version, python_version):
+        self.coreApp.OS_data["OS_image"] = os_name
+        self.coreApp.OS_data["OS_image_version"] = os_version
+        self.coreApp.python_version = python_version
+        self.manage_requirements_button['state'] = tk.NORMAL
+        self.send_button['state'] = tk.NORMAL
+        self.package_list_button['state'] = tk.NORMAL
+        self.add_attributes_button['state'] = tk.NORMAL
 
     def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages, requirements_pip_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
@@ -100,10 +109,6 @@ class App(tk.Tk):
         if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED and self.manage_requirements_button['state'] == tk.DISABLED and self.send_button['state'] == tk.DISABLED and self.package_list_button['state'] == tk.DISABLED:
             self.project_tree_button['state'] = tk.NORMAL
             self.basic_configuration_button['state'] = tk.NORMAL
-            self.manage_requirements_button['state'] = tk.NORMAL
-            self.send_button['state'] = tk.NORMAL
-            self.package_list_button['state'] = tk.NORMAL
-            self.add_attributes_button['state'] = tk.NORMAL
             
     def open_generate(self):
         self.generate_window = GeneratorWindow(self)
