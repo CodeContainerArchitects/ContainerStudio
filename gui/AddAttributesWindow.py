@@ -1,5 +1,6 @@
 import tkinter as tk
 
+from gui.attributes.AddCommandsWindow import AddCommandsWindow
 from gui.attributes.AddPortsWindow import AddPortsWindow
 from gui.attributes.AddEnvVariablesWindow import AddEnvVariablesWindow
 from gui.attributes.AddEntryPointWindow import AddEntryPointWindow
@@ -60,5 +61,5 @@ class AddAttributesWindow(tk.Toplevel):
         pass
 
     def add_commands(self, parent):
-        add_commands_window = AddCommandsWindow()
+        add_commands_window = AddCommandsWindow(parent=self, grandparent=parent)
         add_commands_window.grab_set()
