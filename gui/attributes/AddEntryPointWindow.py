@@ -33,13 +33,13 @@ class AddEntryPointWindow(tk.Toplevel):
         parameters_list_label.pack(side=tk.TOP, pady=self.padding, fill='both')
         self.parameters_list.pack(side=tk.TOP, pady=self.padding, fill='both')
 
-        button_frame_upper.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
-        add_parameter_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        delete_parameter_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-
         button_frame_lower.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+
+        button_frame_upper.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
+        add_parameter_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        delete_parameter_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
 
         # to show what was previously added
         items = grandparent.coreApp.entry_point[1:len(grandparent.coreApp.entry_point)-1]
