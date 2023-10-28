@@ -46,12 +46,13 @@ class AddCommandsWindow(tk.Toplevel):
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
 
-        # self.ports = grandparent.coreApp.get_expose_ports()
-        # for host_port, container_port in self.ports.items():
-        #     if host_port == f"-{container_port}":
-        #         self.ports_list.insert(tk.END, f":{container_port}")
-        #     else:
-        #         self.ports_list.insert(tk.END, f"{host_port}:{container_port}")
+        # take saved previously values
+        if grandparent.coreApp.commands_after_files or grandparent.coreApp.commands_before_files:
+            for element in grandparent.coreApp.commands_before_files:
+                self.added_commands_list.insert(tk.END, element)
+            self.added_commands_list.insert(tk.END, self.before_or_after_files)
+            for element in grandparent.coreApp.commands_after_files:
+                self.added_commands_list.insert(tk.END, element)
 
     def _add_command(self, command, if_with_files):
         if command == "":
@@ -127,5 +128,7 @@ class AddCommandsWindow(tk.Toplevel):
         switch_user_window.grab_set()
 
     def apply(self, grandparent):
-        grandparent.coreApp.set_expose_ports(self.ports)
+        files_index = self._find_index_of_files()
+        grandparent.coreApp.commands_before_files = self.added_commands_list.get(0, files_index - 1)
+        grandparent.coreApp.commands_after_files = self.added_commands_list.get(files_index + 1, tk.END)
         self.destroy()

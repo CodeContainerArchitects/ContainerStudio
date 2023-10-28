@@ -31,6 +31,8 @@ class CoreApp:
         self.python_version = ""
         self.template_version = None
         self.entry_point = ""
+        self.commands_before_files = []
+        self.commands_after_files = []
 
     def get_OS_data(self):
         return self.OS_data
@@ -142,7 +144,6 @@ class CoreApp:
         for value in values:
             if value in self.chosen_pip_packages.keys():
                 self.chosen_pip_packages.pop(value)
-                
 
     def get_chosen_apt_packages(self):
         print(self.chosen_apt_packages)

@@ -21,9 +21,21 @@ RUN --mount=type=cache,target=/var/cache/apt \
         python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+{% if commands_before_files %}
+{% for command in commands_before_files %}
+{{ command }}
+{% endfor %}
+{% endif %}
+
 {% for file in copy_folder_to_dockerfile %}
 COPY {{ file }}
 {% endfor %}
+
+{% if commands_after_files %}
+{% for command in commands_after_files %}
+{{ command }}
+{% endfor %}
+{% endif %}
 
 RUN --mount=type=cache,target=/var/cache/apt \ 
     apt-get update \

@@ -38,6 +38,12 @@ RUN --mount=type=cache,target=/root/.cache pip3 install {{ name }}=={{ version }
 {% endif %}
 {% endfor %}
 
+{% if commands_before_files %}
+{% for command in commands_before_files %}
+{{ command }}
+{% endfor %}
+{% endif %}
+
 {% if use_requirements %}
 {% for i in range(0, ranges) %}
 COPY {{ use_requirements[i] }} .
@@ -52,6 +58,12 @@ RUN --mount=type=cache,target=/root/.cache pip install -r {{ file_names[i] }}
 {% for file in copy_folder_to_dockerfile %}
 COPY {{ file }}
 {% endfor %}
+
+{% if commands_after_files %}
+{% for command in commands_after_files %}
+{{ command }}
+{% endfor %}
+{% endif %}
 
 {% if entry_point %}
 ENTRYPOINT {{ entry_point }}
