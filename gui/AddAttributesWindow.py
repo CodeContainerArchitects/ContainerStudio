@@ -4,6 +4,7 @@ from gui.attributes.AddCommandsWindow import AddCommandsWindow
 from gui.attributes.AddPortsWindow import AddPortsWindow
 from gui.attributes.AddEnvVariablesWindow import AddEnvVariablesWindow
 from gui.attributes.AddEntryPointWindow import AddEntryPointWindow
+from gui.attributes.AddVolumesWindow import AddVolumesWindow
 
 
 class AddAttributesWindow(tk.Toplevel):
@@ -13,7 +14,7 @@ class AddAttributesWindow(tk.Toplevel):
         self.window_height = 600
         self.padding = 5
         
-        self.title("Customize Dockerfile Attributes")
+        self.title("Customize attributes")
         center_x = int(parent.screen_width/2 - self.window_width / 2)
         center_y = int(parent.screen_height/2 - self.window_height / 2)
         
@@ -46,11 +47,11 @@ class AddAttributesWindow(tk.Toplevel):
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         
     def add_ports(self, parent):
-        add_ports_window = AddPortsWindow(self, parent)
+        add_ports_window = AddPortsWindow(parent=self, grandparent=parent)
         add_ports_window.grab_set()
         
     def add_env_variables(self, parent):
-        add_env_vars_window = AddEnvVariablesWindow(self, parent)
+        add_env_vars_window = AddEnvVariablesWindow(parent=self, grandparent=parent)
         add_env_vars_window.grab_set()
 
     def add_entry_point(self, parent):
@@ -58,7 +59,8 @@ class AddAttributesWindow(tk.Toplevel):
         add_entry_point_window.grab_set()
 
     def add_volumes(self, parent):
-        pass
+        add_volumes_window = AddVolumesWindow(parent=self, grandparent=parent)
+        add_volumes_window.grab_set()
 
     def add_commands(self, parent):
         add_commands_window = AddCommandsWindow(parent=self, grandparent=parent)

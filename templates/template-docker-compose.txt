@@ -18,4 +18,10 @@ services:
             {% endif %}
             {% endfor %}
         {% endif %}
+        {% if volumes %}
+        volumes:
+            {% for host_path, container_port in volumes.items() %}
+            - {{ host_path }}:{{ container_port }}
+            {% endfor %}
+        {% endif %}
         restart: {{ restart }}

@@ -13,7 +13,7 @@ class CoreApp:
         self.cmd_commands = []
         self.shell_commands = []
         self.maintainers = []
-        self.volumes = []
+        self.volumes = {}
         self.labels = []
         self.stop_signals = []
         self.healthchecks = []

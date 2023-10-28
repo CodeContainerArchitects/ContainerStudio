@@ -47,7 +47,8 @@ class DockerfileGenerator:
                                        all_commands=self.coreApp.all_commands,
                                        entry_point=self.coreApp.entry_point,
                                        commands_before_files=self.coreApp.commands_before_files,
-                                       commands_after_files=self.coreApp.commands_after_files)
+                                       commands_after_files=self.coreApp.commands_after_files,
+                                       volumes=self.coreApp.volumes)
 
         filename = "Dockerfile"
         with open(os.path.join(self.coreApp.get_project_root_dir(), filename), "w") as file:

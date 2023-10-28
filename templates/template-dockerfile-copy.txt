@@ -2,6 +2,12 @@ FROM {{ OS_image }}:{{ OS_image_version }}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+{% if volumes %}
+{% for host_path, container_path in volumes.items() %}
+VOLUME {{ container_path }}
+{% endfor %}
+{% endif %}
+
 WORKDIR /files
 
 {% for key, value in env_variables.items() %}
