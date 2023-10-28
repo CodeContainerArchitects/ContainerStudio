@@ -13,6 +13,7 @@ class AddCommandsWindow(tk.Toplevel):
 
         # variables
         self.before_or_after_files = "<adding dependencies and files>"
+        self.switch_user_index = 0
 
         # window attributes
         self.title("Add commands")
@@ -27,11 +28,11 @@ class AddCommandsWindow(tk.Toplevel):
         button_frame_upper = tk.Frame(self)
         add_command_button = tk.Button(button_frame_upper, text="Add command", command=lambda: self.add(grandparent=grandparent))
         insert_command_button = tk.Button(button_frame_upper, text="Insert command", command=lambda: self.insert(grandparent=grandparent))
-        delete_ports_button = tk.Button(button_frame_upper, text="Delete command", command=lambda: self.delete())
-        switch_user_button = tk.Button(button_frame_upper, text="Switch user", command=lambda: self.switch_user())
+        delete_command_button = tk.Button(button_frame_upper, text="Delete command", command=lambda: self.delete())
+        switch_user_button = tk.Button(button_frame_upper, text="Switch user", command=lambda: self.switch_user(grandparent=grandparent))
 
         button_frame_lower = tk.Frame(self)
-        apply_button = tk.Button(button_frame_lower, text="Apply", command=lambda: self.apply(grandparent))
+        apply_button = tk.Button(button_frame_lower, text="Apply", command=lambda: self.apply(grandparent=grandparent))
         cancel_button = tk.Button(button_frame_lower, text="Cancel", command=self.destroy)
 
         label_for_added_commands_list.pack(side=tk.TOP, pady=self.padding, fill='both')
@@ -40,8 +41,8 @@ class AddCommandsWindow(tk.Toplevel):
         button_frame_upper.pack(side=tk.BOTTOM, pady=self.padding, fill='both')
         add_command_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         insert_command_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        delete_ports_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         switch_user_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        delete_command_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
 
@@ -99,8 +100,31 @@ class AddCommandsWindow(tk.Toplevel):
                                                     callback=self._insert_command, width=grandparent.screen_width / 2, height=grandparent.screen_height / 2)
             insert_window.grab_set()
 
-    def switch_user(self):
-        pass
+    @staticmethod
+    def _check_if_int(variable):
+        try:
+            return int(variable)
+        except ValueError:
+            return variable
+
+    def _switch_user_command(self, user_uid, group_gid):
+        user_uid = self._check_if_int(user_uid)
+        group_gid = self._check_if_int(group_gid)
+        if user_uid and group_gid:
+            if (isinstance(user_uid, str) and isinstance(group_gid, str)) or (isinstance(user_uid, int) and isinstance(group_gid, int)):
+                self.added_commands_list.insert(self.switch_user_index, "USER " + str(user_uid) + ":" + str(group_gid))
+            else:
+                tk.messagebox.showerror("Error", "Only combination user-group and UID-GID can be used together.")
+        elif user_uid:
+            self.added_commands_list.insert(self.switch_user_index, "USER " + str(user_uid))
+        else:
+            tk.messagebox.showerror("Error", "User(UID) cannot be empty. Only group(GID) is optional.")
+
+    def switch_user(self, grandparent):
+        self.switch_user_index = self.added_commands_list.curselection()[0]
+        switch_user_window = InsertDoubleValueWindow(parent=self, title="Switch user", string1="User (or UID): ", string2="Group (or GID):",
+                                                     callback=self._switch_user_command, width=grandparent.screen_width / 2, height=grandparent.screen_height / 2)
+        switch_user_window.grab_set()
 
     def apply(self, grandparent):
         grandparent.coreApp.set_expose_ports(self.ports)
