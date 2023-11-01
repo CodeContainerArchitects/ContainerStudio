@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
 from gui.attributes.InsertDoubleValueWindow import InsertDoubleValueWindow
+
 
 class AddPortsWindow(tk.Toplevel):
     def __init__(self, parent, grandparent):

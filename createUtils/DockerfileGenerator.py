@@ -34,17 +34,21 @@ class DockerfileGenerator:
         
         res_apt_packages = self.coreApp.chosen_apt_packages | self.coreApp.subprocess_apt_packages
         content = self.template.render(OS_image=self.coreApp.OS_data["OS_image"],
-                                OS_image_version=self.coreApp.OS_data["OS_image_version"],
-                                python_version=self.coreApp.python_version,
-                                packages_to_install=self.coreApp.chosen_pip_packages,
-                                apt_get_packages=res_apt_packages,
-                                use_requirements=self.coreApp.chosen_requirements,
-                                file_names=self.coreApp.requirements_files_names,
-                                ranges=len(self.coreApp.chosen_requirements),
-                                copy_folder_to_dockerfile=copy_folder_to_dockerfile,
-                                env_variables=self.coreApp.env_variables,
-                                ports=self.coreApp.expose_ports,
-                                all_commands=self.coreApp.all_commands)
+                                       OS_image_version=self.coreApp.OS_data["OS_image_version"],
+                                       python_version=self.coreApp.python_version,
+                                       packages_to_install=self.coreApp.chosen_pip_packages,
+                                       apt_get_packages=res_apt_packages,
+                                       use_requirements=self.coreApp.chosen_requirements,
+                                       file_names=self.coreApp.requirements_files_names,
+                                       ranges=len(self.coreApp.chosen_requirements),
+                                       copy_folder_to_dockerfile=copy_folder_to_dockerfile,
+                                       env_variables=self.coreApp.env_variables,
+                                       ports=self.coreApp.expose_ports,
+                                       all_commands=self.coreApp.all_commands,
+                                       entry_point=self.coreApp.entry_point,
+                                       commands_before_files=self.coreApp.commands_before_files,
+                                       commands_after_files=self.coreApp.commands_after_files,
+                                       volumes=self.coreApp.volumes)
 
         filename = "Dockerfile"
         with open(os.path.join(self.coreApp.get_project_root_dir(), filename), "w") as file:

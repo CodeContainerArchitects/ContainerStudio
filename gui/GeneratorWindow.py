@@ -8,6 +8,7 @@ from tkinter import messagebox as messagebox
 from tkinter.filedialog import asksaveasfile
 from gui.FilesNotFoundWindow import FilesNotFoundWindow
 
+
 class GeneratorWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
