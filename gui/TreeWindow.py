@@ -8,7 +8,7 @@ class TreeWindow(tk.Toplevel):
         
         self.window_width = 600
         self.window_height = 400
-        self.padding = 5
+        self.padding = 10
         
         self.title("Project directory tree")
         center_x = int(parent.screen_width/2 - self.window_width / 2)
@@ -37,11 +37,11 @@ class TreeWindow(tk.Toplevel):
         scrollbar.pack(side="right", fill="y")
         self.treeview.pack(fill='both')
         treeframe.pack(side=tk.TOP, fill = 'both')
-        choose_file_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        choose_folder_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        delete_items_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        exit_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-        buttonframe.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        choose_file_button.pack(side=tk.LEFT, pady=self.padding, padx=self.padding, fill='both', expand=True)
+        choose_folder_button.pack(side=tk.LEFT, pady=self.padding,padx=self.padding, fill='both', expand=True)
+        delete_items_button.pack(side=tk.LEFT, pady=self.padding,padx=self.padding, fill='both', expand=True)
+        exit_button.pack(side=tk.LEFT, pady=self.padding,padx=self.padding, fill='both', expand=True)
+        buttonframe.pack(side=tk.BOTTOM,pady=self.padding, fill=tk.BOTH, expand=True)
     
     def build_tree(self):
         path = os.path.abspath(self.directory)
