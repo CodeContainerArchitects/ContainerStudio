@@ -2,6 +2,12 @@ FROM {{ OS_image }}:{{ OS_image_version }}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+{% if volumes %}
+{% for host_path, container_path in volumes.items() %}
+VOLUME {{ container_path }}
+{% endfor %}
+{% endif %}
+
 WORKDIR /files
 
 {% for key, value in env_variables.items() %}
@@ -38,6 +44,12 @@ RUN --mount=type=cache,target=/root/.cache pip3 install {{ name }}=={{ version }
 {% endif %}
 {% endfor %}
 
+{% if commands_before_files %}
+{% for command in commands_before_files %}
+{{ command }}
+{% endfor %}
+{% endif %}
+
 {% if use_requirements %}
 {% for i in range(0, ranges) %}
 COPY {{ use_requirements[i] }} .
@@ -53,4 +65,12 @@ RUN --mount=type=cache,target=/root/.cache pip install -r {{ file_names[i] }}
 COPY {{ file }}
 {% endfor %}
 
-CMD ["bash"]
+{% if commands_after_files %}
+{% for command in commands_after_files %}
+{{ command }}
+{% endfor %}
+{% endif %}
+
+{% if entry_point %}
+ENTRYPOINT {{ entry_point }}
+{% endif %}

@@ -50,7 +50,7 @@ class App(tk.Tk):
         
         self.send_button = tk.Button(mainframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
         
-        self.add_attributes_button = tk.Button(mainframe, text = "Customize Dockerfile Attributes", state=tk.DISABLED, command=lambda:self.open_add_attributes())
+        self.add_attributes_button = tk.Button(mainframe, text = "Customize Attributes", state=tk.DISABLED, command=lambda:self.open_add_attributes())
         exit_button = tk.Button(mainframe, text = "Exit", command = self.destroy)
         
         self.rowconfigure(0, weight=1)
