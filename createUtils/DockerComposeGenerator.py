@@ -1,11 +1,12 @@
 import jinja2
 import os
-from CoreApp import CoreApp
+import config as cfg
+
 
 class DockerComposeGenerator:
     def __init__(self, coreApp, project_name, projectTree):
         self.coreApp = coreApp
-        self.environment = jinja2.Environment(loader=jinja2.FileSystemLoader("templates/"), trim_blocks=True, lstrip_blocks=True)
+        self.environment = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.join(cfg.path_to_project, "templates")), trim_blocks=True, lstrip_blocks=True)
         self.template = self.environment.get_template("template-docker-compose.txt")
         self.project_name = project_name
         self.dockerfile_name = "Dockerfile"

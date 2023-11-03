@@ -1,5 +1,6 @@
 import subprocess
 import os
+import config as cfg
 
 pip_packages = {
     'numpy': 'numpy',
@@ -158,6 +159,7 @@ def get_package_versions(mode, package_name):
         version = output.decode().strip().split(", ")
     return version
 
+
 build_in_packages = [
     "chmod",
     "chown",
@@ -215,9 +217,11 @@ build_in_packages = [
 python_versions = ['3.12', '3.11', '3.10', '3.9', '3.8', '3.7', '3.6', '3.5']
 
 os_versions = ['debian:10', 'debian:11', 'debian:12','ubuntu:20.04', 'ubuntu:22.04', 'ubuntu:23.04']
+
+
 def load_apt_to_dict(os_name):
     file_content = []
-    parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    parent_directory = cfg.path_to_project
     try:
         with open(f'{parent_directory}/modules_listings/apt/{os_name}.txt', 'r') as file:
             content = file.read()
@@ -228,11 +232,12 @@ def load_apt_to_dict(os_name):
 
     return file_content
 
+
 def load_pip_to_dict():
     file_content = []
-    parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    parent_directory = cfg.path_to_project
     try:
-        with open(f'{parent_directory}/modules_listings/pip/all_pip_packages.txt', 'r') as file:
+        with open(os.path.join(parent_directory, "modules_listings", "pip", "all_pip_packages.txt"), 'r') as file:
             content = file.read()
             lines = content.split('\n')
             file_content = {line.strip(): line.strip() for line in lines if line.strip()}
@@ -240,6 +245,7 @@ def load_pip_to_dict():
         file_content = None
 
     return file_content
+
 
 apt_packages = load_apt_to_dict("ubuntu20tls")
 pip_packages = load_pip_to_dict()
