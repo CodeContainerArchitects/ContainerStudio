@@ -9,6 +9,7 @@ class TreeWindow(tk.Toplevel):
         self.window_width = 600
         self.window_height = 400
         self.padding = 10
+        self.resizable(False, False)
         
         self.title("Project directory tree")
         center_x = int(parent.screen_width/2 - self.window_width / 2)

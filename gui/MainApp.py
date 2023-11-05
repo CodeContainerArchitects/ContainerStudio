@@ -1,4 +1,6 @@
 import tkinter as tk
+import os
+from tkinter import messagebox
 from ProjectTree import ProjectTree
 from gui.BasicConfigurationWindow import BasicConfigurationWindow
 from gui.TreeWindow import TreeWindow
@@ -6,6 +8,7 @@ from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
 from gui.PackageListWindow import PackageListWindow
 from gui.AddAttributesWindow import AddAttributesWindow
+from Dumper import Dumper
 
 
 class App(tk.Tk):
@@ -14,6 +17,7 @@ class App(tk.Tk):
         
         self.coreApp = coreApp
         self.projectTree = ProjectTree()
+        self.dumper = Dumper(coreApp)
 
         # set properties of the window
         self.title("Code Container")
@@ -51,7 +55,7 @@ class App(tk.Tk):
         self.send_button = tk.Button(mainframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
         
         self.add_attributes_button = tk.Button(mainframe, text = "Customize Attributes", state=tk.DISABLED, command=lambda:self.open_add_attributes())
-        exit_button = tk.Button(mainframe, text = "Exit", command = self.destroy)
+        exit_button = tk.Button(mainframe, text = "Exit", command = self.on_closing)
         
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -109,6 +113,10 @@ class App(tk.Tk):
     def select_working_directory(self):
         self.projectTree.select_working_directory()
         working_directory = self.projectTree.get_working_directory()
+        
+        if os.path.isfile(os.path.join(working_directory, self.dumper.file_name)):
+            self.dumper.import_coreapp(working_directory)
+        
         self.coreApp.set_project_root_dir(working_directory)
         self.folder_label['text'] = working_directory
         
@@ -123,3 +131,10 @@ class App(tk.Tk):
     def open_add_attributes(self):
         self.add_attributes_window = AddAttributesWindow(self)
         self.add_attributes_window.grab_set()
+        
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            path = self.coreApp.get_project_root_dir()
+            if path:
+                self.dumper.export_coreapp(path)
+            self.destroy()
