@@ -20,6 +20,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         self.apt_pip_packages = []
         self.chosen_requirements = []
         self.callback = set_chosen_requirements
+        self.parent = parent
 
         # window properties
         self.window_width = 600
@@ -91,7 +92,7 @@ class ManageRequirementsWindow(tk.Toplevel):
     def create_requirements(self, parent):
         def callback_create_requirements(file_name):
             if file_name != '':
-                module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name)
+                module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name, os_name=self.parent.coreAPP.operating_systems)
                 _, _, self.apt_packages, self.not_known_packages, self.apt_pip_packages = module_searcher.get_modules()
 
                 self.delete_no_files_found_comment()

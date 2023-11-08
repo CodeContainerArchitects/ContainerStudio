@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from createUtils.common_utils import _add_line_to_file
+from createUtils.common_utils import _add_line_to_file, map_apt_package
 
 
 class PipAptPackageWindow(tk.Toplevel):
@@ -58,5 +58,5 @@ class PipAptPackageWindow(tk.Toplevel):
             if if_pip.get():
                 _add_line_to_file(line=item, path_to_file=self.path)
             if if_apt.get():
-                self.parent.apt_packages[item] = "no version: subprocess"
+                self.parent.apt_packages[map_apt_package(package=item, os_name=self.parent.parent.coreApp.operating_systems)] = "no version: subprocess"
         self.destroy()
