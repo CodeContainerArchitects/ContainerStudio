@@ -16,7 +16,7 @@ class BasicConfigurationWindow(tk.Toplevel):
         self.resizable(False, False)
 
         # appearance
-        self.window_width = 800
+        self.window_width = 850
         self.window_height = 500
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
