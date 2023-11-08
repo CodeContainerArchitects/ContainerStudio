@@ -142,12 +142,11 @@ class CoreApp:
             
     def delete_chosen_pip_packages(self, values):
         for value in values:
-            if value in self.chosen_pip_packages.keys():
-                self.chosen_pip_packages.pop(value)
+            name = value.split(" ")[0]
+            if name in self.chosen_pip_packages.keys():
+                self.chosen_pip_packages.pop(name)
 
     def get_chosen_apt_packages(self):
-        print(self.chosen_apt_packages)
-        print(self.subprocess_apt_packages)
         return self.chosen_apt_packages | self.subprocess_apt_packages
 
     def set_chosen_apt_package(self, value):
@@ -159,8 +158,9 @@ class CoreApp:
             
     def delete_chosen_apt_packages(self, values):
         for value in values:
-            if value in self.chosen_apt_packages.keys():
-                self.chosen_apt_packages.pop(value)
+            name = value.split(" ")[0]
+            if name in self.chosen_apt_packages.keys():
+                self.chosen_apt_packages.pop(name)
 
     def add_apt_package(self, value):
         self.chosen_apt_packages.extend(value)

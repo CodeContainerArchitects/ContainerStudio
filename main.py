@@ -9,4 +9,5 @@ from createUtils.DockerfileGenerator import DockerfileGenerator
 if __name__ == "__main__":
     coreApp = CoreApp()
     main_window = App(coreApp)
+    main_window.protocol("WM_DELETE_WINDOW", main_window.on_closing)
     main_window.mainloop()

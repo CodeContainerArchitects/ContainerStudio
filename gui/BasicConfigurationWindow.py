@@ -13,13 +13,14 @@ class BasicConfigurationWindow(tk.Toplevel):
         self.chosen_python = ''
         self.parent = parent
         self.callback = callback
+        self.resizable(False, False)
 
         # appearance
-        self.window_width = 800
+        self.window_width = 850
         self.window_height = 500
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
-        self.padding = 5
+        self.padding = 10
         center_x = int(self.screen_width / 2 - self.window_width / 2)
         center_y = int(self.screen_height / 2 - self.window_height / 2)
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
@@ -35,15 +36,16 @@ class BasicConfigurationWindow(tk.Toplevel):
 
         # python version
         version_label = tk.Label(python_frame, text="Select Python version:")
-        self.entry_version = tk.Entry(python_frame, width=47)
+        self.entry_version = tk.Entry(python_frame, width=50)
         self.entry_version.bind("<KeyRelease>", self.check_python_versions)
-        self.version_listbox = tk.Listbox(python_frame, height=15, width=47, selectmode=tk.SINGLE, exportselection=0)
+        self.entry_version.focus_set()
+        self.version_listbox = tk.Listbox(python_frame, height=15, width=50, selectmode=tk.SINGLE, exportselection=0)
         self.version_listbox.bind('<<ListboxSelect>>', self.set_python_version)
         # os
         os_label = tk.Label(os_frame, text="Select Operating System:")
-        self.entry_os = tk.Entry(os_frame, width=47)
+        self.entry_os = tk.Entry(os_frame, width=50)
         self.entry_os.bind("<KeyRelease>", self.check_operating_systems)
-        self.os_listbox = tk.Listbox(os_frame, height=15, width=47, selectmode=tk.SINGLE, exportselection=0)
+        self.os_listbox = tk.Listbox(os_frame, height=15, width=50, selectmode=tk.SINGLE, exportselection=0)
         self.os_listbox.bind('<<ListboxSelect>>', self.set_operating_system)
 
         update_list(self.version_listbox, python_versions)
@@ -58,6 +60,8 @@ class BasicConfigurationWindow(tk.Toplevel):
             index_os = self.os_listbox.get(0, tk.END).index(f"{parent.coreApp.OS_data['OS_image']}:{parent.coreApp.OS_data['OS_image_version']}")
             self.os_listbox.select_set(index_os)
             self.chosen_os = self.os_listbox.get(index_os)
+            
+            
             
         self.apply_button = tk.Button(button_frame, text="Apply", command=lambda: self.apply())
         exit_button = tk.Button(button_frame, text="Cancel", command=self.destroy)
@@ -74,7 +78,10 @@ class BasicConfigurationWindow(tk.Toplevel):
 
         # button_frame elements
         self.apply_button.grid(row=0, column=0, pady=self.padding)
-        button_frame.grid_columnconfigure(1, weight=1)
+        button_frame.grid_propagate(True)
+        button_frame.columnconfigure(0, weight=1)
+        button_frame.columnconfigure(1, weight=1)
+        button_frame.rowconfigure(0, weight=1)
         exit_button.grid(row=0, column=1, sticky='se', pady=self.padding)
 
     def check_operating_systems(self, event):
