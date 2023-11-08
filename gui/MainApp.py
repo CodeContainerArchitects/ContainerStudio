@@ -1,6 +1,7 @@
 import tkinter as tk
 import os
 from tkinter import messagebox
+from tkinter.messagebox import askyesno
 from ProjectTree import ProjectTree
 from gui.BasicConfigurationWindow import BasicConfigurationWindow
 from gui.TreeWindow import TreeWindow
@@ -16,9 +17,10 @@ class App(tk.Tk):
         super().__init__()
         
         self.coreApp = coreApp
-        self.projectTree = ProjectTree()
-        self.dumper = Dumper(coreApp)
-
+        self.dump_file_name = ".dump_coreapp.json"
+        self.dumper = Dumper(coreApp, self.dump_file_name)
+        self.projectTree = ProjectTree(self.dump_file_name)
+        
         # set properties of the window
         self.title("Code Container")
         
@@ -91,10 +93,14 @@ class App(tk.Tk):
         self.coreApp.OS_data["OS_image"] = os_name
         self.coreApp.OS_data["OS_image_version"] = os_version
         self.coreApp.python_version = python_version
-        self.manage_requirements_button['state'] = tk.NORMAL
-        self.send_button['state'] = tk.NORMAL
-        self.package_list_button['state'] = tk.NORMAL
-        self.add_attributes_button['state'] = tk.NORMAL
+        self.check_os_and_python()
+        
+    def check_os_and_python(self):
+        if self.coreApp.OS_data and self.coreApp.python_version:
+            self.manage_requirements_button['state'] = tk.NORMAL
+            self.send_button['state'] = tk.NORMAL
+            self.package_list_button['state'] = tk.NORMAL
+            self.add_attributes_button['state'] = tk.NORMAL
 
     def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages, requirements_pip_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
@@ -115,14 +121,19 @@ class App(tk.Tk):
         working_directory = self.projectTree.get_working_directory()
         
         if os.path.isfile(os.path.join(working_directory, self.dumper.file_name)):
-            self.dumper.import_coreapp(working_directory)
-        
-        self.coreApp.set_project_root_dir(working_directory)
+            answer = askyesno(title="Found data from previous session!", message="Do you want to import settings from previous session?")
+            if answer:
+                self.dumper.import_coreapp(working_directory)
+            else:
+                self.coreApp.set_project_root_dir(working_directory)
+        else:
+            self.coreApp.set_project_root_dir(working_directory)
         self.folder_label['text'] = working_directory
         
         if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED and self.manage_requirements_button['state'] == tk.DISABLED and self.send_button['state'] == tk.DISABLED and self.package_list_button['state'] == tk.DISABLED:
             self.project_tree_button['state'] = tk.NORMAL
             self.basic_configuration_button['state'] = tk.NORMAL
+            self.check_os_and_python()
             
     def open_generate(self):
         self.generate_window = GeneratorWindow(self)
