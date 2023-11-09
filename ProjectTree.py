@@ -5,10 +5,11 @@ import shutil
 
 
 class ProjectTree:
-    def __init__(self):
+    def __init__(self, parent, dump_file_name):
         self.parent_dir = ""
-        self.container_directory = "/data/"
+        self.parent = parent
         self.files = []  
+        self.dump_file_name = dump_file_name
 
     # selects the directory where the files will be copied to and where the Dockerfile will be created
     def select_working_directory(self):
@@ -70,6 +71,7 @@ class ProjectTree:
         files_to_container = []
         if os.path.isdir(self.parent_dir) == True and len(os.listdir(self.parent_dir)) > 0:
             for file in os.listdir(self.parent_dir):
-                line = file + " " + self.container_directory + file
-                files_to_container.append(line)
+                if file != self.dump_file_name:
+                    line = file + " " + self.parent.coreApp.container_directory + file
+                    files_to_container.append(line)
         return files_to_container

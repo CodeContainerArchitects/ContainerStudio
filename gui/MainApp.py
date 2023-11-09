@@ -1,4 +1,7 @@
 import tkinter as tk
+import os
+from tkinter import messagebox
+from tkinter.messagebox import askyesno
 from ProjectTree import ProjectTree
 from gui.BasicConfigurationWindow import BasicConfigurationWindow
 from gui.TreeWindow import TreeWindow
@@ -6,6 +9,7 @@ from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
 from gui.PackageListWindow import PackageListWindow
 from gui.AddAttributesWindow import AddAttributesWindow
+from Dumper import Dumper
 
 
 class App(tk.Tk):
@@ -13,8 +17,10 @@ class App(tk.Tk):
         super().__init__()
         
         self.coreApp = coreApp
-        self.projectTree = ProjectTree()
-
+        self.dump_file_name = ".dump_coreapp.json"
+        self.dumper = Dumper(coreApp, self.dump_file_name)
+        self.projectTree = ProjectTree(parent=self, dump_file_name=self.dump_file_name)
+        
         # set properties of the window
         self.title("Code Container")
         
@@ -22,7 +28,7 @@ class App(tk.Tk):
         self.window_height = 500
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
-        self.padding = 5
+        self.padding = 15
         
         center_x = int(self.screen_width/2 - self.window_width / 2)
         center_y = int(self.screen_height/2 - self.window_height / 2)
@@ -30,43 +36,49 @@ class App(tk.Tk):
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
         self.configure(background='#B9B4C7')
         
-        mainframe = tk.Frame(self, width=self.window_width, height=self.window_height)
-        buttonframe = tk.Frame(mainframe)
+        mainframe = tk.Frame(self, width=self.window_width/2, height=self.window_height)
         
         # select folder
-        select_folder_button = tk.Button(buttonframe, text="Select folder",  command=lambda: self.select_working_directory())
+        select_folder_button = tk.Button(mainframe, text="Select folder",  command=lambda: self.select_working_directory())
         
         self.folder_name = "No folder selected."
         
-        self.folder_label = tk.Label(buttonframe, text=self.folder_name, justify=tk.LEFT, width=25, padx = self.padding)
+        self.folder_label = tk.Label(mainframe, text=self.folder_name, justify=tk.LEFT, width=25, padx = self.padding)
         
         # opens a new window
-        self.project_tree_button = tk.Button(buttonframe, text="Show project tree", state=tk.DISABLED, command=lambda: self.open_tree_window())
+        self.project_tree_button = tk.Button(mainframe, text="Show project tree", state=tk.DISABLED, command=lambda: self.open_tree_window())
 
-        self.basic_configuration_button = tk.Button(buttonframe, text="Basic configuration", state=tk.DISABLED, command=lambda: self.open_basic_configuration_window())
+        self.basic_configuration_button = tk.Button(mainframe, text="Basic configuration", state=tk.DISABLED, command=lambda: self.open_basic_configuration_window())
 
-        self.manage_requirements_button = tk.Button(buttonframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
+        self.manage_requirements_button = tk.Button(mainframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
         
-        self.package_list_button = tk.Button(buttonframe, text="Select apt and pip packages", state=tk.DISABLED, command=lambda: self.open_packages_list_window())
+        self.package_list_button = tk.Button(mainframe, text="Select apt and pip packages", state=tk.DISABLED, command=lambda: self.open_packages_list_window())
         
-        self.send_button = tk.Button(buttonframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
+        self.send_button = tk.Button(mainframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
         
-        self.add_attributes_button = tk.Button(buttonframe, text="Customize attributes", state=tk.DISABLED, command=lambda:self.open_add_attributes())
-        exit_button = tk.Button(buttonframe, text = "Exit", command=self.destroy)
+        self.add_attributes_button = tk.Button(mainframe, text = "Customize Attributes", state=tk.DISABLED, command=lambda:self.open_add_attributes())
+        exit_button = tk.Button(mainframe, text = "Exit", command = self.on_closing)
         
-        mainframe.pack(side=tk.TOP)
-        buttonframe.pack(expand=True)
-        mainframe.pack_propagate(0)
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+        mainframe.grid(row=0, column=0, sticky='nsew')
+        mainframe.grid_propagate(True)
         
-        select_folder_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.folder_label.pack(pady=self.padding, side=tk.TOP)
-        self.project_tree_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.basic_configuration_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.manage_requirements_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.package_list_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.add_attributes_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        self.send_button.pack(pady=self.padding, side=tk.TOP, fill='x')
-        exit_button.pack(pady=self.padding, side=tk.TOP, fill='x')
+        for idx in range(0,5):
+            mainframe.columnconfigure(idx, weight=1)
+        
+        for idx in range(0, 9):
+            mainframe.rowconfigure(idx, weight=1)
+        
+        select_folder_button.grid(row = 0, column=2, sticky='nsew', pady = self.padding)
+        self.folder_label.grid(row = 1, column=2, sticky='nsew', pady = self.padding)
+        self.project_tree_button.grid(row = 2, column=2, sticky='nsew', pady = self.padding)
+        self.basic_configuration_button.grid(row = 3, column=2, sticky='nsew', pady = self.padding)
+        self.manage_requirements_button.grid(row = 4, column=2, sticky='nsew', pady = self.padding)
+        self.package_list_button.grid(row = 5, column=2, sticky='nsew', pady = self.padding)
+        self.add_attributes_button.grid(row = 6, column=2, sticky='nsew', pady = self.padding)
+        self.send_button.grid(row = 7, column=2, sticky='nsew', pady = self.padding)
+        exit_button.grid(row = 8, column=2, sticky='nsew', pady = self.padding)
         
     def open_tree_window(self):
         tree_window = TreeWindow(self)
@@ -81,10 +93,14 @@ class App(tk.Tk):
         self.coreApp.OS_data["OS_image"] = os_name
         self.coreApp.OS_data["OS_image_version"] = os_version
         self.coreApp.python_version = python_version
-        self.manage_requirements_button['state'] = tk.NORMAL
-        self.send_button['state'] = tk.NORMAL
-        self.package_list_button['state'] = tk.NORMAL
-        self.add_attributes_button['state'] = tk.NORMAL
+        self.check_os_and_python()
+        
+    def check_os_and_python(self):
+        if self.coreApp.OS_data and self.coreApp.python_version:
+            self.manage_requirements_button['state'] = tk.NORMAL
+            self.send_button['state'] = tk.NORMAL
+            self.package_list_button['state'] = tk.NORMAL
+            self.add_attributes_button['state'] = tk.NORMAL
 
     def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages, requirements_pip_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
@@ -103,12 +119,21 @@ class App(tk.Tk):
     def select_working_directory(self):
         self.projectTree.select_working_directory()
         working_directory = self.projectTree.get_working_directory()
-        self.coreApp.set_project_root_dir(working_directory)
+        
+        if os.path.isfile(os.path.join(working_directory, self.dumper.file_name)):
+            answer = askyesno(title="Found data from previous session!", message="Do you want to import settings from previous session?")
+            if answer:
+                self.dumper.import_coreapp(working_directory)
+            else:
+                self.coreApp.set_project_root_dir(working_directory)
+        else:
+            self.coreApp.set_project_root_dir(working_directory)
         self.folder_label['text'] = working_directory
         
         if working_directory != '' and self.project_tree_button['state'] == tk.DISABLED and self.manage_requirements_button['state'] == tk.DISABLED and self.send_button['state'] == tk.DISABLED and self.package_list_button['state'] == tk.DISABLED:
             self.project_tree_button['state'] = tk.NORMAL
             self.basic_configuration_button['state'] = tk.NORMAL
+            self.check_os_and_python()
             
     def open_generate(self):
         self.generate_window = GeneratorWindow(self)
@@ -117,3 +142,10 @@ class App(tk.Tk):
     def open_add_attributes(self):
         self.add_attributes_window = AddAttributesWindow(self)
         self.add_attributes_window.grab_set()
+        
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            path = self.coreApp.get_project_root_dir()
+            if path:
+                self.dumper.export_coreapp(path)
+            self.destroy()
