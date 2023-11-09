@@ -2,18 +2,19 @@ import os
 import string
 import subprocess
 
-from createUtils.common_utils import _add_line_to_file
+from createUtils.common_utils import _add_line_to_file, map_apt_package
 from createUtils.package_listing import apt_packages, build_in_packages
 
 
 class ModuleSearcher:
-    def __init__(self, path_to_project, requirements_file_name):
+    def __init__(self, path_to_project, requirements_file_name, os_name):
         self.path_to_project = path_to_project
         self.requirements_file_name = requirements_file_name
         self.path_to_requirements_file = os.path.join(self.path_to_project, self.requirements_file_name)
         self.apt_modules = {}
         self.apt_pip_modules = []
         self.not_known_modules = []
+        self.os_name = os_name
 
     def get_modules(self):
         try:
@@ -52,7 +53,7 @@ class ModuleSearcher:
             else:
                 # check if apt-module
                 if command in apt_packages.keys():
-                    self.apt_modules[command] = "no version: "
+                    self.apt_modules[map_apt_package(package=command, os_name=self.os_name)] = "no version: "
                 else:
                     self.not_known_modules.append(command)
 

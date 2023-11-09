@@ -1,14 +1,15 @@
 import tkinter as tk
 
-from createUtils.common_utils import _add_line_to_file
+from createUtils.common_utils import _add_line_to_file, map_apt_package
 
 
 class PipAptPackageWindow(tk.Toplevel):
-    def __init__(self, parent, path):
+    def __init__(self, parent, path, os_name):
         super().__init__(parent)
 
         # variables
         self.parent = parent
+        self.os_name = os_name
         self.checkboxes = []
         self.row = 1
         self.path = path
@@ -58,5 +59,5 @@ class PipAptPackageWindow(tk.Toplevel):
             if if_pip.get():
                 _add_line_to_file(line=item, path_to_file=self.path)
             if if_apt.get():
-                self.parent.apt_packages[item] = "no version: subprocess"
+                self.parent.apt_packages[map_apt_package(package=item, os_name=self.os_name)] = "no version: subprocess"
         self.destroy()
