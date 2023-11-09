@@ -1,12 +1,14 @@
 import tkinter as tk
+from createUtils.common_utils import map_apt_package
 
 
 class UnknownPackagesFoundWindow(tk.Toplevel):
-    def __init__(self, parent, unknown_packages):
+    def __init__(self, parent, unknown_packages, os_name):
         super().__init__(parent)
 
         # variables
         self.parent = parent
+        self.os_name = os_name
 
         # window properties
         self.title("Unknown packages")
@@ -40,6 +42,7 @@ class UnknownPackagesFoundWindow(tk.Toplevel):
     def ok(self):
         chosen_packages = []
         for i in self.list_of_packages.curselection():
-            chosen_packages.append(self.list_of_packages.get(i))
+            apt_package = map_apt_package(package=self.list_of_packages.get(i), os_name=self.os_name)
+            chosen_packages.append(apt_package)
         self.parent.apt_packages.extend(chosen_packages)
         self.destroy()

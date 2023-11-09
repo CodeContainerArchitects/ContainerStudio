@@ -45,6 +45,3 @@ def map_apt_package(package, os_name):
             print("No <code> in div")
     else:
         print("Bad response")
-
-
-map_apt_package(package="curl", os_name='Debian')

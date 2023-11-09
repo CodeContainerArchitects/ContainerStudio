@@ -88,14 +88,14 @@ class ManageRequirementsWindow(tk.Toplevel):
     def create_requirements(self, parent):
         def callback_create_requirements(file_name):
             if file_name != '':
-                module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name, os_name=self.parent.coreAPP.operating_systems)
+                module_searcher = ModuleSearcher(path_to_project=self.directory, requirements_file_name=file_name, os_name=self.parent.coreAPP.OS_data["OS_image"].capitalize())
                 _, _, self.apt_packages, self.not_known_packages, self.apt_pip_packages = module_searcher.get_modules()
 
                 self.chosen_requirements.insert(tk.END, file_name)
                 if len(self.apt_pip_packages) != 0:
-                    PipAptPackageWindow(parent=self, path=os.path.join(self.directory, file_name))
+                    PipAptPackageWindow(parent=self, path=os.path.join(self.directory, file_name), os_name=self.parent.coreAPP.OS_data["OS_image"].capitalize())
                 if len(self.not_known_packages) != 0:
-                    UnknownPackagesFoundWindow(parent=self, unknown_packages=self.not_known_packages)
+                    UnknownPackagesFoundWindow(parent=self, unknown_packages=self.not_known_packages, os_name=self.parent.coreAPP.OS_data["OS_image"].capitalize())
         entry_window = EntryWindow(self, parent.projectTree.get_working_directory(), callback_create_requirements)
         entry_window.grab_set()
 
