@@ -2,11 +2,11 @@ FROM {{ OS_image }}:{{ OS_image_version }}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-WORKDIR /files
+WORKDIR /data
 
 {% if use_requirements %}
 {% for i in range(0, ranges) %}
-COPY {{ use_requirements[i] }} .
+COPY {{ use_requirements[i] }} {{  file_names[i] }}
 {% endfor %}
 {% endif%}
 

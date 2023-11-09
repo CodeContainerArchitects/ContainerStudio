@@ -5,9 +5,9 @@ import shutil
 
 
 class ProjectTree:
-    def __init__(self, dump_file_name):
+    def __init__(self, parent, dump_file_name):
         self.parent_dir = ""
-        self.container_directory = "/data/"
+        self.parent = parent
         self.files = []  
         self.dump_file_name = dump_file_name
 
@@ -72,6 +72,6 @@ class ProjectTree:
         if os.path.isdir(self.parent_dir) == True and len(os.listdir(self.parent_dir)) > 0:
             for file in os.listdir(self.parent_dir):
                 if file != self.dump_file_name:
-                    line = file + " " + self.container_directory + file
+                    line = file + " " + self.parent.coreApp.container_directory + file
                     files_to_container.append(line)
         return files_to_container

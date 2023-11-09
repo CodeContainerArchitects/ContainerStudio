@@ -19,7 +19,7 @@ class App(tk.Tk):
         self.coreApp = coreApp
         self.dump_file_name = ".dump_coreapp.json"
         self.dumper = Dumper(coreApp, self.dump_file_name)
-        self.projectTree = ProjectTree(self.dump_file_name)
+        self.projectTree = ProjectTree(parent=self, dump_file_name=self.dump_file_name)
         
         # set properties of the window
         self.title("Code Container")
