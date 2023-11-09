@@ -3,3 +3,4 @@ createUtils/__pycache__
 outputs/
 .vscode/
 .idea/
+config.py

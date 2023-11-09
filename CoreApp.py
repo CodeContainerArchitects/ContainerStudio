@@ -33,6 +33,7 @@ class CoreApp:
         self.entry_point = ""
         self.commands_before_files = []
         self.commands_after_files = []
+        self.container_directory = "/data/"
 
     def get_OS_data(self):
         return self.OS_data

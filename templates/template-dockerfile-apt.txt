@@ -8,7 +8,7 @@ VOLUME {{ container_path }}
 {% endfor %}
 {% endif %}
 
-WORKDIR /files
+WORKDIR /data
 
 {% for key, value in env_variables.items() %}
 ENV {{ key }}={{ value }}
@@ -57,7 +57,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
 
 {% if use_requirements %}
 {% for i in range(0, ranges) %}
-COPY {{ use_requirements[i] }} .
+COPY {{ use_requirements[i] }} {{  file_names[i] }}
 {% endfor %}
 {% endif%}
 {% if use_requirements %}
