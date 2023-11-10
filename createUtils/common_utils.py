@@ -1,4 +1,5 @@
 import os
+import uuid
 from tkinter import END
 from bs4 import BeautifulSoup
 import requests
@@ -45,3 +46,20 @@ def map_apt_package(package, os_name):
             print("No <code> in div")
     else:
         print("Bad response")
+
+
+def delete_from_file(file_path, content):
+    # take lines from current requirements.txt
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    requirements_directory = os.path.dirname(file_path)
+    requirements_filename = os.path.basename(file_path).split('.')[0]
+    tmp_requirements_file_path = os.path.join(requirements_directory, f"{requirements_filename}_{uuid.uuid4()}")
+    lines = [line for line in lines if not any(requirement in line for requirement in content)]
+    with open(tmp_requirements_file_path, 'w') as f:
+        f.writelines(lines)
+
+    # remove existing requirements.txt and save copy as normal requirements.txt
+    os.remove(file_path)
+    os.rename(tmp_requirements_file_path, file_path)

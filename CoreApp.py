@@ -1,3 +1,8 @@
+import os.path
+
+from createUtils.common_utils import delete_from_file
+
+
 class CoreApp:
     def __init__(self):
         self.OS_data = {}
@@ -145,6 +150,13 @@ class CoreApp:
             name = value.split(" ")[0]
             if name in self.chosen_pip_packages.keys():
                 self.chosen_pip_packages.pop(name)
+            elif name in self.requirements_pip_packages.keys():
+                self.requirements_pip_packages.pop(name)
+
+        # delete also if selected is from requirements file
+        values = [val.split(" ")[0] for val in values]
+        for i in range(0, len(self.chosen_requirements)):
+            delete_from_file(file_path=os.path.join(self.project_root_dir, self.chosen_requirements[i]), content=values)
 
     def get_chosen_apt_packages(self):
         return self.chosen_apt_packages | self.subprocess_apt_packages
@@ -161,6 +173,8 @@ class CoreApp:
             name = value.split(" ")[0]
             if name in self.chosen_apt_packages.keys():
                 self.chosen_apt_packages.pop(name)
+            elif name in self.subprocess_apt_packages.keys():
+                self.subprocess_apt_packages.pop(name)
 
     def add_apt_package(self, value):
         self.chosen_apt_packages.extend(value)
