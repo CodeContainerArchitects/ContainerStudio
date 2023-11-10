@@ -40,9 +40,12 @@ class UnknownPackagesFoundWindow(tk.Toplevel):
             self.list_of_packages.insert(tk.END, unknown_packages[i])
 
     def ok(self):
-        chosen_packages = []
+        chosen_packages = {}
         for i in self.list_of_packages.curselection():
             apt_package = map_apt_package(package=self.list_of_packages.get(i), os_name=self.os_name)
-            chosen_packages.append(apt_package)
-        self.parent.apt_packages.extend(chosen_packages)
+            chosen_packages[apt_package] = apt_package
+        print(f"before parent.apt_packages: {len(self.parent.apt_packages)}")
+        print(f"chosen_packages: {len(chosen_packages)}")
+        self.parent.apt_packages = self.parent.apt_packages | chosen_packages
+        print(f"after parent.apt_packages: {len(self.parent.apt_packages)}")
         self.destroy()

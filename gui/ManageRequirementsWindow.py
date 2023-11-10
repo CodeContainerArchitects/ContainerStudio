@@ -116,7 +116,7 @@ class ManageRequirementsWindow(tk.Toplevel):
         self.apt_packages = list(set(self.apt_packages))
         apt_packages_dict = {}
         for item in self.apt_packages:
-            apt_packages_dict[item] = "no version: subprocess"
+            apt_packages_dict[item] = "latest"
 
         # parse choosen requirements
         for r in requirements_files:
@@ -124,7 +124,7 @@ class ManageRequirementsWindow(tk.Toplevel):
             for req in rf.requirements:
                 d = req.to_dict()
                 name = d["name"]
-                requirements_pip_packages[name] = "no version: package in requirements"
+                requirements_pip_packages[name] = "latest"
 
         # give requirements_pip_packages to the main list
         self.callback(requirements_files, requirements_files_dockerfile_path, apt_packages_dict, requirements_pip_packages)
