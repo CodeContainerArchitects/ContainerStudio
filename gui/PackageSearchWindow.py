@@ -1,12 +1,15 @@
 import tkinter as tk
-from createUtils.package_listing import pip_packages, apt_packages
 from createUtils.common_utils import update_list
 from createUtils.package_listing import get_package_versions
+
 
 class PackageSearchWindow(tk.Toplevel):
     def __init__(self, parent, mode, callback):
         super().__init__(parent)
-        
+
+        # variables
+        self.parent = parent
+
         self.window_width = 800
         self.window_height = 500
         self.screen_width = self.winfo_screenwidth()
@@ -45,9 +48,9 @@ class PackageSearchWindow(tk.Toplevel):
         self.packages_listbox.bind('<<ListboxSelect>>', self.set_chosen_package)
         
         if self.mode == 'pip':
-                list = pip_packages.keys()
+                list = self.parent.parent.coreApp.pip_packages.keys()
         elif self.mode == 'apt':
-                list = apt_packages.keys()
+                list = self.parent.parent.coreApp.apt_packages.keys()
         update_list(self.packages_listbox, list)
         
         version_label = tk.Label(versionframe, text="Select package version:")
@@ -78,9 +81,9 @@ class PackageSearchWindow(tk.Toplevel):
         entry = self.entry_package.get()
         
         if self.mode == 'pip':
-                list = pip_packages.values()
+                list = self.parent.parent.coreApp.pip_packages.values()
         elif self.mode == 'apt':
-                list = apt_packages.values()
+                list = self.parent.parent.coreApp.apt_packages.values()
                 
         if entry =='':
             data = list

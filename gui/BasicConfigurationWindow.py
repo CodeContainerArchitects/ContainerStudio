@@ -1,7 +1,7 @@
 import tkinter as tk
-from createUtils.package_listing import pip_packages, apt_packages, python_versions, os_versions
+from createUtils.package_listing import python_versions, os_versions
 from createUtils.common_utils import update_list
-from createUtils.package_listing import get_package_versions
+from createUtils.package_listing import load_apt_to_dict, load_pip_to_dict
 
 
 class BasicConfigurationWindow(tk.Toplevel):
@@ -61,8 +61,6 @@ class BasicConfigurationWindow(tk.Toplevel):
             self.os_listbox.select_set(index_os)
             self.chosen_os = self.os_listbox.get(index_os)
             
-            
-            
         self.apply_button = tk.Button(button_frame, text="Apply", command=lambda: self.apply())
         exit_button = tk.Button(button_frame, text="Cancel", command=self.destroy)
 
@@ -121,6 +119,9 @@ class BasicConfigurationWindow(tk.Toplevel):
             if selected_index_python:
                 chosen_system_split = self.chosen_os.split(":")
                 self.callback(chosen_system_split[0], chosen_system_split[1], self.chosen_python)
+                # saving lists of full apt packages and pip packages
+                self.parent.coreApp.pip_packages = load_pip_to_dict()
+                self.parent.coreApp.apt_packages = load_apt_to_dict(os_name=f"{chosen_system_split[0]}{chosen_system_split[1].replace('.', '')}")
                 self.destroy()
             else:
                 tk.messagebox.showerror("Error", "Python version must be selected!")

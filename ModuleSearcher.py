@@ -3,11 +3,11 @@ import string
 import subprocess
 
 from createUtils.common_utils import _add_line_to_file, map_apt_package
-from createUtils.package_listing import apt_packages, build_in_packages
+from createUtils.package_listing import build_in_packages
 
 
 class ModuleSearcher:
-    def __init__(self, path_to_project, requirements_file_name, os_name):
+    def __init__(self, path_to_project, requirements_file_name, os_name, coreApp):
         self.path_to_project = path_to_project
         self.requirements_file_name = requirements_file_name
         self.path_to_requirements_file = os.path.join(self.path_to_project, self.requirements_file_name)
@@ -15,6 +15,7 @@ class ModuleSearcher:
         self.apt_pip_modules = []
         self.not_known_modules = []
         self.os_name = os_name
+        self.coreApp = coreApp
 
     def get_modules(self):
         try:
@@ -46,13 +47,13 @@ class ModuleSearcher:
                 subprocess_result = subprocess.run(['pip', 'install', command, '--dry-run'])
             except subprocess.CalledProcessError as e:
                 print("something went wrong")
-            if subprocess_result.returncode == 0 and command in apt_packages.values():
+            if subprocess_result.returncode == 0 and command in self.coreApp.apt_packages.values():
                 self.apt_pip_modules.append(command)
             elif subprocess_result.returncode == 0:
                 _add_line_to_file(line=command, path_to_file=self.path_to_requirements_file)
             else:
                 # check if apt-module
-                if command in apt_packages.keys():
+                if command in self.coreApp.apt_packages.keys():
                     self.apt_modules[map_apt_package(package=command, os_name=self.os_name)] = "latest"
                 else:
                     self.not_known_modules.append(command)
