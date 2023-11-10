@@ -53,7 +53,7 @@ class ModuleSearcher:
             else:
                 # check if apt-module
                 if command in apt_packages.keys():
-                    self.apt_modules[map_apt_package(package=command, os_name=self.os_name)] = "no version: "
+                    self.apt_modules[map_apt_package(package=command, os_name=self.os_name)] = "latest"
                 else:
                     self.not_known_modules.append(command)
 
