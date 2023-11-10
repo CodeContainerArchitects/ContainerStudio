@@ -1,7 +1,7 @@
 import tkinter as tk
-from createUtils.common_utils import update_list
 from createUtils.common_utils import update_list_dict
 from gui.PackageSearchWindow import PackageSearchWindow
+
 
 class PackageListWindow(tk.Toplevel):
     def __init__(self, parent):
@@ -41,7 +41,6 @@ class PackageListWindow(tk.Toplevel):
         delete_pip_button = tk.Button(pipframe, text="Delete pip package", command=lambda: self.delete_package('pip'))
         delete_apt_button = tk.Button(aptframe, text="Delete apt package", command=lambda: self.delete_package('apt'))
         
-        
         exit_button = tk.Button(optionsframe, text="Exit", command=self.destroy)
         
         pip_packages_label.grid(row=0, column=0, pady=self.padding)
@@ -68,10 +67,8 @@ class PackageListWindow(tk.Toplevel):
 
         package_search_window = PackageSearchWindow(self, mode, callback_add_package)
         package_search_window.grab_set()
-        
     
     def delete_package(self, mode):
-        
         if mode == 'pip':
             chosen_packages_indices = self.pip_packages_listbox.curselection()
             chosen_packages = [self.pip_packages_listbox.get(index) for index in chosen_packages_indices]
