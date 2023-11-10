@@ -274,7 +274,7 @@ class DockerfileParser:
         
         for package in packages:
             if package not in pip_packages.keys():
-                pip_packages[package] = "latest"
+                pip_packages[package] = "no version"
                 
         if packages:
             last_index = command.index(packages[-1])
