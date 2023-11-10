@@ -245,7 +245,3 @@ def load_pip_to_dict():
         file_content = None
 
     return file_content
-
-
-apt_packages = load_apt_to_dict("ubuntu20tls")
-pip_packages = load_pip_to_dict()

@@ -1,6 +1,3 @@
-from createUtils.package_listing import apt_packages, pip_packages
-
-
 class CoreApp:
     def __init__(self):
         self.OS_data = {}
@@ -34,6 +31,8 @@ class CoreApp:
         self.commands_before_files = []
         self.commands_after_files = []
         self.container_directory = "/data/"
+        self.apt_packages = {}
+        self.pip_packages = {}
 
     def get_OS_data(self):
         return self.OS_data
