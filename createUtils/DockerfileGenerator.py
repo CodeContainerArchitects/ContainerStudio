@@ -23,7 +23,8 @@ class DockerfileGenerator:
         self.dockerfile_path = path
 
     def generate_dockerfile(self):
-        copy_folder_to_dockerfile = self.projectTree.copy_dir_to_container()
+        #copy_folder_to_dockerfile = self.projectTree.copy_dir_to_container()
+        self.projectTree.use_dockerignore()
         
         parser = DockerfileParser(self.coreApp)
         
@@ -42,7 +43,6 @@ class DockerfileGenerator:
                                        use_requirements=self.coreApp.chosen_requirements,
                                        file_names=self.coreApp.requirements_files_names,
                                        ranges=len(self.coreApp.chosen_requirements),
-                                       copy_folder_to_dockerfile=copy_folder_to_dockerfile,
                                        env_variables=self.coreApp.env_variables,
                                        ports=self.coreApp.expose_ports,
                                        all_commands=self.coreApp.all_commands,

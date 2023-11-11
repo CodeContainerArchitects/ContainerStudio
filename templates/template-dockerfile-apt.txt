@@ -38,9 +38,7 @@ RUN pip install --upgrade pip
 {% endfor %}
 {% endif %}
 
-{% for file in copy_folder_to_dockerfile %}
-COPY {{ file }}
-{% endfor %}
+COPY . /data/
 
 {% if commands_after_files %}
 {% for command in commands_after_files %}
