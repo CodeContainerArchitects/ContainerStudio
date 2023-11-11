@@ -42,21 +42,32 @@ class ModuleSearcher:
 
     def _analyze_command(self, command):
         if command != '' and command not in build_in_packages:
+            translated_command = map_apt_package(package=command, os_name=self.os_name)
+            if_pip = False
+            if_apt = False
             subprocess_result = 1
             try:
                 subprocess_result = subprocess.run(['pip', 'install', command, '--dry-run'])
             except subprocess.CalledProcessError as e:
                 print("something went wrong")
-            if subprocess_result.returncode == 0 and command in self.coreApp.apt_packages.values():
-                self.apt_pip_modules.append(command)
-            elif subprocess_result.returncode == 0:
-                _add_line_to_file(line=command, path_to_file=self.path_to_requirements_file)
+
+            # check if pip
+            if subprocess_result.returncode == 0:
+                if_pip = True
+            # check if apt
+            if translated_command:
+                if_apt = True
+
+            # check if pip and apt
+            if if_pip and if_apt:
+                self.apt_pip_modules.append(f"{command} ({translated_command})")
+            elif not if_apt and not if_pip:
+                self.not_known_modules.append(command)
             else:
-                # check if apt-module
-                if command in self.coreApp.apt_packages.keys():
-                    self.apt_modules[map_apt_package(package=command, os_name=self.os_name)] = "latest"
-                else:
-                    self.not_known_modules.append(command)
+                if if_pip:
+                    _add_line_to_file(line=command, path_to_file=self.path_to_requirements_file)
+                if if_apt:
+                    self.apt_modules[translated_command] = "latest"
 
     def _find_os(self):
         for root, dirs, files in os.walk(self.path_to_project):
