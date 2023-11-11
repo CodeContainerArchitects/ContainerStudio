@@ -1,9 +1,3 @@
-All
-
-Generated:
-Copyright
-See
-
 0ad
 0ad-data
 0ad-data-common

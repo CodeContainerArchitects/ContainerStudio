@@ -31,7 +31,8 @@ class Dumper:
             data = json.load(file)
             for var_name, var_value in data.items():
                 if isinstance(var_value, dict):
-                    var_value = {k: int(v) if isinstance(v, str) and v.isdigit() else v for k, v in var_value.items()}
+                    if var_name != "apt_packages" and var_name != "pip_packages":
+                        var_value = {k: int(v) if isinstance(v, str) and v.isdigit() else v for k, v in var_value.items()}
                 setattr(self.coreApp, var_name, var_value)
                 
         for var_name, var_value in vars(self.coreApp).items():

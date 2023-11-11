@@ -78,6 +78,16 @@ class PackageSearchWindow(tk.Toplevel):
         exit_button.grid(row=0, column=1, sticky='se', pady=self.padding)
     
     def check_list_package(self, event):
+        
+        def get_priority(item):
+            if entry.lower() == item.lower():
+                return 1  
+            elif item.lower().startswith(entry.lower()):
+                return 2  
+            elif entry.lower() in item.lower():
+                return 3  
+            return 4 
+        
         entry = self.entry_package.get()
         
         if self.mode == 'pip':
@@ -90,11 +100,11 @@ class PackageSearchWindow(tk.Toplevel):
         else:
             data = []
             
-            for item in list:
-                if entry.lower() in item.lower():
-                    data.append(item)
-                    
-        update_list(self.packages_listbox, data)  
+        prioritized_items = [(item, get_priority(item)) for item in list]
+        prioritized_items.sort(key=lambda x: x[1])
+        data = [item for item, priority in prioritized_items if priority != 4]
+            
+        update_list(self.packages_listbox, data) 
         
     def check_list_version(self, event):
         entry = self.entry_version.get()
