@@ -38,6 +38,7 @@ class CoreApp:
         self.container_directory = "/data/"
         self.apt_packages = {}
         self.pip_packages = {}
+        self.resources_and_access_management = {"Sharing graphics card resources": 0, "Display sharing": 0, "Sharing a sound card": 0, "Pip update": 0}
 
     def get_OS_data(self):
         return self.OS_data

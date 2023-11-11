@@ -4,6 +4,7 @@ from tkinter import messagebox
 from tkinter.messagebox import askyesno
 from ProjectTree import ProjectTree
 from gui.BasicConfigurationWindow import BasicConfigurationWindow
+from gui.CheckboxWindow import CheckboxWindow
 from gui.TreeWindow import TreeWindow
 from gui.ManageRequirementsWindow import ManageRequirementsWindow
 from gui.GeneratorWindow import GeneratorWindow
@@ -25,7 +26,7 @@ class App(tk.Tk):
         self.title("Code Container")
         
         self.window_width = 600
-        self.window_height = 500
+        self.window_height = 550
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
         self.padding = 15
@@ -53,7 +54,9 @@ class App(tk.Tk):
         self.manage_requirements_button = tk.Button(mainframe, text="Manage requirements", state=tk.DISABLED, command=lambda: self.open_manage_requirements_window())
         
         self.package_list_button = tk.Button(mainframe, text="Select apt and pip packages", state=tk.DISABLED, command=lambda: self.open_packages_list_window())
-        
+
+        self.resource_and_access_button = tk.Button(mainframe, text="Resource & Access Management", state=tk.DISABLED, command=lambda: self.open_resource_and_access_window())
+
         self.send_button = tk.Button(mainframe, text = "Generate", state=tk.DISABLED, command=lambda:self.open_generate())
         
         self.add_attributes_button = tk.Button(mainframe, text = "Customize Attributes", state=tk.DISABLED, command=lambda:self.open_add_attributes())
@@ -77,8 +80,9 @@ class App(tk.Tk):
         self.manage_requirements_button.grid(row = 4, column=2, sticky='nsew', pady = self.padding)
         self.package_list_button.grid(row = 5, column=2, sticky='nsew', pady = self.padding)
         self.add_attributes_button.grid(row = 6, column=2, sticky='nsew', pady = self.padding)
-        self.send_button.grid(row = 7, column=2, sticky='nsew', pady = self.padding)
-        exit_button.grid(row = 8, column=2, sticky='nsew', pady = self.padding)
+        self.resource_and_access_button.grid(row = 7, column=2, sticky='nsew', pady = self.padding)
+        self.send_button.grid(row = 8, column=2, sticky='nsew', pady = self.padding)
+        exit_button.grid(row = 9, column=2, sticky='nsew', pady = self.padding)
         
     def open_tree_window(self):
         tree_window = TreeWindow(self)
@@ -101,6 +105,7 @@ class App(tk.Tk):
             self.send_button['state'] = tk.NORMAL
             self.package_list_button['state'] = tk.NORMAL
             self.add_attributes_button['state'] = tk.NORMAL
+            self.resource_and_access_button['state'] = tk.NORMAL
 
     def set_chosen_requirements(self, chosen_requirements, file_names, apt_packages, requirements_pip_packages):
         self.coreApp.set_chosen_requirements(chosen_requirements)
@@ -142,7 +147,16 @@ class App(tk.Tk):
     def open_add_attributes(self):
         self.add_attributes_window = AddAttributesWindow(self)
         self.add_attributes_window.grab_set()
-        
+
+    def save_resource_and_access_window(self, checkboxes):
+        for item, checked in checkboxes:
+            print(f"{item}: {checked}")
+            self.coreApp.resources_and_access_management[item] = checked.get()
+
+    def open_resource_and_access_window(self):
+        open_resource_and_access_window = CheckboxWindow(parent=self, title="Resource & Access Management", elements=self.coreApp.resources_and_access_management, callback=self.save_resource_and_access_window)
+        open_resource_and_access_window.grab_set()
+
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             path = self.coreApp.get_project_root_dir()
