@@ -42,10 +42,7 @@ def map_apt_package(package, os_name):
         if find_div:
             find_package = find_div.find('code').text
             return find_package.split(' ')[-1]
-        else:
-            print("No <code> in div")
-    else:
-        print("Bad response")
+    return ''
 
 
 def delete_from_file(file_path, content):

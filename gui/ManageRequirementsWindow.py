@@ -8,7 +8,6 @@ from gui.PipAptPackageWindow import PipAptPackageWindow
 from gui.TreeRequirementsWindow import TreeRequirementsWindow
 from pip_requirements_parser import RequirementsFile
 import os
-from gui.UnknownPackagesFoundWindow import UnknownPackagesFoundWindow
 
 
 class ManageRequirementsWindow(tk.Toplevel):
@@ -95,7 +94,10 @@ class ManageRequirementsWindow(tk.Toplevel):
                 if len(self.apt_pip_packages) != 0:
                     PipAptPackageWindow(parent=self, path=os.path.join(self.directory, file_name), os_name=self.parent.coreApp.OS_data["OS_image"].capitalize())
                 if len(self.not_known_packages) != 0:
-                    UnknownPackagesFoundWindow(parent=self, unknown_packages=self.not_known_packages, os_name=self.parent.coreApp.OS_data["OS_image"].capitalize())
+                    self.not_known_packages = list(set(self.not_known_packages))
+                    tk.messagebox.showwarning(title="Warning", message="Not known found packages during creating "
+                                                                       "requirements file. Check it and add this "
+                                                                       "packages if necessary. \n\n" + '\n'.join(self.not_known_packages))
         entry_window = EntryWindow(self, parent.projectTree.get_working_directory(), callback_create_requirements)
         entry_window.grab_set()
 

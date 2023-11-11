@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from createUtils.common_utils import _add_line_to_file, map_apt_package
+from createUtils.common_utils import _add_line_to_file
 
 
 class PipAptPackageWindow(tk.Toplevel):
@@ -57,7 +57,7 @@ class PipAptPackageWindow(tk.Toplevel):
         for item, if_pip, if_apt in self.checkboxes:
             print(f"{item}: pip is {'checked' if if_pip.get() else 'unchecked'}, apt is {'checked' if if_apt.get() else 'unchecked'}")
             if if_pip.get():
-                _add_line_to_file(line=item, path_to_file=self.path)
+                _add_line_to_file(line=item.split(' ')[0], path_to_file=self.path)
             if if_apt.get():
-                self.parent.apt_packages[map_apt_package(package=item, os_name=self.os_name)] = "latest"
+                self.parent.apt_packages[item.split(' ')[1].replace('(', '').replace(')', '')] = "latest"
         self.destroy()
