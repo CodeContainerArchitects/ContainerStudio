@@ -1,6 +1,7 @@
 import tkinter as tk
 from createUtils.common_utils import update_list_dict
 from gui.PackageSearchWindow import PackageSearchWindow
+from gui.TwoListInWindow import TwoListInWindow
 
 
 class PackageListWindow(tk.Toplevel):
@@ -15,9 +16,9 @@ class PackageListWindow(tk.Toplevel):
         self.title("Selected pip and apt packages")
         center_x = int(self.screen_width/2 - self.window_width / 2)
         center_y = int(self.screen_height/2 - self.window_height / 2)
-        
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
-        
+
+        # variables
         self.parent = parent
         
         pipframe = tk.Frame(self, width = self.window_width/2 - self.padding * 2)
@@ -35,14 +36,15 @@ class PackageListWindow(tk.Toplevel):
         apt_packages_label = tk.Label(aptframe, text="Selected apt packages")
         self.apt_packages_listbox = tk.Listbox(aptframe, height=10, width=45, selectmode='multiple')
         update_list_dict(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
-        
+
         add_pip_button = tk.Button(pipframe, text="Add pip package", command=lambda: self.add_package('pip'))
         add_apt_button = tk.Button(aptframe, text="Add apt package", command=lambda: self.add_package('apt'))
         delete_pip_button = tk.Button(pipframe, text="Delete pip package", command=lambda: self.delete_package('pip'))
         delete_apt_button = tk.Button(aptframe, text="Delete apt package", command=lambda: self.delete_package('apt'))
         
         exit_button = tk.Button(optionsframe, text="Exit", command=self.destroy)
-        
+        manage_external_sources_button = tk.Button(optionsframe, text="Manage external sources", command=lambda: self.manage_external_sources())
+
         pip_packages_label.grid(row=0, column=0, pady=self.padding)
         self.pip_packages_listbox.grid(row=1, column=0, pady=self.padding)
         add_pip_button.grid(row=2, column=0, pady=self.padding)
@@ -54,7 +56,8 @@ class PackageListWindow(tk.Toplevel):
         delete_apt_button.grid(row=3, column=0, pady=self.padding)
         
         optionsframe.grid_columnconfigure(0, weight=1)
-        exit_button.grid(row=0, column=0, sticky='e', pady=self.padding)
+        manage_external_sources_button.grid(row=0, column=0, sticky='e', pady=self.padding)
+        exit_button.grid(row=1, column=0, sticky='e', pady=self.padding)
 
     def add_package(self, mode):
         def callback_add_package(chosen_package, chosen_package_version):
@@ -81,3 +84,7 @@ class PackageListWindow(tk.Toplevel):
             if chosen_packages:
                 self.parent.coreApp.delete_chosen_apt_packages(chosen_packages)
                 update_list_dict(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
+
+    def manage_external_sources(self):
+        manage_external_sources_window = TwoListInWindow(parent=self, grandparent=self.parent)
+        manage_external_sources_window.grab_set()

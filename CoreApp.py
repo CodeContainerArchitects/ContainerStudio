@@ -38,6 +38,8 @@ class CoreApp:
         self.container_directory = "/data/"
         self.apt_packages = {}
         self.pip_packages = {}
+        self.external_lists_links = []
+        self.external_lists_packages = []
 
     def get_OS_data(self):
         return self.OS_data
