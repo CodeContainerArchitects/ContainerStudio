@@ -1,4 +1,5 @@
 import tkinter.filedialog as fd
+from createUtils.common_utils import _find_files
 from tkinter import messagebox
 import os
 import shutil
@@ -75,3 +76,19 @@ class ProjectTree:
                     line = file + " " + self.parent.coreApp.container_directory + file
                     files_to_container.append(line)
         return files_to_container
+    
+    def use_dockerignore(self):
+        dockerignore_path = os.path.join(self.parent_dir, ".dockerignore")
+        if os.path.isfile(dockerignore_path) == True:
+            with open(dockerignore_path, 'r') as f:
+                dockerignore = f.read().splitlines()
+                dockerignore.append("Dockerfile")
+                dockerignore.append("docker-compose.yml")
+                dockerignore.append(self.dump_file_name)
+                
+            with open(dockerignore_path, 'w') as f:
+                f.write('\n'.join(dockerignore))
+                
+        else:
+            with open(dockerignore_path, 'w') as f:
+                f.write("Dockerfile\ndocker-compose.yml\n" + self.dump_file_name)
