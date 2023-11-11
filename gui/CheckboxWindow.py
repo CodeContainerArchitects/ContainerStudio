@@ -2,7 +2,7 @@ import tkinter as tk
 
 
 class CheckboxWindow(tk.Toplevel):
-    def __init__(self, parent, title, elements, callback):
+    def __init__(self, parent, title, elements, callback, callback1=None):
         super().__init__(parent)
 
         # variables
@@ -43,6 +43,10 @@ class CheckboxWindow(tk.Toplevel):
         button_frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         apply_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+
+        # suggestions
+        if callback1:
+            callback1()
 
     def apply(self):
         self.callback(self.checkboxes)

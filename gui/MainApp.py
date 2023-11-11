@@ -139,14 +139,17 @@ class App(tk.Tk):
             self.project_tree_button['state'] = tk.NORMAL
             self.basic_configuration_button['state'] = tk.NORMAL
             self.check_os_and_python()
-            
+
+    def suggestions(self):
+        tk.messagebox.showinfo(title="Suggestions", message="Suggestions")
+
     def open_generate(self):
-        self.generate_window = GeneratorWindow(self)
-        self.generate_window.grab_set()
+        generate_window = GeneratorWindow(parent=self, suggestions_function=self.suggestions)
+        generate_window.grab_set()
         
     def open_add_attributes(self):
-        self.add_attributes_window = AddAttributesWindow(self)
-        self.add_attributes_window.grab_set()
+        add_attributes_window = AddAttributesWindow(self)
+        add_attributes_window.grab_set()
 
     def save_resource_and_access_window(self, checkboxes):
         for item, checked in checkboxes:
@@ -154,7 +157,7 @@ class App(tk.Tk):
             self.coreApp.resources_and_access_management[item] = checked.get()
 
     def open_resource_and_access_window(self):
-        open_resource_and_access_window = CheckboxWindow(parent=self, title="Resource & Access Management", elements=self.coreApp.resources_and_access_management, callback=self.save_resource_and_access_window)
+        open_resource_and_access_window = CheckboxWindow(parent=self, title="Resource & Access Management", elements=self.coreApp.resources_and_access_management, callback=self.save_resource_and_access_window, callback1=self.suggestions)
         open_resource_and_access_window.grab_set()
 
     def on_closing(self):
