@@ -68,6 +68,9 @@ class ManageExternalSourceWindow(tk.Toplevel):
         print(f"Packages: {self.grandparent.coreApp.external_lists_packages}")
 
     def _add_link(self, link, cert, name, pool, radiobutton_value):
+        if not link or not cert or not name or not pool:
+            tk.messagebox.showerror("Error", "All fields must be filled!")
+            return
         element = {"link": link, "cert": cert, "name": name, "pool": pool, "radiobutton_value": radiobutton_value}
         if_link_exists = False
         for item in self.links_properties:
@@ -90,7 +93,7 @@ class ManageExternalSourceWindow(tk.Toplevel):
     def add_to_list(self, mode):
         if mode == 'link':
             entry_window = InsertListData(parent=self, title="Add link", label1="Enter link to the list: ", label2="Enter link to the certificate: ", label3="Enter list name:", label4="Enter pool: ",
-                                          callback=self._add_link, width=self.parent.screen_width / 2, height=self.parent.screen_height / 2, radio_title="Do you need to add os name and pool?", radio_options=[["Yes", 1], ["No", 2]])
+                                          callback=self._add_link, width=self.parent.screen_width / 2, height=self.parent.screen_height / 2, radio_title="Do you need to add OS codename?", radio_options=[["Yes", 1], ["No", 2]])
             entry_window.grab_set()
         if mode == 'package':
             entry_window = InsertValueWindow(parent=self, title="Add package", string="Enter package: ", callback=self._add_package,

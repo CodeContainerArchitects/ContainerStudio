@@ -32,6 +32,14 @@ class DockerfileGenerator:
             parser.parse_dockerfile(dockerfile_path=dockerfile_path,
                                     files=self.dockerfile_files,
                                     files_not_found=self.files_not_found)
+            
+        external_lists_added = False
+        external_packages_added = False
+        if self.coreApp.external_lists_links is not None:
+            external_lists_added = True
+        if self.coreApp.external_lists_packages is not None:
+            external_packages_added = True
+        
         
         res_apt_packages = self.coreApp.chosen_apt_packages | self.coreApp.subprocess_apt_packages
         content = self.template.render(OS_image=self.coreApp.OS_data["OS_image"],
@@ -49,7 +57,11 @@ class DockerfileGenerator:
                                        entry_point=self.coreApp.entry_point,
                                        commands_before_files=self.coreApp.commands_before_files,
                                        commands_after_files=self.coreApp.commands_after_files,
-                                       volumes=self.coreApp.volumes)
+                                       volumes=self.coreApp.volumes,
+                                       external_lists_added=external_lists_added,
+                                       external_lists=self.coreApp.external_lists_links,
+                                       external_packages_added=external_packages_added,
+                                       external_packages=self.coreApp.external_lists_packages)
 
         filename = "Dockerfile"
         with open(os.path.join(self.coreApp.get_project_root_dir(), filename), "w") as file:
