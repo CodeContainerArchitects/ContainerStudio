@@ -1,7 +1,7 @@
 import tkinter as tk
 from createUtils.common_utils import update_list_dict
 from gui.PackageSearchWindow import PackageSearchWindow
-from gui.TwoListInWindow import TwoListInWindow
+from gui.ManageExternalSourceWindow import ManageExternalSourceWindow
 
 
 class PackageListWindow(tk.Toplevel):
@@ -86,5 +86,5 @@ class PackageListWindow(tk.Toplevel):
                 update_list_dict(self.apt_packages_listbox, self.parent.coreApp.get_chosen_apt_packages())
 
     def manage_external_sources(self):
-        manage_external_sources_window = TwoListInWindow(parent=self, grandparent=self.parent)
+        manage_external_sources_window = ManageExternalSourceWindow(parent=self, grandparent=self.parent)
         manage_external_sources_window.grab_set()

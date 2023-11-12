@@ -1,14 +1,17 @@
 import tkinter as tk
+
+from gui.InsertListData import InsertListData
 from gui.attributes.InsertValueWindow import InsertValueWindow
 
 
-class TwoListInWindow(tk.Toplevel):
+class ManageExternalSourceWindow(tk.Toplevel):
     def __init__(self, parent, grandparent):
         super().__init__(parent)
 
         # variables
         self.parent = parent
         self.grandparent = grandparent
+        self.links_properties = []
 
         # window properties
         self.window_width = 800
@@ -16,7 +19,7 @@ class TwoListInWindow(tk.Toplevel):
         self.padding = 10
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
-        self.title("Selected pip and apt packages")
+        self.title("Manage external sources window")
         center_x = int(self.screen_width / 2 - self.window_width / 2)
         center_y = int(self.screen_height / 2 - self.window_height / 2)
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
@@ -55,17 +58,26 @@ class TwoListInWindow(tk.Toplevel):
 
         # restore
         for element in self.grandparent.coreApp.external_lists_links:
-            self.links_list.insert(tk.END, element)
+            self.links_properties.append(element)
+        for element in self.links_properties:
+            self.links_list.insert(tk.END, f"{element['name']} ({element['link']})")
         for element in self.grandparent.coreApp.external_lists_packages:
             self.packages_list.insert(tk.END, element)
 
-    def _add_link(self, element):
-        if element == "":
-            tk.messagebox.showerror("Error", "Link cannot be empty!")
-        elif element in self.links_list.get(0, tk.END):
-            tk.messagebox.showwarning("Warning", "Link already added.")
+        print(f"Links: {self.grandparent.coreApp.external_lists_links}")
+        print(f"Packages: {self.grandparent.coreApp.external_lists_packages}")
+
+    def _add_link(self, link, cert, name, pool, radiobutton_value):
+        element = {"link": link, "cert": cert, "name": name, "pool": pool, "radiobutton_value": radiobutton_value}
+        if_link_exists = False
+        for item in self.links_properties:
+            if item['link'] == link:
+                if_link_exists = True
+        if not if_link_exists:
+            self.links_list.insert(tk.END, f"{element['name']} ({element['link']})")
+            self.links_properties.append(element)
         else:
-            self.links_list.insert(tk.END, element)
+            tk.messagebox.showwarning("Warning", "Such link already added.")
 
     def _add_package(self, element):
         if element == "":
@@ -77,8 +89,8 @@ class TwoListInWindow(tk.Toplevel):
 
     def add_to_list(self, mode):
         if mode == 'link':
-            entry_window = InsertValueWindow(parent=self, title="Add link", string="Enter link: ", callback=self._add_link,
-                                             width=self.grandparent.screen_width / 2, height=self.grandparent.screen_height / 2)
+            entry_window = InsertListData(parent=self, title="Add link", label1="Enter link to the list: ", label2="Enter link to the certificate: ", label3="Enter list name:", label4="Enter pool: ",
+                                          callback=self._add_link, width=self.parent.screen_width / 2, height=self.parent.screen_height / 2, radio_title="Do you need to add os name and pool?", radio_options=[["Yes", 1], ["No", 2]])
             entry_window.grab_set()
         if mode == 'package':
             entry_window = InsertValueWindow(parent=self, title="Add package", string="Enter package: ", callback=self._add_package,
@@ -90,17 +102,21 @@ class TwoListInWindow(tk.Toplevel):
         if mode == 'link':
             selected = self.links_list.curselection()
             for sp in selected:
+                value = self.links_list.get(sp)
                 self.links_list.delete(sp)
+                helper = []
+                for item in self.links_properties:
+                    if item['link'] != value.split(' ')[1].replace('(', '').replace(')', ''):
+                        helper.append(item)
+                self.links_properties = helper
         if mode == 'package':
             selected = self.packages_list.curselection()
             for sp in selected:
                 self.packages_list.delete(sp)
 
     def apply(self):
-        for item in self.links_list.get(0, tk.END):
-            if item not in self.grandparent.coreApp.external_lists_links:
-                self.grandparent.coreApp.external_lists_links.append(item)
+        self.grandparent.coreApp.external_lists_links = self.links_properties
+        self.grandparent.coreApp.external_lists_packages = []
         for item in self.packages_list.get(0, tk.END):
-            if item not in self.grandparent.coreApp.external_lists_packages:
-                self.grandparent.coreApp.external_lists_packages.append(item)
+            self.grandparent.coreApp.external_lists_packages.append(item)
         self.destroy()
