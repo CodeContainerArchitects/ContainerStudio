@@ -10,13 +10,12 @@ from gui.FilesNotFoundWindow import FilesNotFoundWindow
 
 
 class GeneratorWindow(tk.Toplevel):
-    def __init__(self, parent, suggestions_function):
+    def __init__(self, parent):
         super().__init__(parent)
         self.window_width = 600
         self.window_height = 400
         self.padding = 5
-        self.suggestions_function = suggestions_function
-        
+
         self.title("Generate Files")
         center_x = int(parent.screen_width/2 - self.window_width / 2)
         center_y = int(parent.screen_height/2 - self.window_height / 2)
@@ -61,9 +60,6 @@ class GeneratorWindow(tk.Toplevel):
         create_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         self.create_compose_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
-
-        # suggestion
-        suggestions_function()
         
     def search_for_dockerfile(self, parent):
         pattern = re.compile(r".*Dockerfile.*")
