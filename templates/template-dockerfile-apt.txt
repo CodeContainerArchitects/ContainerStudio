@@ -30,7 +30,9 @@ RUN eval "$(pyenv init -)" && \
     pyenv global {{ python_version }}
 RUN python -m venv venv
 ENV PATH="venv/bin:$PATH"
+{% if update_pip %}
 RUN pip install --upgrade pip
+{% endif %}
 
 {% if commands_before_files %}
 {% for command in commands_before_files %}

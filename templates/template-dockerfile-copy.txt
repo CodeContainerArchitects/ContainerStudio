@@ -28,7 +28,9 @@ RUN eval "$(pyenv init -)" && \
     pyenv global {{ python_version }}
 RUN python -m venv venv
 ENV PATH="venv/bin:$PATH"
+{% if update_pip %}
 RUN pip install --upgrade pip
+{% endif %}
 
 RUN --mount=type=cache,target=/var/cache/apt \ 
     apt-get update \

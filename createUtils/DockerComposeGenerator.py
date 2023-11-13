@@ -23,7 +23,10 @@ class DockerComposeGenerator:
                                        ports=self.coreApp.expose_ports,
                                        env_variables=self.coreApp.env_variables,
                                        restart=self.restart,
-                                       volumes=self.coreApp.volumes)
+                                       volumes=self.coreApp.volumes,
+                                       use_gpu=self.coreApp.resources_and_access_management["Sharing graphics card resources"],
+                                       use_display=self.coreApp.resources_and_access_management["Display sharing"],
+                                       use_sound=self.coreApp.resources_and_access_management["Sharing a sound card"])
         
         with open(os.path.join(self.coreApp.get_project_root_dir(), self.compose_name), "w") as file:
             file.write(content)
