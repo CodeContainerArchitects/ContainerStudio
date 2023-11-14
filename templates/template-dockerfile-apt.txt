@@ -32,6 +32,20 @@ RUN python -m venv venv
 ENV PATH="venv/bin:$PATH"
 RUN pip install --upgrade pip
 
+{% if external_lists_added %}
+RUN apt-get install -y ca-certificates curl gnupg apt-transport-https gpg
+RUN install -m 0755 -d /etc/apt/keyrings
+{% for element in external_lists %}
+RUN curl -fsSL {{ element["cert"] }} | gpg --dearmor -o /etc/apt/keyrings/{{ element["name"] }}.gpg
+RUN chmod a+r /etc/apt/keyrings/{{ element["name"] }}.gpg
+{% if element["radiobutton_value"] == 1 %}
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/{{ element["name"] }}.gpg] {{ element["link"] }} $(. /etc/os-release && echo "$VERSION_CODENAME") {{ element["pool"] }}" | tee /etc/apt/sources.list.d/{{ element["name"] }}.list > /dev/null
+{% else %}
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/{{ element["name"] }}.gpg] {{ element["link"] }} {{ element["pool"] }}" | tee /etc/apt/sources.list.d/{{ element["name"] }}.list > /dev/null
+{% endif %}
+{% endfor %}
+{% endif %}
+
 {% if commands_before_files %}
 {% for command in commands_before_files %}
 {{ command }}
@@ -76,6 +90,15 @@ RUN --mount=type=cache,target=/root/.cache pip install {{ name }}
 RUN --mount=type=cache,target=/root/.cache pip install {{ name }}=={{ version }}
 {% endif %}
 {% endfor %}
+
+{% if external_packages_added and external_lists_added %}
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+{% for package in external_packages %}
+        {{ package }} \
+{% endfor %}
+    && rm -rf /var/lib/apt/lists/*
+{% endif %}
 
 {% if entry_point %}
 ENTRYPOINT {{ entry_point }}
