@@ -4,11 +4,16 @@ services:
         build:
             context: {{ context }}
             dockerfile: {{ dockerfile_name }}
-        {% if env_variables %}
+        {% if env_variables or use_display or use_sound %}
         environment:
+            {% if env_variables %}
             {% for key, value in env_variables.items() %}
             {{ key }}={{ value }}
             {% endfor %}
+            {% endif %}
+            {% if use_display or use_sound %}
+            - DISPLAY=${DISPLAY}
+            {% endif %}
         {% endif %}
         {% if ports %}
         ports:
@@ -18,10 +23,28 @@ services:
             {% endif %}
             {% endfor %}
         {% endif %}
-        {% if volumes %}
+        {% if volumes or use_display or use_sound %}
         volumes:
+            {% if volumes %}
             {% for host_path, container_port in volumes.items() %}
             - {{ host_path }}:{{ container_port }}
             {% endfor %}
+            {% endif %}
+            {% if use_display or use_sound %}
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            {% endif %}
+        {% endif %}
+        {% if use_sound %}
+        devices:
+            - "/dev/snd:/dev/snd"
+        {% endif %}
+        {% if use_gpu %}
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                    - driver: nvidia
+                      count: all
+                      capabilities: [gpu]
         {% endif %}
         restart: {{ restart }}

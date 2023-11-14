@@ -15,7 +15,7 @@ class GeneratorWindow(tk.Toplevel):
         self.window_width = 600
         self.window_height = 400
         self.padding = 5
-        
+
         self.title("Generate Files")
         center_x = int(parent.screen_width/2 - self.window_width / 2)
         center_y = int(parent.screen_height/2 - self.window_height / 2)

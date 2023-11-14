@@ -46,6 +46,7 @@ class DockerfileGenerator:
         content = self.template.render(OS_image=self.coreApp.OS_data["OS_image"],
                                        OS_image_version=self.coreApp.OS_data["OS_image_version"],
                                        python_version=self.coreApp.python_version,
+                                       update_pip=self.coreApp.resources_and_access_management["Pip update"],
                                        packages_to_install=self.coreApp.chosen_pip_packages,
                                        apt_get_packages=res_apt_packages,
                                        use_requirements=self.coreApp.chosen_requirements,
