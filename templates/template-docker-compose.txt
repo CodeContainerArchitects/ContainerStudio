@@ -1,4 +1,4 @@
-version: {{ compose_version }}
+version: "{{ compose_version }}"
 services:
     {{ project_name }}:
         build:
