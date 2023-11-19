@@ -1,6 +1,7 @@
 import tkinter as tk
 from createUtils.DockerfileGenerator import DockerfileGenerator
 from createUtils.DockerComposeGenerator import DockerComposeGenerator
+from DockerfileParser import DockerfileParser
 import os
 import re
 from createUtils.common_utils import _find_files
@@ -39,6 +40,7 @@ class GeneratorWindow(tk.Toplevel):
         
         create_dockerfile_button = tk.Button(button_frame_dockerfile_buttons, text="Create Dockerfile", command=lambda: self.create_dockerfile(parent))
         self.create_compose_button = tk.Button(button_frame_dockerfile_buttons, text="Create docker-compose.yml", state=tk.DISABLED, command=lambda: self.create_compose(parent))
+        self.parse_existing_dockerfile_button = tk.Button(button_frame_dockerfile_buttons, text="Get info from existing Dockerfile", state=tk.DISABLED, command=lambda: self.parse_existing_dockerfile(parent))
         
         button_frame_lower = tk.Frame(self)
         cancel_button = tk.Button(button_frame_lower, text="Exit", command=self.destroy)
@@ -59,8 +61,30 @@ class GeneratorWindow(tk.Toplevel):
         
         create_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         self.create_compose_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
+        self.parse_existing_dockerfile_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         cancel_button.pack(side=tk.LEFT, pady=self.padding, fill='x', expand=True)
         
+        self.dockerfile_files = []
+        self.files_not_found = []
+        
+    def parse_existing_dockerfile(self, parent):
+        dockerfile_selected = self.list_of_dockerfiles.curselection()
+        if dockerfile_selected:
+            dockerfile_index = dockerfile_selected[0]
+            if dockerfile_index or dockerfile_index == 0:
+                dockerfile_path = self.list_of_dockerfiles.get(dockerfile_index)
+                dockerfile_path = os.path.join(parent.coreApp.project_root_dir, dockerfile_path)
+                parser = DockerfileParser(parent.coreApp)
+                
+                self.files_not_found = []
+                parser.parse_dockerfile(dockerfile_path=dockerfile_path,
+                                        files=self.dockerfile_files,
+                                        files_not_found=self.files_not_found)
+                
+                if self.files_not_found:
+                    filesNotFoundWindow = FilesNotFoundWindow(self, self.files_not_found)
+                    filesNotFoundWindow.grab_set()
+    
     def search_for_dockerfile(self, parent):
         pattern = re.compile(r".*Dockerfile.*")
         result = _find_files(path=parent.coreApp.project_root_dir, pattern=pattern)
@@ -68,6 +92,7 @@ class GeneratorWindow(tk.Toplevel):
         if len(result) == 0:
             self.list_of_dockerfiles.insert(tk.END, "No Dockerfiles found")
         else:
+            self.parse_existing_dockerfile_button.config(state=tk.NORMAL)
             for file in result:
                 self.list_of_dockerfiles.insert(tk.END, file)
                 
@@ -76,25 +101,7 @@ class GeneratorWindow(tk.Toplevel):
         print(self.chosen_option.get())
         parent.coreApp.set_template_version(self.chosen_option.get())
         generator = DockerfileGenerator(parent.coreApp, parent.projectTree)
-        dockerfile_selected = self.list_of_dockerfiles.curselection()
-        if dockerfile_selected:
-            dockerfile_index = dockerfile_selected[0]
-            if dockerfile_index or dockerfile_index == 0:
-                dockerfile_path = self.list_of_dockerfiles.get(dockerfile_index)
-                generator.set_dockerfile_path(dockerfile_path)
-                res=messagebox.askquestion("Copy Dockerfile", "Do you want to make a copy of selected Dockerfile?")
-                if res == 'yes':
-                    f = asksaveasfile(filetypes=[("All Files","*.*")], initialdir=parent.coreApp.project_root_dir, initialfile=dockerfile_path+"_copy")
-                    if f is not None:
-                        orig_file = open(os.path.join(parent.coreApp.project_root_dir, dockerfile_path), "r")
-                        content = orig_file.read()
-                        f.write(content)
-                        orig_file.close()
-                        f.close()
         generator.generate_dockerfile()
-        if generator.files_not_found:
-            filesNotFoundWindow = FilesNotFoundWindow(self, generator.files_not_found)
-            filesNotFoundWindow.grab_set()
         self.create_compose_button.config(state=tk.NORMAL)
     
     def create_compose(self, parent):

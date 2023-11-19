@@ -86,7 +86,7 @@ RUN --mount=type=cache,target=/root/.cache pip install -r {{ file_names[i] }}
 {% endif%}
 
 {% for name, version in packages_to_install.items() %}
-{% if "no version" in version %}
+{% if "package from requirements" in version %}
 RUN --mount=type=cache,target=/root/.cache pip install {{ name }}
 {% else %}
 RUN --mount=type=cache,target=/root/.cache pip install {{ name }}=={{ version }}

@@ -6,40 +6,11 @@ from createUtils.common_utils import _find_files
 class DockerfileParser:
     def __init__(self, coreApp):
         self.coreApp = coreApp
-
-
-    def get_dockerfile_path(self):
-        pattern = re.compile(r".*Dockerfile.*")
-        result = _find_files(path=self.coreApp.project_root_dir, pattern=pattern)
-        if result:
-            print(f"Found Dockerfiles at:")
-            for i in range(0, len(result)):
-                print(f'{i}. {result[i]}')
-            print('Choose appropriate Dockerfile, which will be used as a base. To quit press x.\n')
-            index = input()
-            if index.isdigit():
-                file_name = result[int(index)]
-                print("Do you want to copy selected Dockerfile (y/n)?")
-                option = input()
-                if option == 'y':
-                    print("Enter the name of the copy of selected Dockerfile: ")
-                    copy_file_name = input()
-                    while os.path.exists(os.path.join(self.coreApp.project_root_dir, copy_file_name)):
-                        print("File arleady exists. Choose another file name.\n")
-                        copy_file_name = input()
-                    shutil.copyfile(os.path.join(self.coreApp.project_root_dir, file_name), os.path.join(self.coreApp.project_root_dir, copy_file_name))
-                return file_name
-            else:
-                return None
-        else:
-            print("Dockerfile not found in the specified directory.")
-            return None
         
     def parse_dockerfile(self, dockerfile_path, files, files_not_found) :
         with open(dockerfile_path, 'r') as file:
             content = file.readlines()
         icontent = iter(content)    
-        os_selected = False
         for line in icontent:
             command = line.split()
             if command:
@@ -62,77 +33,51 @@ class DockerfileParser:
                 whole_command = " ".join(command)
                 if 'ONBUILD' not in command:
                     if 'FROM' in command:
-                        if os_selected:
-                            image = command[command.index('FROM')+1:command.index('FROM')+2]
-                            if ':' in image[0]:
-                                parts = image[0].split(':')
-                                self.coreApp.os_docker["OS_image"] = parts[0]
-                                self.coreApp.os_docker["OS_image_version"] = parts[1]
-                            else:
-                                self.coreApp.os_docker["OS_image"] = image[0]
-                                self.coreApp.os_docker["OS_image_version"] = 'latest'
-                            os_selected = True
-                        else:
-                            self.coreApp.all_commands.append(whole_command)
-                            self.coreApp.images.append(whole_command)
+                        pass
                     if 'MAINTAINER' in command:
-                        self.coreApp.all_commands.append(whole_command)
-                        self.coreApp.maintainers.append(whole_command)
+                        pass
                     if 'VOLUME' in command:
-                        self.coreApp.all_commands.append(whole_command)
-                        self.coreApp.volumes.append(whole_command)
+                        pass
                     if 'LABEL' in command:
-                        self.coreApp.all_commands.append(whole_command)
-                        self.coreApp.labels.append(whole_command)
+                        pass
                     if 'EXPOSE' in command:
                         container_port = whole_command.split()[1]
                         host_port = f"-{container_port}"
                         self.coreApp.expose_ports[host_port] = container_port
-                        self.coreApp.all_commands.append(whole_command)
                     if 'USER' in command:
-                        self.coreApp.users.append(whole_command)
-                        self.coreApp.all_commands.append(whole_command)
+                        pass
                     if 'WORKDIR' in command:
-                        self.coreApp.all_commands.append(whole_command)
+                        pass
                     if 'ARG' in command:
-                        self.coreApp.arguments.append(whole_command)
-                        self.coreApp.all_commands.append(whole_command)
+                        pass
                     if 'ENTRYPOINT' in command:
-                        self.coreApp.entrypoint_commands.append(whole_command)
-                        self.coreApp.all_commands.append(whole_command)
+                        self.coreApp.entry_point = whole_command.replace("ENTRYPOINT ", "")
                     if 'CMD' in command:
-                        self.coreApp.cmd_commands.append(whole_command)
-                        self.coreApp.all_commands.append(whole_command)
+                        pass
                     if 'STOPSIGNAL' in command:
-                        self.coreApp.ll_commands.append(whole_command)
-                        self.coreApp.stop_signals.append(whole_command)
+                        pass
                     if 'HEALTHCHECK' in command:
-                        self.coreApp.all_commands.append(whole_command)
-                        self.coreApp.healthchecks.append(whole_command)
+                        pass
                     if 'SHELL' in command:
-                        self.coreApp.shell_commands.append(whole_command)
-                        self.coreApp.all_commands.append(whole_command)
+                        pass
                     if 'RUN' in command:                     
                         if 'apt' in command or 'apt-get' in command:
                             if 'install' in command:
-                                self.coreApp.chosen_apt_packages, rest_of_command = self.add_apt_packages(command, self.coreApp.chosen_apt_packages)
-                                if rest_of_command:
-                                    self.coreApp.run_commands.append(" ".join(rest_of_command))
-                                    self.coreApp.all_commands.append(" ".join(rest_of_command))
+                                self.coreApp.chosen_apt_packages = self.add_apt_packages(command, self.coreApp.chosen_apt_packages)
                         elif 'pip' in command:
                             if 'install' in command:
-                                self.coreApp.chosen_pip_packages, rest_of_command = self.add_pip_packages(command, self.coreApp.chosen_pip_packages)
-                                if rest_of_command:
-                                    self.coreApp.run_commands.append(" ".join(rest_of_command))
-                                    self.coreApp.all_commands.append(" ".join(rest_of_command))
+                                self.coreApp.chosen_pip_packages = self.add_pip_packages(command, self.coreApp.chosen_pip_packages)
                         else:
-                            self.coreApp.run_commands.append(whole_command)
-                            self.coreApp.all_commands.append(whole_command)
+                            pass
                     if 'ENV' in command:
-                        key = whole_command.split()[1].split('=')[0]
-                        value = whole_command.split()[1].split('=')[1]
-                        self.coreApp.env_variables[key] = value
-                        self.coreApp.all_commands.append(whole_command)
+                        if '=' in whole_command:
+                            key = whole_command.split()[1].split('=')[0]
+                            value = whole_command.split()[1].split('=')[1]
+                            self.coreApp.env_variables[key] = value
+                        else:
+                            key = whole_command.split()[1]
+                            value = whole_command.split()[2]
+                            self.coreApp.env_variables[key] = value
                     if 'COPY' in command:
                         files.append(whole_command)
                         self.coreApp.all_commands.append(whole_command)
@@ -214,14 +159,7 @@ class DockerfileParser:
             if package not in apt_packages.keys():
                 apt_packages[package] = "latest"
                 
-        if packages:
-            last_index = command.index(packages[-1])
-            rest_of_command = command[:first_index-1] + command[last_index+1:]
-        
-        if len(rest_of_command) == 1:
-            rest_of_command = None
-                
-        return apt_packages, rest_of_command
+        return apt_packages
 
     def add_pip_packages(self, command, pip_packages):
         packages = command
@@ -274,15 +212,6 @@ class DockerfileParser:
         
         for package in packages:
             if package not in pip_packages.keys():
-                pip_packages[package] = "no version"
+                pip_packages[package] = "package from requirements"
                 
-        if packages:
-            last_index = command.index(packages[-1])
-            rest_of_command = command[:first_index-1] + command[last_index+1:]
-        else:
-            rest_of_command = command
-        
-        if len(rest_of_command) == 1:
-            rest_of_command = None
-        
-        return pip_packages, rest_of_command
+        return pip_packages

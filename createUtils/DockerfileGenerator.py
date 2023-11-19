@@ -25,15 +25,6 @@ class DockerfileGenerator:
     def generate_dockerfile(self):
         #copy_folder_to_dockerfile = self.projectTree.copy_dir_to_container()
         self.projectTree.use_dockerignore()
-        
-        parser = DockerfileParser(self.coreApp)
-        
-        if self.dockerfile_path:
-            dockerfile_path = os.path.join(self.coreApp.get_project_root_dir(), self.dockerfile_path)
-            parser.parse_dockerfile(dockerfile_path=dockerfile_path,
-                                    files=self.dockerfile_files,
-                                    files_not_found=self.files_not_found)
-            
         external_lists_added = False
         external_packages_added = False
         if self.coreApp.external_lists_links is not None:
