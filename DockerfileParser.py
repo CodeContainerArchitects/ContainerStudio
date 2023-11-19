@@ -63,10 +63,10 @@ class DockerfileParser:
                     if 'RUN' in command:                     
                         if 'apt' in command or 'apt-get' in command:
                             if 'install' in command:
-                                self.coreApp.chosen_apt_packages, rest_of_command = self.add_apt_packages(command, self.coreApp.chosen_apt_packages)
+                                self.coreApp.chosen_apt_packages = self.add_apt_packages(command, self.coreApp.chosen_apt_packages)
                         elif 'pip' in command:
                             if 'install' in command:
-                                self.coreApp.chosen_pip_packages, rest_of_command = self.add_pip_packages(command, self.coreApp.chosen_pip_packages)
+                                self.coreApp.chosen_pip_packages = self.add_pip_packages(command, self.coreApp.chosen_pip_packages)
                         else:
                             pass
                     if 'ENV' in command:
@@ -154,14 +154,7 @@ class DockerfileParser:
             if package not in apt_packages.keys():
                 apt_packages[package] = "latest"
                 
-        if packages:
-            last_index = command.index(packages[-1])
-            rest_of_command = command[:first_index-1] + command[last_index+1:]
-        
-        if len(rest_of_command) == 1:
-            rest_of_command = None
-                
-        return apt_packages, rest_of_command
+        return apt_packages
 
     def add_pip_packages(self, command, pip_packages):
         packages = command
@@ -216,13 +209,4 @@ class DockerfileParser:
             if package not in pip_packages.keys():
                 pip_packages[package] = "no version"
                 
-        if packages:
-            last_index = command.index(packages[-1])
-            rest_of_command = command[:first_index-1] + command[last_index+1:]
-        else:
-            rest_of_command = command
-        
-        if len(rest_of_command) == 1:
-            rest_of_command = None
-        
-        return pip_packages, rest_of_command
+        return pip_packages
