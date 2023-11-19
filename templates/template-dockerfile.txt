@@ -21,7 +21,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 {% for name, version in packages_to_install.items() %}
-{% if "no version" in version %}
+{% if "package from requirements" in version %}
 RUN pip3 install {{ name }}
 {% else %}
 RUN pip3 install {{ name }}=={{ version }}

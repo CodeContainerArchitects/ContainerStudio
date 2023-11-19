@@ -76,6 +76,7 @@ class GeneratorWindow(tk.Toplevel):
                 dockerfile_path = os.path.join(parent.coreApp.project_root_dir, dockerfile_path)
                 parser = DockerfileParser(parent.coreApp)
                 
+                self.files_not_found = []
                 parser.parse_dockerfile(dockerfile_path=dockerfile_path,
                                         files=self.dockerfile_files,
                                         files_not_found=self.files_not_found)

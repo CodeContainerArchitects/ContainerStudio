@@ -126,7 +126,7 @@ class ManageRequirementsWindow(tk.Toplevel):
             for req in rf.requirements:
                 d = req.to_dict()
                 name = d["name"]
-                requirements_pip_packages[name] = "no version"
+                requirements_pip_packages[name] = "package from requirements"
 
         # give requirements_pip_packages to the main list
         self.callback(requirements_files, requirements_files_dockerfile_path, apt_packages_dict, requirements_pip_packages)

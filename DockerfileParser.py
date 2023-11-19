@@ -70,9 +70,14 @@ class DockerfileParser:
                         else:
                             pass
                     if 'ENV' in command:
-                        key = whole_command.split()[1].split('=')[0]
-                        value = whole_command.split()[1].split('=')[1]
-                        self.coreApp.env_variables[key] = value
+                        if '=' in whole_command:
+                            key = whole_command.split()[1].split('=')[0]
+                            value = whole_command.split()[1].split('=')[1]
+                            self.coreApp.env_variables[key] = value
+                        else:
+                            key = whole_command.split()[1]
+                            value = whole_command.split()[2]
+                            self.coreApp.env_variables[key] = value
                     if 'COPY' in command:
                         files.append(whole_command)
                         self.coreApp.all_commands.append(whole_command)
@@ -207,6 +212,6 @@ class DockerfileParser:
         
         for package in packages:
             if package not in pip_packages.keys():
-                pip_packages[package] = "no version"
+                pip_packages[package] = "package from requirements"
                 
         return pip_packages
