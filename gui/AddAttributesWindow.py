@@ -21,15 +21,15 @@ class AddAttributesWindow(tk.Toplevel):
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
         
         button_frame_upper = tk.Frame(self)
-        add_ports_button = tk.Button(button_frame_upper, text="Add ports", command=lambda: self.add_ports(parent))
-        add_env_variables_button = tk.Button(button_frame_upper, text="Add environment variables", command=lambda: self.add_env_variables(parent))
+        add_ports_button = tk.Button(button_frame_upper, text="Manage ports", command=lambda: self.add_ports(parent))
+        add_env_variables_button = tk.Button(button_frame_upper, text="Manage environment variables", command=lambda: self.add_env_variables(parent))
 
         button_frame_upper_1 = tk.Frame(self)
-        add_entrypoint_button = tk.Button(button_frame_upper_1, text="Add entry point", command=lambda: self.add_entry_point(parent))
-        add_volumes_button = tk.Button(button_frame_upper_1, text="Add volumes", command=lambda: self.add_volumes(parent))
+        add_entrypoint_button = tk.Button(button_frame_upper_1, text="Manage entry point", command=lambda: self.add_entry_point(parent))
+        add_volumes_button = tk.Button(button_frame_upper_1, text="Manage volumes", command=lambda: self.add_volumes(parent))
 
         button_frame_upper_2 = tk.Frame(self)
-        add_run_commands_button = tk.Button(button_frame_upper_2, text="Add commands", command=lambda: self.add_commands(parent))
+        add_run_commands_button = tk.Button(button_frame_upper_2, text="Manage commands", command=lambda: self.add_commands(parent))
 
         button_frame_lower = tk.Frame(self)
         cancel_button = tk.Button(button_frame_lower, text="Return to main menu", command=self.destroy)

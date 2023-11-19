@@ -78,7 +78,7 @@ class AddCommandsWindow(tk.Toplevel):
         return index
 
     def add(self, grandparent):
-        add_command_window = InsertValueWithRadioWindow(parent=self, title="Enter command", string="Enter command: ", callback=self._add_command,
+        add_command_window = InsertValueWithRadioWindow(parent=self, title="Add command", string="Enter command: ", callback=self._add_command,
                                                         width=grandparent.screen_width / 2, height=grandparent.screen_height / 2, radio_title="Does command use files?", radio_options=[["Yes", 1], ["No", 2]])
         add_command_window.grab_set()
 

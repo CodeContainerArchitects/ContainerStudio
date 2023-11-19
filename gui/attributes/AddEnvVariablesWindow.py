@@ -51,7 +51,7 @@ class AddEnvVariablesWindow(tk.Toplevel):
         self.env_variables[key] = value
     
     def add_env_vars(self, grandparent):
-        env_vars_window = InsertDoubleValueWindow(self, "Enter variable values", "Enter variable name: ", "Enter variable value", self.insert_into_list, grandparent.screen_width/2, grandparent.screen_height/2)
+        env_vars_window = InsertDoubleValueWindow(self, "Add variable", "Enter variable name: ", "Enter variable value", self.insert_into_list, grandparent.screen_width/2, grandparent.screen_height/2)
         env_vars_window.grab_set()
             
     def delete_env_vars(self):

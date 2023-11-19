@@ -22,7 +22,7 @@ class EntryWindow(tk.Toplevel):
         center_y = int(self.screen_height / 2 - self.window_height / 2)
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
 
-        self.title("Entry requirements file name")
+        self.title("Create requirements")
 
         label_for_entry = tk.Label(self, text="Enter requirements file name: ")
         self.entry = tk.Entry(self, textvariable=tk.StringVar())

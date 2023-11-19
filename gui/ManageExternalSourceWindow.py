@@ -19,7 +19,7 @@ class ManageExternalSourceWindow(tk.Toplevel):
         self.padding = 10
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
-        self.title("Manage external sources window")
+        self.title("Manage external sources")
         center_x = int(self.screen_width / 2 - self.window_width / 2)
         center_y = int(self.screen_height / 2 - self.window_height / 2)
         self.geometry(f'{self.window_width}x{self.window_height}+{center_x}+{center_y}')
