@@ -22,9 +22,9 @@ class PackageSearchWindow(tk.Toplevel):
         self.chosen_version = ''
         
         if mode == 'pip':
-            self.title("Select pip package")
+            self.title("Add pip package")
         elif mode == 'apt':
-            self.title("Select apt package")
+            self.title("Add apt package")
         
         center_x = int(self.screen_width/2 - self.window_width / 2)
         center_y = int(self.screen_height/2 - self.window_height / 2)

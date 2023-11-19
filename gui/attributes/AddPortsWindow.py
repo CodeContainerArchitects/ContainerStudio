@@ -56,7 +56,7 @@ class AddPortsWindow(tk.Toplevel):
         self.ports[host_port] = container_port
     
     def add_ports(self, grandparent):
-        host_port_window = InsertDoubleValueWindow(self, "Enter port values", "Enter host port: ", "Enter container port", self.insert_into_list, grandparent.screen_width/2, grandparent.screen_height/2)
+        host_port_window = InsertDoubleValueWindow(self, "Add port", "Enter host port: ", "Enter container port", self.insert_into_list, grandparent.screen_width/2, grandparent.screen_height/2)
         host_port_window.grab_set()
             
     def delete_ports(self):

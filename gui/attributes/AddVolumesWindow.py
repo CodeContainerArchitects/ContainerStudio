@@ -49,7 +49,7 @@ class AddVolumesWindow(tk.Toplevel):
             return
 
     def add_volume(self, grandparent):
-        volume_window = InsertDoubleValueWindow(parent=self, title="Enter volume values", string1="Enter container path: ",
+        volume_window = InsertDoubleValueWindow(parent=self, title="Add volume", string1="Enter container path: ",
                                                 string2="Enter host path:", callback=self.insert_into_list,
                                                 width=grandparent.screen_width / 2, height=grandparent.screen_height / 2)
         volume_window.grab_set()
