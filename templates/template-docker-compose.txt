@@ -8,7 +8,7 @@ services:
         environment:
             {% if env_variables %}
             {% for key, value in env_variables.items() %}
-            {{ key }}={{ value }}
+            - {{ key }}={{ value }}
             {% endfor %}
             {% endif %}
             {% if use_display or use_sound %}
@@ -19,7 +19,7 @@ services:
         ports:
             {% for host_port, container_port in ports.items() %}
             {% if '-' not in host_port %}
-            {{ host_port }}:{{ container_port }}
+            - {{ host_port }}:{{ container_port }}
             {% endif %}
             {% endfor %}
         {% endif %}
